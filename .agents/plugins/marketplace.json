@@ -1,11 +1,11 @@
 {
-  "name": "conductor-marketplace",
+  "name": "crewmarshal-marketplace",
   "interface": {
-    "displayName": "Conductor"
+    "displayName": "CrewMarshal"
   },
   "plugins": [
     {
-      "name": "conductor",
+      "name": "crewmarshal",
       "source": {
         "source": "local",
         "path": "./"

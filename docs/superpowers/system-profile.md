@@ -1,12 +1,14 @@
-# System Profile: Conductor (Claude Code plugin)
+# System Profile: CrewMarshal (Claude Code plugin)
 
-**Cập nhật:** 2026-09-03
+**Cập nhật:** 2026-09-23
 **Trạng thái:** ĐÃ CHỐT — user xác nhận 2026-08-05
 **Ký hiệu:** `~` = Claude suy từ repo, chưa ai xác nhận · `✓` = user đã chốt
 
 ## Quy mô & tải
-- **Người dùng:** ✓ **công khai trên GitHub** — người lạ cài được qua marketplace.
-  Hệ quả cứng: mọi ví dụ trong skill phải **tự giải thích**, không được giả định
+- **Người dùng:** ✓ **repo công khai trên GitHub, nhưng chỉ tác giả dùng** —
+  user chốt 2026-09-23. Không phải lo migration hay tương thích ngược cho người
+  cài khác khi đổi tên/namespace. Vì repo vẫn công khai, hệ quả cứng giữ
+  nguyên: mọi ví dụ trong skill phải **tự giải thích**, không được giả định
   bất kỳ project nội bộ nào của tác giả — không tên dự án, không số liệu vận
   hành thật; lệnh theo máy chỉ nằm trong `executor-roster.md`.
 - Tải: ~ không có runtime. "Tải" duy nhất là **context Claude phải nạp** mỗi lần
@@ -76,9 +78,11 @@ luật không tồn tại.
 ## Biên hệ thống
 - **Hợp đồng KHÔNG được phá:**
   - Tên skill trong frontmatter — người dùng gọi bằng tên, đổi là phá cách gọi.
+    Chỉ đổi khi user quyết định có chủ ý (2026-09-23: plugin đổi tên
+    `conductor` → `crewmarshal`, `using-conductor` → `using-crewmarshal`).
   - `references/executor-roster.md` là **chỗ duy nhất** chứa lệnh theo máy; thân
     skill phải bất khả tri về agent.
-  - Conductor là **delta trên superpowers**, không thay thế: `brainstorming`,
+  - CrewMarshal là **delta trên superpowers**, không thay thế: `brainstorming`,
     `writing-plans`, `finishing-a-development-branch` vẫn là của superpowers.
 - ~ Phụ thuộc ngoài: superpowers (bookend), các CLI executor (Codex, agy, …) chỉ
   qua roster.

@@ -1,11 +1,11 @@
 ---
-name: using-conductor
-description: Use when starting delegated multi-agent delivery on a project — maps the full workflow arc and points to the right conductor skill and superpowers skill at each stage.
+name: using-crewmarshal
+description: Use when starting delegated multi-agent delivery on a project — maps the full workflow arc and points to the right crewmarshal skill and superpowers skill at each stage.
 ---
 
-# Using Conductor
+# Using CrewMarshal
 
-Conductor is the delivery discipline for work where **Claude architects and
+CrewMarshal is the delivery discipline for work where **Claude architects and
 reviews while external coding agents implement.** It is a thin delta over
 superpowers — it does not replace `brainstorming`, `writing-plans`, or
 `finishing-a-development-branch`; it slots the delegation-and-review loop
@@ -41,7 +41,7 @@ pointer-handoff                  → write state + next action before the sessio
 Steps in `[brackets]` come from the **superpowers** plugin, which exists on Claude
 Code. On a harness without it, do that step directly — design before building,
 write the plan before delegating, integrate deliberately at the end — and the
-Conductor skills around it are unchanged.
+CrewMarshal skills around it are unchanged.
 
 `pointer-handoff` brackets the whole arc: read at the start, written at the end
 and whenever something significant surfaces mid-session. `lessons-ledger` is
@@ -109,7 +109,7 @@ batched. Verification gates are never skipped when real code gets written.
 
 ## Across Harnesses
 
-Conductor installs on any agent harness that loads `SKILL.md` folders (Claude Code
+CrewMarshal installs on any agent harness that loads `SKILL.md` folders (Claude Code
 and Codex both do). Two things differ by harness — neither changes the discipline:
 
 - **Bookend skills.** `brainstorming`, `writing-plans`, and

@@ -1,4 +1,4 @@
-# Conductor
+# CrewMarshal
 
 A plugin packaging a **multi-agent delivery discipline**: the coordinating agent
 architects and reviews while external coding agents (agy, Codex, kiro, opencode,
@@ -13,11 +13,11 @@ From GitHub (recommended):
 
 ```
 /plugin marketplace add https://github.com/nguyengiatam/conductor.git
-/plugin install conductor@conductor-marketplace
+/plugin install crewmarshal@crewmarshal-marketplace
 ```
 
-`conductor-marketplace` is the marketplace name (from `.claude-plugin/marketplace.json`);
-the `@<marketplace>` qualifier is **required** on install. `conductor` is the
+`crewmarshal-marketplace` is the marketplace name (from `.claude-plugin/marketplace.json`);
+the `@<marketplace>` qualifier is **required** on install. `crewmarshal` is the
 plugin name.
 
 The GitHub `owner/repo` shorthand also works, but it clones over SSH by default —
@@ -31,16 +31,16 @@ From a local clone (no network):
 
 ```
 /plugin marketplace add /path/to/conductor
-/plugin install conductor@conductor-marketplace
+/plugin install crewmarshal@crewmarshal-marketplace
 ```
 
-Update to the latest pushed version any time with `/plugin marketplace update conductor-marketplace`.
+Update to the latest pushed version any time with `/plugin marketplace update crewmarshal-marketplace`.
 
 ## Install — Codex
 
 ```
 codex plugin marketplace add https://github.com/nguyengiatam/conductor.git
-codex plugin add conductor@conductor-marketplace
+codex plugin add crewmarshal@crewmarshal-marketplace
 ```
 
 A local clone works the same way — pass the path instead of the URL. Verify with
@@ -50,8 +50,8 @@ Codex reads `.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json`;
 Claude Code reads the two files under `.claude-plugin/`. Both point at the same
 `skills/` directory, so the skills themselves are identical on either harness.
 
-Remove with `codex plugin remove conductor` and
-`codex plugin marketplace remove conductor-marketplace`.
+Remove with `codex plugin remove crewmarshal` and
+`codex plugin marketplace remove crewmarshal-marketplace`.
 
 ### What differs on Codex
 
@@ -76,7 +76,7 @@ skill's `validate_plugin.py`.
 | `pointer-handoff` | One short pointer file per project: current state + next action. Read on resume, written before the session ends. |
 | `lessons-ledger` | Per-project lessons indexed by code area and work type, so only the relevant ones load; project-wide ones get crystallized into the executor context file. |
 | `concept-briefing` | Locks a user-confirmed system profile, tiers each request, and routes it to the right amount of process — including a phased roadmap for layered work. |
-| `using-conductor` | Index/map of the workflow arc and where it meets superpowers. |
+| `using-crewmarshal` | Index/map of the workflow arc and where it meets superpowers. |
 | `orchestrating-executors` | Workforce management: who is on the team and what they proved, subagent-vs-external choice, quota, one-task handoffs, a monitor on every dispatch, parallel isolation, checkpoint protocol. |
 | `executor-context` | One fixed context file the coordinator maintains, so handoffs point at it instead of retyping conventions. |
 | `checkpoint-verification` | Refuses green tests as proof; inspect call-site + drive the real runtime path. |
@@ -120,6 +120,6 @@ file for your machine/agents; the skills stay unchanged.
 
 ## Relationship to superpowers
 
-On Claude Code, Conductor is a delta: it assumes superpowers is installed for the
+On Claude Code, CrewMarshal is a delta: it assumes superpowers is installed for the
 brainstorm / plan / finish bookends. The nine delta skills also work standalone,
 which is how they run on Codex.

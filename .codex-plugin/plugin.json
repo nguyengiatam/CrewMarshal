@@ -1,6 +1,6 @@
 {
-  "name": "conductor",
-  "version": "0.10.0",
+  "name": "crewmarshal",
+  "version": "0.11.0",
   "description": "Multi-agent delivery discipline: the coordinator architects and reviews while external executors implement, under adversarial review-to-GO and real-runtime verification.",
   "author": {
     "name": "Nguyễn Gia Tâm"
@@ -17,7 +17,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Conductor",
+    "displayName": "CrewMarshal",
     "shortDescription": "Delegate implementation, keep the review discipline",
     "longDescription": "A delivery discipline for work where the coordinator designs, reviews, and verifies while external coding agents implement. Covers system profiling, request tiering, phased roadmaps, workforce management, per-task checkpoints, adversarial review, and session handoff.",
     "developerName": "Nguyễn Gia Tâm",

@@ -54,7 +54,7 @@ Bảng: bẫy | hệ quả nếu quên | thuộc phase nào.
 Bảng: rủi ro | mức | cách xử lý.
 
 ## Cách làm việc theo phase                            [nếu có]
-Ai viết plan, ai thực thi, ai kiểm — chỉ ghi khi khác mặc định của Conductor.
+Ai viết plan, ai thực thi, ai kiểm — chỉ ghi khi khác mặc định của CrewMarshal.
 ```
 
 ---
