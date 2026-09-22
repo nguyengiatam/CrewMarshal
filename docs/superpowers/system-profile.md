@@ -86,13 +86,3 @@ luật không tồn tại.
     `writing-plans`, `finishing-a-development-branch` vẫn là của superpowers.
 - ~ Phụ thuộc ngoài: superpowers (bookend), các CLI executor (Codex, agy, …) chỉ
   qua roster.
-
-## Quy ước lập kế hoạch
-- **Độ chi tiết plan:** ✓ **plan trỏ, không chép** — user chốt 2026-09-03. Plan
-  nêu mục tiêu, ràng buộc, nghiệm thu; phần chữ để người viết skill nghĩ. Đây là
-  thay đổi **có chủ ý** so với tiền lệ duy nhất trong repo
-  (`docs/superpowers/plans/2026-07-24-concept-briefing.md`: 481 dòng, code viết
-  sẵn từng bước) — plan cũ không phải khuôn mẫu cho plan sau.
-- Ai thực thi phần lớn task: ~ coordinator viết thẳng; repo này là tài liệu, mỗi
-  file là một luật phải cân từng chữ.
-- Nơi đặt spec/plan: ✓ `docs/superpowers/specs/` và `docs/superpowers/plans/`.

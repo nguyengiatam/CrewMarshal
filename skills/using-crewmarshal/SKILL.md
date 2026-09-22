@@ -22,6 +22,7 @@ which steps below actually run. What follows is the T2/T3 path — the full one.
 pointer-handoff                  → (ongoing project) read the pointer, reconcile with reality
 lessons-ledger                   → pull only the lessons matching this area + kind of work
 concept-briefing                 → confirm system profile, tier the request, route
+project-working-agreement        → load cadence + role rules (set up once if missing)
 [superpowers:brainstorming]      → design the change (steered by the profile)
 [superpowers:writing-plans]      → draft the task-by-task plan
 planning-for-delegation          → gate it: altitude, plan-detail convention,
@@ -72,6 +73,7 @@ batched. Verification gates are never skipped when real code gets written.
 | Resuming an ongoing project, or closing a session | `pointer-handoff` |
 | Starting work in an area, or recording a wrong diagnosis | `lessons-ledger` |
 | Profiling the system + tiering the request before design | `concept-briefing` |
+| Setting or changing how the team works: cadence, role limits, plan detail | `project-working-agreement` |
 | Planning large work as phases from foundation upward | `concept-briefing` (roadmap) |
 | Deciding what to build | `superpowers:brainstorming` |
 | Turning a spec into tasks | `superpowers:writing-plans` |
@@ -115,7 +117,7 @@ and Codex both do). Two things differ by harness — neither changes the discipl
 
 - **Bookend skills.** `brainstorming`, `writing-plans`, and
   `finishing-a-development-branch` ship with superpowers on Claude Code. Elsewhere,
-  do those steps directly; the nine delta skills work standalone.
+  do those steps directly; the ten delta skills work standalone.
 - **Background work.** `orchestrating-executors` requires every dispatch to run in
   the background with a monitor that notifies this session. Where the harness has
   no verified channel for that, the dispatch does not meet the contract — say so,

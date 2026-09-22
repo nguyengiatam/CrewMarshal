@@ -218,8 +218,8 @@ launch on top of it is a duplicate dispatch.
 
 ### After dispatch: work or wait, never poll
 
-- **Carry on with independent work** inside the scope and working rhythm already
-  agreed. If there is none, end the turn and wait for the notification.
+- **Carry on with independent work** inside the scope and cadence the working
+  agreement (`project-working-agreement`) allows. If there is none, end the turn and wait for the notification.
 - **Do not read logs, check the PID, or ask the executor on a schedule just to
   learn "is it done yet".** Check by hand only when a signal looks wrong, when you
   suspect the monitor has died, or when the user asks for progress.
@@ -286,6 +286,7 @@ mistakes get multiplied.
 ## The Loop
 
 ```
+read working agreement → cadence + role limits (set it up if missing)
 read team.md → who is assigned what here; ask the user if a role is unfilled
 for each task in plan:
     check quota across roster → pick executor (assignment + strength + quota)

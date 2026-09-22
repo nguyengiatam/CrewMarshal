@@ -1,6 +1,6 @@
 ---
 name: planning-for-delegation
-description: Use after a plan is drafted and before any task is handed to an executor — settles how detailed this project's plans are (asking once and recording it in the system profile), keeps spec and plan at their own altitudes, and runs nine structural checks that catch the errors which send an executor confidently in the wrong direction.
+description: Use after a plan is drafted and before any task is handed to an executor — settles how detailed this project's plans are (asking once and recording it in the working agreement), keeps spec and plan at their own altitudes, and runs nine structural checks that catch the errors which send an executor confidently in the wrong direction.
 ---
 
 # Planning for Delegation
@@ -53,25 +53,25 @@ and what they have proven:
 
 **Do not pick for the project. Resolve it in this order:**
 
-1. **Read `system-profile.md`** (`concept-briefing`) — the *Quy ước lập kế hoạch*
-   section. If it is settled there, follow it and move on.
-2. **No line in the profile?** Look for precedent: existing plans under the
-   project's plans directory. Infer the convention, write it into the profile
+1. **Read the working agreement** (`project-working-agreement`) — the plan-detail
+   line under *Quy ước riêng*. If it is settled there, follow it and move on.
+2. **No line there?** Look for precedent: existing plans under the
+   project's plans directory. Infer the convention, write it into the agreement
    marked `~`, and confirm it in the next batched question.
-3. **No profile line and no precedent?** **Ask the user, once**:
+3. **No line and no precedent?** **Ask the user, once**:
 
 > "Dự án chưa có quy ước về độ chi tiết của plan. Hai kiểu: (a) **plan trỏ** —
 > nêu mục tiêu, ràng buộc, nghiệm thu, ví dụ tối giản, phần cài đặt để executor
 > nghĩ; (b) **plan chép đủ code** — mỗi bước kèm code viết sẵn. (a) hợp khi
 > executor đã chứng minh làm được và ta muốn giữ tốc độ; (b) hợp khi executor
-> yếu hoặc vùng code quá nhạy cảm. Chốt kiểu nào? Tôi ghi vào system-profile để
+> yếu hoặc vùng code quá nhạy cảm. Chốt kiểu nào? Tôi ghi vào working agreement để
 > các phiên sau khỏi hỏi lại."
 
-Then **write the answer into the profile**, not just into this conversation. The
+Then **write the answer into the working agreement**, not just into this conversation. The
 whole point is that the next session — and the next executor prompt — inherits
 it instead of silently falling back to a default nobody chose.
 
-When the profile says "plan trỏ", this skill **overrides** the
+When the agreement says "plan trỏ", this skill **overrides** the
 `superpowers:writing-plans` rule above for this project. Say so in the plan
 header, so a later reader does not "fix" the plan back.
 
@@ -145,8 +145,8 @@ invisible afterwards.
 | Thought | Reality |
 |---------|---------|
 | "The plan is complete, so it's ready to hand off" | Complete and wrong is the dangerous case. Run the nine checks. |
-| "I'll write the code into the plan so nothing goes wrong" | Check the profile first. If the project says "plan trỏ", writing the code is doing the executor's job and making planning the bottleneck. |
-| "The skill says code blocks are required" | That is `writing-plans`' default, and it is a project decision — recorded in `system-profile.md`. |
+| "I'll write the code into the plan so nothing goes wrong" | Check the working agreement first. If the project says "plan trỏ", writing the code is doing the executor's job and making planning the bottleneck. |
+| "The skill says code blocks are required" | That is `writing-plans`' default, and it is a project decision — recorded in the working agreement. |
 | "No convention anywhere, I'll use the sensible default" | Ask once, then record it. A default nobody chose gets re-litigated every phase. |
 | "These tasks touch different files, so they're parallel" | Check generated artifacts and shared migrations too. |
 | "Acceptance is that the tests pass" | Then the tasks whose requirement is only observable on infrastructure have no acceptance at all. |

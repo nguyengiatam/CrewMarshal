@@ -50,7 +50,9 @@ each one earned by a real failure mode:
 6. **How to work.** TDD order if that's the discipline; use the plan's code
    rather than inventing an alternative; **stop and report when the plan is wrong
    instead of improvising**; never edit outside scope just to make lint or tests
-   green; commit or don't commit.
+   green; commit or don't commit. Role limits and cadence come from the working
+   agreement (`project-working-agreement`) — point at its executor part, don't
+   copy it.
 7. **Running in parallel with other executors.** Whose files are held, and how to
    tell foreign lint/typecheck errors from your own.
 8. **What the final report must contain.** Files changed, test results before and

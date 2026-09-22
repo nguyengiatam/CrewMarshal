@@ -68,10 +68,9 @@ for** — today's numbers or the expected ones. That choice is currently invisib
 so each session picks differently and the answers disagree without anyone
 noticing.
 
-One profile section is filled **later, not now**: *Quy ước lập kế hoạch* — how
-detailed this project's plans are. `planning-for-delegation` asks it the first
-time a plan is written and records the answer there. Don't ask it upfront; it
-costs a round-trip on projects that never reach a plan file.
+How the team works — cadence, role limits, how detailed plans are — is not
+profile material. It lives in the working agreement (`project-working-agreement`);
+don't ask it here.
 
 **Silence is not consent.** There is no "the user didn't object, so it's
 confirmed" path. If they can't decide a line, mark that line `CHƯA CHỐT`, don't

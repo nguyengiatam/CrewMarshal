@@ -60,11 +60,6 @@ evidence marker. If the user cannot answer yet, leave the line `CHƯA CHỐT`.
 ## Biên hệ thống
 - Hợp đồng KHÔNG được phá: <API công khai, schema, job, consumer ngoài>
 - Phụ thuộc ngoài: <...>
-
-## Quy ước lập kế hoạch
-- **Độ chi tiết plan:** <plan trỏ, executor tự viết cài đặt | plan chép đủ code>
-- Ai thực thi phần lớn task: <executor ngoài | subagent | coordinator>
-- Nơi đặt spec/plan: <đường dẫn>
 ```
 
 ---
@@ -84,10 +79,8 @@ which priority wins a conflict. Those are the questions worth the user's time �
 questions, never inferences. The *Quy mô dự kiến* block has no row in the table
 above on purpose: there is nothing to look at.
 
-*Quy ước lập kế hoạch* is filled the first time the project writes a plan —
-`planning-for-delegation` asks it then and records the answer here. Leaving it
-empty until then is correct; it costs a round-trip on projects that never get
-that far.
+Working rules — cadence, role limits, plan detail — don't belong here; they live
+in the working agreement (`project-working-agreement`).
 
 ## What a good one reads like
 

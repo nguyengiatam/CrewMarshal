@@ -57,7 +57,7 @@ Remove with `codex plugin remove crewmarshal` and
 
 - **No superpowers.** `brainstorming`, `writing-plans`, and
   `finishing-a-development-branch` are Claude Code plugins. On Codex, do those
-  steps directly; the nine delta skills work standalone.
+  steps directly; the ten delta skills work standalone.
 - **No verified notification channel yet.** `orchestrating-executors` requires
   every dispatch to run in the background with a monitor that notifies the
   coordinator. On Codex that channel is unverified, so a dispatch there does not
@@ -78,11 +78,12 @@ skill's `validate_plugin.py`.
 | `pointer-handoff` | One short pointer file per project: current state + next action. Read on resume, written before the session ends. |
 | `lessons-ledger` | Per-project lessons indexed by code area and work type, so only the relevant ones load; project-wide ones get crystallized into the executor context file. |
 | `concept-briefing` | Locks a user-confirmed system profile, tiers each request, and routes it to the right amount of process — including a phased roadmap for layered work. |
+| `project-working-agreement` | One project file of working rules — stop after each task or continue, what each role may decide, plan detail, commit/language — asked once, reused by every session and executor. |
 | `using-crewmarshal` | Index/map of the workflow arc and where it meets superpowers. |
 | `orchestrating-executors` | Workforce management: who is on the team and what they proved, subagent-vs-external choice, quota, one-task handoffs, async dispatch with a monitor (no polling), parallel isolation, checkpoint protocol. |
 | `executor-context` | One fixed context file the coordinator maintains, so handoffs point at it instead of retyping conventions. |
 | `checkpoint-verification` | Refuses green tests as proof; inspect call-site + drive the real runtime path. |
-| `planning-for-delegation` | The gate a plan passes before the first dispatch: spec/plan altitude, the project's plan-detail convention (asked once, kept in the profile), nine structural checks, [E]/[C], phase gates. |
+| `planning-for-delegation` | The gate a plan passes before the first dispatch: spec/plan altitude, the project's plan-detail convention (asked once, kept in the working agreement), nine structural checks, [E]/[C], phase gates. |
 | `adversarial-review-to-go` | External adversarial reviewer locked to the altitude of what it reviews — spec, plan or diff; every finding carries 1-2 fix directions (a direction, never a patch) at that altitude; converging rounds to GO on a diff, one round on a document; re-verify every finding. |
 | `convention-commit-gate` | Centralized enums, no magic literals, project commit style. |
 
@@ -93,7 +94,8 @@ which steps run. Below is the full T2/T3 path:
 
 ```
 pointer-handoff (resume) → lessons-ledger (what applies here?)
-  → concept-briefing → brainstorming (SP) → writing-plans (SP)
+  → concept-briefing → project-working-agreement (cadence + role rules)
+  → brainstorming (SP) → writing-plans (SP)
   → planning-for-delegation (gate the plan before anyone is dispatched)
   → orchestrating-executors ⇄ checkpoint-verification ⇄ convention-commit-gate  (per task)
   → adversarial-review-to-go
@@ -123,5 +125,5 @@ file for your machine/agents; the skills stay unchanged.
 ## Relationship to superpowers
 
 On Claude Code, CrewMarshal is a delta: it assumes superpowers is installed for the
-brainstorm / plan / finish bookends. The nine delta skills also work standalone,
+brainstorm / plan / finish bookends. The ten delta skills also work standalone,
 which is how they run on Codex.
