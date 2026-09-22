@@ -1,7 +1,8 @@
 # CrewMarshal: tên plugin, quy ước dự án, ba hook và monitor bất đồng bộ
 
 **Ngày:** 2026-09-22
-**Trạng thái:** Ghi nhận yêu cầu từ trao đổi; các lựa chọn chưa chốt được liệt kê riêng.
+**Trạng thái:** ĐÃ TRIỂN KHAI 2026-09-23 (0.11.0 → 0.14.0). Giữ làm hồ sơ; mục 9
+ghi các quyết định đã chốt và phần còn mở.
 **Phạm vi tài liệu:** Mô tả hành vi và nghiệm thu, không phải kế hoạch triển khai.
 
 ## 1. Mục tiêu
@@ -233,81 +234,52 @@ phục hồi phiên riêng hoặc một hệ thống quản lý task mới.
 
 ## 6. Ràng buộc chung
 
-- Gắn hook với điểm vào workflow quan sát được; không chỉ dò từ khóa tự do để
-  kết luận agent đang thiết kế hoặc thực thi.
-- Tránh nạp lại toàn bộ tài liệu sau mỗi tool call. Phải cân bằng việc tái sử
-  dụng ngữ cảnh còn hiệu lực với việc nạp lại khi tài liệu hoặc phiên thay đổi.
-- Phân biệt “hook đã chạy”, “agent đã nhận ngữ cảnh” và “agent đã tuân thủ”.
-  Một thông báo nhắc không phải bằng chứng đã đọc hay đã cập nhật.
-- Không tạo vòng lặp vô hạn nếu thiếu file, không có quyền ghi hoặc gặp lỗi.
-  Báo đúng trạng thái chưa hoàn thành, không tuyên bố đã bảo đảm checkpoint.
+- Hook chỉ gắn vào thao tác để lại dấu vết kiểm được; không dò từ khóa để đoán
+  agent đang thiết kế hay thực thi.
+- Hook nhắc, không chặn; lỗi trong hook không làm hỏng phiên (fail open), không
+  tạo vòng lặp. Một lời nhắc không phải bằng chứng agent đã làm theo.
 - Giữ nguyên kiểm chứng thực tế, xác minh finding và cấm bịa kết quả.
-- Skill dùng chung tiếp tục cài được trên Claude Code và Codex. Hook cần ánh
-  xạ và kiểm chứng riêng theo harness; không tuyên bố hook Claude Code tự chạy
-  trên Codex. Phạm vi hook cho bản đầu còn cần chốt.
-- Không đưa đường dẫn, tài khoản hoặc thông tin nội bộ riêng của tác giả vào
-  ví dụ công khai.
+- Skill cài được trên Claude Code và Codex; hook hiện chỉ cho Claude Code, không
+  tuyên bố chạy trên Codex.
+- Không đưa đường dẫn, tài khoản hoặc thông tin nội bộ của tác giả vào ví dụ
+  công khai.
 
-## 7. Tác động lên bộ hiện tại
+## 7. Đã thay đổi
 
-- Bổ sung skill quy ước và tích hợp vào bản đồ workflow, tài liệu sử dụng.
-- Phối hợp với `concept-briefing` để tránh hỏi lặp và lẫn quy ước với profile.
-- Phối hợp với `executor-context`, `orchestrating-executors` để chuyển quy ước
-  đúng vai trò; với `checkpoint-verification` để xác định tiến độ đã nghiệm thu.
-- Bổ sung hành vi pointer định kỳ vào `pointer-handoff`.
-- Sửa `orchestrating-executors` về hợp đồng dispatch, chờ sự kiện và ngoại lệ
-  kiểm tra thủ công; đồng bộ vòng lặp workflow, `executor-roster`, skill giới
-  thiệu và README. Phân biệt rõ tiến triển, executor kết thúc và task nghiệm thu.
-- Cập nhật system profile của chính plugin khi triển khai: các nhận định hiện
-  tại “chỉ Markdown”, “không có mã chạy” và “không có test tự động” sẽ cần xét
-  lại do hook có trạng thái và mã thực thi.
-- Nếu đổi tên, ghi nhận thay đổi tương thích của namespace và skill giới thiệu;
-  không âm thầm bỏ ràng buộc giữ tên skill trong profile hiện tại.
+| Commit | Nội dung |
+|---|---|
+| `2030f76`, `45772de` | Đổi tên plugin, marketplace, `using-crewmarshal`; URL repo `nguyengiatam/CrewMarshal` |
+| `627626a` | `orchestrating-executors`: dispatch bất đồng bộ, cấm poll, bảng trạng thái task; roster, `pointer-handoff`, README |
+| `f598cb9` | Skill `project-working-agreement`; quy ước độ chi tiết plan chuyển từ system profile sang working agreement |
+| `8357604` | Hook nhắc dispatch chạy nền và cập nhật pointer; pre-commit kiểm version; profile cập nhật "có mã chạy" |
 
 ## 8. Tiêu chí nghiệm thu
 
-1. Dự án mới được hỏi nhịp làm việc; lựa chọn được lưu và dùng lại ở phiên sau
-   mà không hỏi lặp. Dự án có quy ước sẵn không nhận thêm bản mâu thuẫn.
-2. Chế độ dừng từng task thực sự dừng sau nghiệm thu; chế độ liên tục chuyển
-   tiếp trong phạm vi cho phép, vẫn hỏi khi thiếu quyết định cần thiết.
-3. Một thiết kế có đánh đổi được chứng minh đã dùng profile trước khi quyết
-   định; trường hợp thiếu profile dẫn tới bổ sung, không suy đoán âm thầm.
-4. Khi profile hoặc quy ước thay đổi giữa phiên, bước liên quan tiếp theo dùng
-   bản mới. Executor/reviewer nhận đúng quy ước theo vai trò.
-5. Đạt ngưỡng tiến độ sinh yêu cầu cập nhật pointer; nội dung cập nhật chứa
-   trạng thái, bằng chứng và bước tiếp theo đúng với công việc đã quan sát.
-6. Sự kiện lặp, nhiều phiên, thao tác cập nhật pointer và task chưa nghiệm thu
-   không làm bộ đếm hoặc nội dung pointer sai lệch.
-7. Không có lời nhắc liên tục khi chưa phát sinh tiến độ mới. Lỗi đọc/ghi không
-   gây lặp vô hạn hoặc báo sai rằng checkpoint đã hoàn thành.
-8. Kiểm chứng qua phiên thực tế cho các điểm vào workflow được hỗ trợ, ngoài
-   kiểm tra script riêng lẻ; tài liệu nêu rõ phạm vi hỗ trợ mỗi harness.
-9. Nếu áp dụng đổi tên: manifest nhất quán, cài mới hoạt động, skill xuất hiện
-   dưới định danh mới và hướng dẫn chuyển từ bản cũ có thể thực hiện được.
-10. Trong phiên thực tế, coordinator dispatch executor kèm monitor, chuyển
-    sang việc độc lập hoặc chờ sự kiện, rồi nhận kết quả đúng task/phiên mà
-    không liên tục gọi tool kiểm PID/log. Kiểm cả lúc coordinator đang làm
-    việc và lúc đang chờ trên từng harness được tuyên bố hỗ trợ.
-11. Executor kết thúc lỗi, yêu cầu quyết định và vượt ngưỡng thời gian tạo đúng
-    thông báo; commit mới và exit code 0 không tự đánh dấu task đã nghiệm thu.
-12. Mất kênh báo, monitor không khởi chạy, thông báo lặp và sự kiện từ lần chạy
-    cũ không gây báo thành công giả, mất kết quả hoặc dispatch trùng. Chế độ
-    dừng từng task vẫn được giữ khi nhận kết quả bất đồng bộ.
-13. Pointer ghi được task đang chạy và task chờ nghiệm thu cùng executor,
-    mã lần chạy, nơi đọc kết quả và bước tiếp theo ngay trong lúc chờ subagent,
-    trước khi đạt ngưỡng task hoàn tất. Task chỉ được tính hoàn tất sau nghiệm
-    thu; nghiệm thu không đạt và thông báo lặp không làm tăng sai bộ đếm.
+Tiêu chí của bản đầu về bộ đếm pointer và hook nạp ngữ cảnh (cũ 3–7) bị bỏ cùng
+thiết kế đó (xem §4). Còn lại:
 
-## 9. Lựa chọn cần chốt trước phần triển khai tương ứng
+| Tiêu chí | Trạng thái |
+|---|---|
+| Đổi tên: manifest nhất quán, cài mới chạy, skill dưới định danh mới | ✓ `claude plugin validate`; cài lại thật trên Claude Code và Codex (0.14.0) |
+| Hook nhắc dispatch: lệnh vẫn chạy, model nhận lời nhắc | ✓ phiên thật `claude -p --plugin-dir .` + 17 test script |
+| Hook pointer: nhắc một lần mỗi HEAD, không lặp, không nhắc khi pointer đang sửa | ✓ phiên thật + test script |
+| Dự án mới được hỏi nhịp làm việc; lựa chọn dùng lại ở phiên sau | Chưa dogfood |
+| Dừng từng task / làm liên tục hành xử đúng | Chưa dogfood |
+| Dispatch kèm monitor, coordinator không poll, nhận kết quả đúng task/phiên | Chưa dogfood |
+| Executor lỗi, exit 0, thông báo lặp không tự đánh dấu nghiệm thu | Chưa dogfood |
+| Pointer ghi task đang chạy/chờ nghiệm thu trong lúc chờ | Chưa dogfood |
 
-- Tên phát hành CrewMarshal, tên marketplace và có đổi repo GitHub hay không.
-- Tên cuối cùng và nơi lưu mặc định của working agreement.
-- Hook bản đầu dành cho Claude Code hay phải hỗ trợ thêm Codex ngay.
-- Ngưỡng pointer, có dùng tín hiệu dự phòng không, và nhắc mềm hay bắt buộc
-  xử lý trước khi chuyển việc/kết thúc lượt.
-- Các điểm vào workflow được hỗ trợ và cách xử lý đường đi không qua skill.
-- Kênh thông báo monitor cho từng harness, ngưỡng cảnh báo và phương án dự
-  phòng khi không hỗ trợ bất đồng bộ; kiểm chứng khả năng trước khi chốt.
+## 9. Quyết định
+
+**Đã chốt:** tên CrewMarshal, marketplace `crewmarshal-marketplace`, repo đã đổi
+tên · chỉ tác giả dùng, không cần migration · working agreement ở
+`docs/superpowers/working-agreement.md`, nhận luôn quy ước độ chi tiết plan ·
+hook chỉ Claude Code, nhắc chứ không chặn · ngưỡng pointer 3 commit, một lần mỗi
+HEAD.
+
+**Còn mở:** nhịp làm việc của chính repo này · hook nhắc commit khi task chưa
+nghiệm thu (cần dấu nghiệm thu) · kênh báo kết quả dispatch trên Codex · hook
+trên Codex · trần số skill.
 
 ## 10. Ngoài phạm vi
 
