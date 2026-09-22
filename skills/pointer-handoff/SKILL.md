@@ -81,6 +81,10 @@ changes — not on a timer while nothing moves. Waiting for an executor is a goo
 moment to write. If the executor is running but its monitor failed, write both
 facts; a label that hides a live process is how a task gets dispatched twice.
 
+On Claude Code a Stop hook holds the turn once when HEAD is 3+ commits past the
+pointer's last update. The reminder is not the update: write the state, or say
+why nothing in the pointer changed.
+
 Every claim carries evidence:
 
 | Instead of | Write |

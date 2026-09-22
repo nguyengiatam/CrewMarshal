@@ -100,60 +100,33 @@ Không nhân bản quy tắc vào nhiều nguồn có thể lệch nhau. Quy ư�
 đã nằm trong system profile cần được tham chiếu hoặc di chuyển có chủ ý, không
 tạo hai bản có thẩm quyền ngang nhau.
 
-## 4. Ba hook theo trách nhiệm
+## 4. Hook: nhắc ở điểm bắt buộc đi qua
 
-“Ba hook” dưới đây là ba trách nhiệm người dùng yêu cầu. Việc ánh xạ sang bao
-nhiêu sự kiện kỹ thuật phụ thuộc khả năng của harness và được chốt ở plan.
+> **Sửa 2026-09-23.** Bản đầu đề xuất ba hook nạp ngữ cảnh (design context,
+> working agreement) và một bộ đếm task đã nghiệm thu. User chốt lại: mục đích
+> hook là để agent **không bỏ qua thao tác quan trọng**, và **một lời nhắc là
+> đủ** — model hiện nay không cần bị chặn cứng. Phần dưới thay cho bản đầu.
 
-### 4.1. Design context — trước khi thiết kế
+**Nguyên tắc.** Hook chỉ gắn vào thao tác để lại dấu vết kiểm được (một lệnh,
+một file, một commit) và nhắc đúng lúc thao tác đó xảy ra. Thao tác không để lại
+dấu vết — "đã đọc system profile trước khi thiết kế" — thuộc về luật trong skill;
+hook nhắc chúng chỉ tốn context mỗi phiên mà không thêm gì.
 
-**Kết quả cần đạt:** agent đã đọc system profile hiện hành trước khi đưa ra
-quyết định thiết kế chịu ảnh hưởng của quy mô, ưu tiên và ràng buộc.
+**Nhắc, không chặn.** Coordinator có lý do chính đáng để làm khác (thử executor,
+kiểm quota). Hook không từ chối lệnh; lỗi trong hook không làm hỏng phiên.
 
-- Áp dụng khi bắt đầu thiết kế và khi thay đổi thiết kế trong quá trình làm.
-- Nếu thiếu profile hoặc thiếu thông tin quyết định, hướng agent bổ sung qua
-  `concept-briefing`; không tự suy quy mô tương lai hay ưu tiên nghiệp vụ.
-- Nếu profile thay đổi hoặc ngữ cảnh phiên bị mất, phải nạp lại trước quyết
-  định liên quan tiếp theo.
-- Không buộc việc cơ học không có quyết định thiết kế đi qua toàn bộ quy trình.
+| Thao tác hay bị bỏ | Điểm nhắc | Dấu vết |
+|---|---|---|
+| Dispatch executor mà không chạy nền | Trước khi chạy lệnh Bash khởi chạy executor | Lệnh khớp mẫu và không bật chạy nền |
+| Không cập nhật pointer khi công việc đã tiến | Lúc kết thúc lượt | HEAD vượt lần cập nhật pointer gần nhất từ 3 commit, pointer không có sửa đang dở; nhắc tối đa một lần mỗi HEAD |
+| Version lệch giữa ba manifest (riêng repo này) | Git pre-commit | So chuỗi version |
 
-### 4.2. Working agreement — trước khi thực hiện công việc
+**Chưa làm:** nhắc trước commit khi task chưa nghiệm thu — cần định nghĩa dấu
+nghiệm thu mà `checkpoint-verification` ghi lại trước.
 
-**Kết quả cần đạt:** agent biết quy ước áp dụng trước khi thực thi hoặc giao việc.
-
-- Nạp quy ước hiện hành, đặc biệt chế độ dừng/tiếp tục và giới hạn từng vai trò.
-- Nếu chưa có quy ước, khởi tạo các lựa chọn cần thiết bằng skill mới.
-- Thay đổi quy ước phải có hiệu lực ở bước liên quan tiếp theo, không giữ bản cũ
-  chỉ vì đã đọc đầu phiên.
-- Khi giao việc, coordinator truyền hoặc cung cấp đường truy cập phần quy ước
-  liên quan cho executor/reviewer, kể cả agent ngoài harness. Hook ở phiên
-  coordinator không chứng minh agent được giao việc đã nhận quy ước.
-
-### 4.3. Pointer checkpoint — sau một lượng tiến độ
-
-**Kết quả cần đạt:** pointer được cập nhật định kỳ khi công việc tiến triển,
-không phụ thuộc hoàn toàn vào việc agent nhớ ghi lúc kết thúc.
-
-- Có ngưỡng cấu hình theo số task hoàn tất; chỉ đếm task đã qua nghiệm thu
-  theo workflow, không coi executor tự báo xong là bằng chứng nghiệm thu.
-- Có thể bổ sung ngưỡng dự phòng khi không dùng task tracking, nhưng tín hiệu
-  dự phòng không được diễn giải thành số task hoàn tất.
-- Khi tới ngưỡng, yêu cầu agent cập nhật pointer bằng trạng thái và bằng chứng
-  đang có. Script quản lý tín hiệu và bộ đếm; agent tổng hợp nội dung.
-- Kiểm tra yêu cầu cập nhật còn chờ ở thời điểm chuẩn bị kết thúc lượt trả lời.
-  Đây không phải giả định rằng mọi lượt trả lời là kết thúc cả phiên.
-- Giữ đường dẫn pointer dự án đã chọn; mặc định hiện có là
-  `docs/superpowers/STATUS.md`. Không tạo pointer thứ hai.
-- Pointer phản ánh trạng thái hiện tại, ngắn và có bằng chứng; không tích lũy
-  thành nhật ký. Không reset chỉ vì đã phát lời nhắc hoặc agent nói đã cập nhật.
-- Duy trì quy tắc ghi ngay khi có phát hiện quan trọng; ngưỡng định kỳ không
-  thay thế quy tắc này.
-- Chống đếm trùng sự kiện, nhắc lặp, và vòng lặp do chính việc viết pointer.
-  Tách trạng thái theo project/session; phải xét trường hợp nhiều phiên cùng
-  dùng một pointer để tránh ghi đè trạng thái của nhau.
-
-Ngưỡng **3 task**, dự phòng **30 lượt tool**, và chế độ **nhắc mềm** từng được
-đề xuất nhưng chưa được người dùng chốt thành mặc định.
+**Bỏ hẳn:** hook nạp system profile/working agreement (4.1, 4.2 bản đầu) và bộ
+đếm task đã nghiệm thu nhiều phiên (4.3 bản đầu) — luật đã nằm trong skill, và
+bộ đếm không quan sát được "nghiệm thu".
 
 ## 5. Monitor khi giao task bất đồng bộ
 

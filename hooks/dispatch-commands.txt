@@ -1,0 +1,9 @@
+# One regex per line: a Bash command matching any of these launches an external
+# executor; run in the foreground, it gets a reminder (never a refusal).
+# Machine-specific, like references/executor-roster.md — edit both together.
+# Anchored to command position (line start, after ; & | or a `timeout N` prefix)
+# so that `grep agy notes.md` is not mistaken for a launch.
+(^|[;&|]|\n)\s*(timeout\s+\S+\s+)?agy\s
+(^|[;&|]|\n)\s*(timeout\s+\S+\s+)?codex\s+exec\b
+(^|[;&|]|\n)\s*(timeout\s+\S+\s+)?kiro-cli\s+chat\b
+(^|[;&|]|\n)\s*(timeout\s+\S+\s+)?opencode\s+run\b

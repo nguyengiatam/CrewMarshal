@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Repo-local check (not shipped as a plugin hook): the version must match in all
+# three manifests. Enable once per clone: git config core.hooksPath .githooks
+versions=$(python3 - <<'PY'
+import json
+m = json.load(open(".claude-plugin/marketplace.json"))
+print(json.load(open(".claude-plugin/plugin.json"))["version"])
+print(next(p["version"] for p in m["plugins"] if p["name"] == "crewmarshal"))
+print(json.load(open(".codex-plugin/plugin.json"))["version"])
+PY
+) || { echo "pre-commit: could not read manifest versions" >&2; exit 1; }
+if [ "$(printf '%s\n' "$versions" | sort -u | wc -l | tr -d ' ')" != "1" ]; then
+  echo "pre-commit: manifest versions differ:" >&2
+  printf '  %s\n' $versions >&2
+  exit 1
+fi

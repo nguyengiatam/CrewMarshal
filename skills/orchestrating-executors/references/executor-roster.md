@@ -41,6 +41,10 @@ nothing." Confirm quota first.
 monitor attached at launch. What is actually observable differs per agent and per
 coordinator harness — record it here, not in the skill.
 
+On Claude Code the plugin's `hooks/dispatch-commands.txt` lists the launch
+patterns for the agents below; a foreground launch gets a reminder. Add a new
+agent there when you add it here.
+
 **Notification channel back to the coordinator (per harness):**
 
 - **Claude Code:** run the launch with Bash `run_in_background` — the session is

@@ -11,7 +11,7 @@
   nguyên: mọi ví dụ trong skill phải **tự giải thích**, không được giả định
   bất kỳ project nội bộ nào của tác giả — không tên dự án, không số liệu vận
   hành thật; lệnh theo máy chỉ nằm trong `executor-roster.md`.
-- Tải: ~ không có runtime. "Tải" duy nhất là **context Claude phải nạp** mỗi lần
+- Tải: ~ không có runtime ngoài hai hook nhắc. "Tải" duy nhất là **context Claude phải nạp** mỗi lần
   skill kích hoạt — đó mới là tài nguyên khan hiếm ở đây.
 - **Scale hiện tại:** ✓ không áp dụng — plugin là file markdown, không có gì để
   scale.
@@ -51,11 +51,14 @@ luật không tồn tại.
    hay trạng thái chưa đo.
 
 ## Định hướng code
-- ~ Không có mã chạy. "Chất lượng" ở đây đo bằng: skill có làm Claude **hành xử
-  đúng** không, và có bị lách bằng lý lẽ không.
+- ~ Chủ yếu là Markdown. Mã chạy duy nhất: hai hook Python trong `hooks/` (chỉ
+  Claude Code, chỉ nhắc, lỗi thì bỏ qua) và pre-commit kiểm version của repo.
+  "Chất lượng" của skill đo bằng: có làm Claude **hành xử đúng** không, và có bị
+  lách bằng lý lẽ không.
 - ~ Mức trừu tượng: viết trực tiếp, mệnh lệnh. Bảng Red Flags ("Thought" vs
   "Reality") là cách chính để chặn đường lách — giữ khuôn đó.
-- ~ Kiểm chứng skill: dogfood trên việc thật, không có test tự động.
+- ~ Kiểm chứng skill: dogfood trên việc thật. Hook có test script
+  (`bash hooks/tests/run.sh`) và được kiểm thêm bằng phiên thật `claude -p --plugin-dir .`.
 
 ## Ràng buộc vận hành
 - ~ Phân phối qua GitHub marketplace. **Sửa file trong repo làm việc chưa tới tay
@@ -66,8 +69,9 @@ luật không tồn tại.
   vào cùng `skills/`.
 - ~ Version nằm ở **ba** file, phải khớp: `.claude-plugin/plugin.json`,
   `.claude-plugin/marketplace.json`, `.codex-plugin/plugin.json`.
-- ~ Không có CI, không có test tự động. Kiểm bằng dogfood; phía Codex kiểm thêm
-  bằng `validate_plugin.py` của skill `plugin-creator`.
+- ~ Không có CI. Skill kiểm bằng dogfood, hook bằng `hooks/tests/run.sh`; phía
+  Codex kiểm thêm bằng `validate_plugin.py` của skill `plugin-creator`. Pre-commit
+  kiểm version bật bằng `git config core.hooksPath .githooks`.
 
 ## Dữ liệu & tuân thủ
 - ~ Không có dữ liệu người dùng, không PII, không secret trong repo.

@@ -63,13 +63,27 @@ Remove with `codex plugin remove crewmarshal` and
   coordinator. On Codex that channel is unverified, so a dispatch there does not
   meet the contract — the skill says so and uses the project's allowed fallback
   or asks, instead of polling silently.
+- **No hooks.** The two hooks below are Claude Code only; on Codex the skills
+  carry the same rules without the reminders.
 
 ### Maintainer note
 
 The version appears in **three** files and they must match:
 `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, and
 `.codex-plugin/plugin.json`. Validate the Codex side with the `plugin-creator`
-skill's `validate_plugin.py`.
+skill's `validate_plugin.py`. A repo-local pre-commit check refuses a commit
+when they differ — enable it once per clone with `git config core.hooksPath .githooks`.
+Hook tests: `bash hooks/tests/run.sh`.
+
+## Hooks (Claude Code)
+
+Two reminders at points the agent cannot skip past. Neither refuses anything;
+both fail open if something goes wrong.
+
+| Hook | When | What |
+|------|------|------|
+| `dispatch_gate.py` (PreToolUse, Bash) | An external executor is launched in the foreground (patterns in `hooks/dispatch-commands.txt`) | Adds one reminder: a real dispatch belongs in the background with a monitor. The command still runs — testing an executor or checking quota is fine. |
+| `pointer_gate.py` (Stop) | HEAD is 3+ commits past the last commit touching `docs/superpowers/STATUS.md`, and the pointer has no pending edit | Holds the end of the turn once and asks for a pointer update. At most once per HEAD; inert in projects without that file. Claude Code labels this "Stop hook error" — that is its name for any Stop hook that holds a turn. |
 
 ## Skills
 
