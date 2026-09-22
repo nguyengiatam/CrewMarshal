@@ -122,8 +122,9 @@ kiểm quota). Hook không từ chối lệnh; lỗi trong hook không làm hỏ
 | Không cập nhật pointer khi công việc đã tiến | Lúc kết thúc lượt | HEAD vượt lần cập nhật pointer gần nhất từ 3 commit, pointer không có sửa đang dở; nhắc tối đa một lần mỗi HEAD |
 | Version lệch giữa ba manifest (riêng repo này) | Git pre-commit | So chuỗi version |
 
-**Chưa làm:** nhắc trước commit khi task chưa nghiệm thu — cần định nghĩa dấu
-nghiệm thu mà `checkpoint-verification` ghi lại trước.
+**Bỏ:** nhắc trước commit khi task chưa nghiệm thu. Executor tự commit task của
+nó trên nhánh feature rồi coordinator mới nghiệm thu (`orchestrating-executors`),
+nên commit trước nghiệm thu là đúng thiết kế.
 
 **Bỏ hẳn:** hook nạp system profile/working agreement (4.1, 4.2 bản đầu) và bộ
 đếm task đã nghiệm thu nhiều phiên (4.3 bản đầu) — luật đã nằm trong skill, và
@@ -277,9 +278,11 @@ tên · chỉ tác giả dùng, không cần migration · working agreement ở
 hook chỉ Claude Code, nhắc chứ không chặn · ngưỡng pointer 3 commit, một lần mỗi
 HEAD.
 
-**Còn mở:** nhịp làm việc của chính repo này · hook nhắc commit khi task chưa
-nghiệm thu (cần dấu nghiệm thu) · kênh báo kết quả dispatch trên Codex · hook
-trên Codex · trần số skill.
+nhịp làm việc của repo này: làm liên tục · bỏ hook nhắc commit (executor commit
+trước, coordinator nghiệm thu sau) · Codex giữ ở mức chỉ có skill · thư mục
+local đổi thành `CrewMarshal`.
+
+**Còn mở:** kênh báo kết quả dispatch và hook trên Codex (khi cần) · trần số skill.
 
 ## 10. Ngoài phạm vi
 

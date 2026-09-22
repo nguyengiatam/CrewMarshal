@@ -4,8 +4,10 @@
 **Ký hiệu:** `✓` = user đã chốt · `~` = đề xuất/suy luận, chưa chốt · `CHƯA CHỐT` = còn mở
 
 ## Nhịp làm việc
-- **Chế độ:** CHƯA CHỐT
-- **Một "task" là:** CHƯA CHỐT
+- **Chế độ:** ✓ **làm liên tục** — user chốt 2026-09-23. Tiếp tục trong phạm vi
+  đã thống nhất, commit và push từng phần xong, chỉ hỏi khi thiếu quyết định.
+- **Một "task" là:** ~ một phần việc hoàn chỉnh có commit riêng (một skill, một
+  hook, một lượt dọn dẹp).
 
 ## Quy ước riêng
 - **Độ chi tiết plan:** ✓ **plan trỏ, không chép** — user chốt 2026-09-03. Plan
@@ -20,4 +22,4 @@
 - Nơi đặt spec/plan: ✓ `docs/superpowers/specs/` và `docs/superpowers/plans/`.
 - Commit: ~ một dòng tiếng Việt không dấu, dạng `<vùng>: <mô tả>`, kèm footer
   `Co-Authored-By`; bump version ở ba file manifest khi skill đổi.
-- Push: ~ commit xong mỗi phần thì push luôn (user nói "luôn đi" 2026-09-23).
+- Push: ✓ commit xong mỗi phần thì push luôn — user chốt 2026-09-23.
