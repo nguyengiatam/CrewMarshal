@@ -12,7 +12,7 @@ Installs on **Claude Code** and **Codex**. On Claude Code it extends
 From GitHub (recommended):
 
 ```
-/plugin marketplace add https://github.com/nguyengiatam/conductor.git
+/plugin marketplace add https://github.com/nguyengiatam/CrewMarshal.git
 /plugin install crewmarshal@crewmarshal-marketplace
 ```
 
@@ -24,13 +24,13 @@ The GitHub `owner/repo` shorthand also works, but it clones over SSH by default 
 set `CLAUDE_CODE_PLUGIN_PREFER_HTTPS=1` to clone over HTTPS instead:
 
 ```
-/plugin marketplace add nguyengiatam/conductor
+/plugin marketplace add nguyengiatam/CrewMarshal
 ```
 
 From a local clone (no network):
 
 ```
-/plugin marketplace add /path/to/conductor
+/plugin marketplace add /path/to/CrewMarshal
 /plugin install crewmarshal@crewmarshal-marketplace
 ```
 
@@ -39,7 +39,7 @@ Update to the latest pushed version any time with `/plugin marketplace update cr
 ## Install — Codex
 
 ```
-codex plugin marketplace add https://github.com/nguyengiatam/conductor.git
+codex plugin marketplace add https://github.com/nguyengiatam/CrewMarshal.git
 codex plugin add crewmarshal@crewmarshal-marketplace
 ```
 
