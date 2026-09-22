@@ -34,6 +34,8 @@ pointer somewhere else, use that — one pointer per project, never two.
 
 ## Đang dở
 <What is half-done, in what state, which files. Empty if nothing is.>
+<Per dispatched task not yet Done: task · state · executor · run id · where to
+read the result · what you do when it lands.>
 
 ## Cảnh báo đang mở
 <Red tests not yet fixed, decisions taken but unverified, data under suspicion.
@@ -72,6 +74,12 @@ recording test counts and SHAs rather than adjectives.
 Write at the end of every session, **and immediately when something significant
 surfaces mid-session** — a red test, a wrong assumption confirmed, a decision the
 user made. A session that ends abruptly loses whatever was only in context.
+
+**Dispatching a task is significant.** Record the run under *Đang dở* as soon as it
+is running (states per `orchestrating-executors`), and update it when the state
+changes — not on a timer while nothing moves. Waiting for an executor is a good
+moment to write. If the executor is running but its monitor failed, write both
+facts; a label that hides a live process is how a task gets dispatched twice.
 
 Every claim carries evidence:
 

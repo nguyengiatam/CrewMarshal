@@ -1,6 +1,6 @@
 ---
 name: orchestrating-executors
-description: Use when a plan is ready and implementation will be delegated to external coding agents or subagents — covers knowing your workforce and what each has proven, choosing between a subagent and an external agent (confirming with the user the first time), role separation, quota management, one-task handoffs, mandatory monitoring of every dispatch, parallel-run isolation, and the per-task checkpoint protocol.
+description: Use when a plan is ready and implementation will be delegated to external coding agents or subagents — covers knowing your workforce and what each has proven, choosing between a subagent and an external agent (confirming with the user the first time), role separation, quota management, one-task handoffs, asynchronous dispatch with a monitor on every run (no polling), parallel-run isolation, and the per-task checkpoint protocol.
 ---
 
 # Orchestrating External Executors
@@ -180,44 +180,90 @@ another repo), stop and reconcile before continuing — do not paper over it.
 - Safety rules for this dispatch: branch, port/DB isolation if parallel, which
   files another executor is currently holding.
 
-## Monitoring Every Dispatch
+## Dispatching Asynchronously
 
-**Every dispatch gets a monitor, attached at the moment of dispatch.** Not "I'll
-check back" — an actual watch with an exit condition.
+**Every dispatch to an external executor runs in the background with a monitor
+attached at the moment of launch — and then you go do something else.** The
+monitor waits and reports; you decide, verify, and accept. Waiting is the
+monitor's job, not yours.
 
-How you attach it depends on the harness, in this order of preference:
+### A dispatch is complete only with evidence of all three
 
-1. **Harness-tracked background work**, if your harness has it — it notifies you.
-2. **A shell background job** that polls the exit condition and exits when met.
-   Works anywhere with a shell, including harnesses that run dispatches
-   synchronously.
-3. **Neither available** → say plainly "no monitor — I'll poll next turn", and
-   then actually poll. This is a worse option, not a forbidden one; what's
-   forbidden is claiming option 1 or 2 while doing option 3.
+1. **The executor actually started** — the signal the roster lists for that agent
+   (a session file, a running job, a first log line). A launched command is not a
+   started executor.
+2. **The monitor is running** and its notification comes back **to this session,
+   for this run** — not "I'll keep an eye on it", not a PID written down.
+3. **The run is recorded:** task, executor, run id, BASE commit, where the result
+   and log will be. Write it to the pointer now (see `pointer-handoff`) — the
+   session may end before the result arrives.
 
-Three rules, each paid for in lost time:
+Until all three hold, the task is *dispatched*, not *running*. Say which.
 
-1. **Attach the monitor immediately when the executor is launched.** Exit
-   condition is concrete: *a new commit appears*, *the process dies*, or *the log
-   is silent past a threshold*. Not "the task finishes" — you cannot observe that.
-2. **Capture the BASE commit at dispatch and pass it to the monitor.** Without a
-   baseline, "a new commit appeared" is unanswerable, and you'll mistake an old
-   commit for progress.
-3. **Never describe a monitoring mechanism you did not actually start.** If you
-   cannot set one up, say plainly: "no monitor — I'll poll next turn." Claiming a
-   watch that was never running silently converts an idle executor into lost time,
-   because nothing will tell you it stalled.
+### How to attach the monitor, in order of preference
 
-Rule 3 exists because it happened: a described-but-unstarted monitor cost half an
-hour of a dead dispatch. The failure mode is specifically that everything *looks*
-fine.
+1. **Harness-tracked background work that notifies you on exit.** Often the launch
+   itself can run this way, so the executor exiting *is* the notification.
+2. **A watcher script run as harness-tracked background work**, exiting when a
+   concrete condition is met: a new commit past BASE, the executor process gone,
+   or silence past a threshold. The script may check on a timer internally — the
+   point is that *you* are not woken on every cycle.
+3. **Neither is available** → the dispatch does **not** meet the async contract.
+   Say so plainly. Use the fallback the project has already allowed, or ask the
+   user; do not slide silently into checking every turn.
 
-**Silence is ambiguous** — it can be an agent working, an agent out of quota, or a
-process holding a pipe waiting for input that will never come. Distinguish them by
-evidence: process state, quota check, log timestamps, and whether any file changed.
-Prefer data over process liveness: a process that is still alive proves nothing
-about whether the work is done, and one that exited proves nothing about whether
-it succeeded.
+Before relaunching after a monitor failure, confirm the executor is not already
+running. A broken monitor on a live executor is two facts — record both; a second
+launch on top of it is a duplicate dispatch.
+
+### After dispatch: work or wait, never poll
+
+- **Carry on with independent work** inside the scope and working rhythm already
+  agreed. If there is none, end the turn and wait for the notification.
+- **Do not read logs, check the PID, or ask the executor on a schedule just to
+  learn "is it done yet".** Check by hand only when a signal looks wrong, when you
+  suspect the monitor has died, or when the user asks for progress.
+- Async is not a licence: it does not permit dispatching further tasks or running
+  in parallel beyond what was agreed, and a stop-after-each-task rhythm still
+  stops after acceptance.
+
+### When a notification arrives
+
+- **Match it to the task and run.** Drop duplicates and events from an older run;
+  a repeated notice must never cause a second acceptance or a second dispatch of
+  the next task.
+- **Exit code 0, a new commit, changed files are progress — not acceptance.** Move
+  the task to awaiting acceptance and run `checkpoint-verification`.
+- **Silence past the threshold is a warning to investigate, not a verdict.** It can
+  be an agent working, out of quota, or a process holding a pipe waiting for input
+  that never comes. Distinguish by evidence: process state, quota, log timestamps,
+  changed files. A live process proves nothing about completion; an exited one
+  proves nothing about success.
+
+### Task states
+
+| State | Meaning |
+|-------|---------|
+| Dispatched | Launch issued; not yet evidence that the executor started and the monitor is attached |
+| Running | Executor started, monitor attached, run recorded |
+| Awaiting acceptance | Executor returned; you have not verified it |
+| Done | You verified it and every applicable gate passed |
+| Blocked | Missing a decision, information, or precondition |
+| Failed | Evidence the run did not meet the task; decide fix or re-dispatch (as a new run) |
+| Cancelled | Confirmed stopped, within your authority |
+
+**Only Done is done.** Nothing else counts as a completed task — in the pointer or anywhere else.
+
+### Rules paid for in lost time
+
+1. **Capture the BASE commit at dispatch and give it to the monitor.** Without a
+   baseline, "a new commit appeared" is unanswerable and an old commit looks like
+   progress.
+2. **Never describe a monitor you did not actually start.** A described-but-unstarted
+   monitor once cost half an hour of a dead dispatch — everything *looked* fine
+   because nothing was watching.
+3. **Never poll to fill the silence.** Every status check spends your context on a
+   question the monitor already answers.
 
 ## Running Executors in Parallel
 
@@ -244,9 +290,10 @@ read team.md → who is assigned what here; ask the user if a role is unfilled
 for each task in plan:
     check quota across roster → pick executor (assignment + strength + quota)
     capture BASE commit
-    dispatch ONE task (prompt → context file + task + area lessons)
-    attach monitor immediately (exit: new commit / process dead / silence)
-    executor implements + stops
+    dispatch ONE task in the background (prompt → context file + task + area lessons)
+    attach monitor immediately (exit: new commit / process gone / silence) → record run in pointer
+    do independent work, or end the turn and wait for the notification — never poll
+    notification → match task + run → awaiting acceptance
     checkpoint-verification   (call-site + real runtime path; recompute expected numbers yourself)
     convention-commit-gate    (enums, no magic literals, commit style)
     fix or re-dispatch if a gate fails
@@ -270,7 +317,11 @@ then:
 | "The user won't care which agent does this" | They pay for it, in different budgets. Silent substitution spends their resources for them. |
 | "I remember this agent is bad at that" | Check the team file. If the memory isn't recorded with evidence, it's prejudice — and the reason it failed may already be fixed. |
 | "I'll check on it in a while" | Attach a monitor at dispatch, with a real exit condition and a BASE commit. |
-| "I've got a watcher on it" (but didn't start one) | Say "no monitor, I'll poll next turn." A described-but-unstarted watch costs you the whole idle period. |
+| "I've got a watcher on it" (but didn't start one) | Say "no monitor — dispatch doesn't meet the async contract." A described-but-unstarted watch costs you the whole idle period. |
+| "Let me peek at the log, see if it's done" | The monitor will tell you. Check by hand only on a wrong-looking signal, a suspected dead monitor, or a user request. |
+| "Nothing else to do, I'll check every minute" | End the turn and wait for the notification. |
+| "Exit 0 and a new commit — mark it done" | That's progress. It's awaiting acceptance until `checkpoint-verification` passes. |
+| "Monitor failed, relaunch the whole thing" | Check whether the executor is already running first. Two launches = a duplicate dispatch. |
 | "It's been quiet, it must be working" | Silence is ambiguous. Check quota, process state, and whether any file changed. |
 | "Process is still alive, so it's still working" | Liveness proves nothing. Check the data it should have produced. |
 | "This tiny mechanical change — delegate it" | If it's fully specified, you're faster than the round-trip. |

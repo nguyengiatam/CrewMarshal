@@ -58,9 +58,11 @@ Remove with `codex plugin remove crewmarshal` and
 - **No superpowers.** `brainstorming`, `writing-plans`, and
   `finishing-a-development-branch` are Claude Code plugins. On Codex, do those
   steps directly; the nine delta skills work standalone.
-- **No harness-tracked background jobs.** `orchestrating-executors` requires a
-  monitor on every dispatch — run it as a shell background job polling the BASE
-  commit, or say plainly that there is no monitor and poll next turn.
+- **No verified notification channel yet.** `orchestrating-executors` requires
+  every dispatch to run in the background with a monitor that notifies the
+  coordinator. On Codex that channel is unverified, so a dispatch there does not
+  meet the contract — the skill says so and uses the project's allowed fallback
+  or asks, instead of polling silently.
 
 ### Maintainer note
 
@@ -77,7 +79,7 @@ skill's `validate_plugin.py`.
 | `lessons-ledger` | Per-project lessons indexed by code area and work type, so only the relevant ones load; project-wide ones get crystallized into the executor context file. |
 | `concept-briefing` | Locks a user-confirmed system profile, tiers each request, and routes it to the right amount of process — including a phased roadmap for layered work. |
 | `using-crewmarshal` | Index/map of the workflow arc and where it meets superpowers. |
-| `orchestrating-executors` | Workforce management: who is on the team and what they proved, subagent-vs-external choice, quota, one-task handoffs, a monitor on every dispatch, parallel isolation, checkpoint protocol. |
+| `orchestrating-executors` | Workforce management: who is on the team and what they proved, subagent-vs-external choice, quota, one-task handoffs, async dispatch with a monitor (no polling), parallel isolation, checkpoint protocol. |
 | `executor-context` | One fixed context file the coordinator maintains, so handoffs point at it instead of retyping conventions. |
 | `checkpoint-verification` | Refuses green tests as proof; inspect call-site + drive the real runtime path. |
 | `planning-for-delegation` | The gate a plan passes before the first dispatch: spec/plan altitude, the project's plan-detail convention (asked once, kept in the profile), nine structural checks, [E]/[C], phase gates. |

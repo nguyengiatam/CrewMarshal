@@ -1,6 +1,6 @@
 {
   "name": "crewmarshal",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Multi-agent delivery discipline: the coordinator architects and reviews while external executors implement, under adversarial review-to-GO and real-runtime verification.",
   "author": {
     "name": "Nguyễn Gia Tâm"

@@ -28,7 +28,7 @@ planning-for-delegation          → gate it: altitude, plan-detail convention,
                                    nine structural checks, [E]/[C], phase gates
 
    ┌─ executor-context           → keep the fixed context file current; handoffs point at it
-   ├─ orchestrating-executors    → check quota, hand off ONE task, attach a monitor at dispatch
+   ├─ orchestrating-executors    → check quota, hand off ONE task in the background + monitor, don't poll
    │     checkpoint-verification  → inspect call-site + drive real runtime path
    │     convention-commit-gate   → enums, no magic literals, commit style
    └─  (loop per task; fix or re-dispatch if a gate fails; re-tier if scope diverges)
@@ -102,8 +102,9 @@ batched. Verification gates are never skipped when real code gets written.
   into a fact.
 - Green tests are never acceptance; the call-site and real runtime path are.
 - Whoever writes the code does not certify it. Recompute expected values yourself.
-- Every dispatch gets a monitor attached at dispatch — and a monitor you describe
-  but never start is worse than admitting there isn't one.
+- Every dispatch runs in the background with a monitor attached at launch; then
+  you work on something else or wait for the notification — never poll. A monitor
+  you describe but never start is worse than admitting there isn't one.
 - The executor roster is machine-specific and lives in one file; the skills are
   portable.
 
@@ -115,10 +116,10 @@ and Codex both do). Two things differ by harness — neither changes the discipl
 - **Bookend skills.** `brainstorming`, `writing-plans`, and
   `finishing-a-development-branch` ship with superpowers on Claude Code. Elsewhere,
   do those steps directly; the nine delta skills work standalone.
-- **Background work.** `orchestrating-executors` requires a monitor on every
-  dispatch. Where the harness tracks background jobs, use that; where it doesn't,
-  run the dispatch as a shell background job and poll against the BASE commit. If
-  neither is possible, say so out loud rather than implying a watch exists.
+- **Background work.** `orchestrating-executors` requires every dispatch to run in
+  the background with a monitor that notifies this session. Where the harness has
+  no verified channel for that, the dispatch does not meet the contract — say so,
+  and use the fallback the project allowed or ask; never imply a watch exists.
 
 Skill names are referenced without a namespace prefix here, because the prefix
 differs per harness. Invoke them however your harness invokes skills.

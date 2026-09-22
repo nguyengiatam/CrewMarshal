@@ -37,8 +37,21 @@ nothing." Confirm quota first.
 
 ## How to monitor each (exit conditions for the dispatch watcher)
 
-`orchestrating-executors` requires a monitor attached at dispatch. What is
-actually observable differs per agent — record it here, not in the skill.
+`orchestrating-executors` requires every dispatch to run in the background with a
+monitor attached at launch. What is actually observable differs per agent and per
+coordinator harness — record it here, not in the skill.
+
+**Notification channel back to the coordinator (per harness):**
+
+- **Claude Code:** run the launch with Bash `run_in_background` — the session is
+  re-invoked when the command exits, so the exit *is* the notification. For a
+  condition other than exit (new commit, silence threshold), run a watcher script
+  the same way, or use the `Monitor` tool. Both work while the coordinator is busy
+  and while it has ended its turn.
+- **Codex:** no verified channel yet. `codex queue` exists in CLI 0.155.1 (help
+  only, delivery not tested) — verify before relying on it. Until then a Codex
+  coordinator does not meet the async contract; use the project's allowed fallback
+  or ask.
 
 - **Universal:** new commit past the BASE SHA captured at dispatch; any change to
   the files in scope; process exit.
@@ -47,7 +60,7 @@ actually observable differs per agent — record it here, not in the skill.
 - **Codex:** a new session/state file appearing is the signal that the job really
   started — **absence of one means it never ran** (typically quota). Do not wait
   for a completion notice that will not come.
-- **kiro:** poll liveness with `kill -0 <pid>`. Silent >5 min with no token spend
+- **kiro:** the watcher checks liveness with `kill -0 <pid>`. Silent >5 min with no token spend
   usually means a child process is holding a pipe waiting for EOF — inspect
   children of `kiro-cli-chat` and kill the pipe holder, not the parent by pattern.
 
