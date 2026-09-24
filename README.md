@@ -108,7 +108,7 @@ which steps run. Below is the full T2/T3 path:
 
 ```
 pointer-handoff (resume) → lessons-ledger (what applies here?)
-  → concept-briefing → project-working-agreement (cadence + role rules)
+  → concept-briefing → project-working-agreement (cadence + execution mode + role rules)
   → brainstorming (SP) → writing-plans (SP)
   → planning-for-delegation (gate the plan before anyone is dispatched)
   → orchestrating-executors ⇄ checkpoint-verification ⇄ convention-commit-gate  (per task)

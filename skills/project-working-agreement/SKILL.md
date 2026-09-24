@@ -1,6 +1,6 @@
 ---
 name: project-working-agreement
-description: Use before executing or dispatching work on a project, and whenever the user changes how the work should run — keeps one project file of working rules (stop after each task or continue, what coordinator/executor/reviewer may decide, plan detail, commit and language conventions), set up once by asking the user and reused by every later session and every executor.
+description: Use before executing or dispatching work on a project, and whenever the user changes how the work should run — keeps one project file of working rules (stop after each task or continue, parallel or sequential executors by default, what coordinator/executor/reviewer may decide, plan detail, commit and language conventions), set up once by asking the user and reused by every later session and every executor.
 ---
 
 # Project Working Agreement
@@ -56,11 +56,34 @@ Pin down what "a task" means in this project's workflow (a plan task, a phase, a
 PR). One tool call is not a task. Continuing never means widening scope or
 skipping verification.
 
+### The execution-mode question is always asked explicitly too
+
+Cadence says *when to stop*; execution mode says *how many executors run at once*.
+Left unasked, a session defaults to one task at a time — it is the easiest plan to
+write, not a choice anyone made — and a project that has several executors never
+uses them. Offer at least these two, and never pick for the user:
+
+1. **Prefer parallel** — plans are designed for several executors at once: draw the
+   dependency graph, split shape-only edges into a contract task, fill each wave as
+   wide as the team, quota, and review capacity allow. Sequential is the exception,
+   and every wave of one task says why (what the tasks collide on, or what behaviour
+   the next task needs).
+2. **Prefer sequential** — one task in flight at a time. Parallel only when the user
+   asks for it on a specific plan. Right when review capacity is the bottleneck, the
+   area is fragile, or the team is effectively one agent.
+
+Also settle, if the user has a view: the widest wave they want (e.g. "tối đa 3
+executor cùng lúc"). The mode shapes plans at design time — `planning-for-delegation`
+reads it when it draws the waves; `orchestrating-executors` runs what the plan drew.
+It is not a dispatch-time override: a plan written sequentially does not become
+parallel at dispatch, and a parallel plan still respects the wave limits.
+
 ## The Groups
 
 | Group | What to settle |
 |-------|----------------|
 | Cadence | Stop after each task, or continue within scope; what "a task" is |
+| Execution mode | Prefer parallel or sequential executors; widest wave, if the user sets one |
 | Coordinator | Design, breakdown, dispatch, dependency calls, acceptance, keeping state |
 | Executor | What it may decide alone, what it must verify, what its report contains |
 | Reviewer | Scope, evidence a finding needs, fix directions, what happens on disagreement |
@@ -106,6 +129,8 @@ That you read the agreement proves nothing about whether they did.
 | Thought | Reality |
 |---------|---------|
 | "They said 'keep going' once, so the cadence is continuous" | An example is not a rule. Ask the cadence question explicitly. |
+| "Sequential is simpler, I'll plan one task at a time" | That is a choice the user makes, once. Ask the execution-mode question. |
+| "Mode is parallel, but these are easier in a row" | In parallel mode a one-task wave needs a stated reason. "Easier" is not one. |
 | "I read the agreement at the start, that's enough" | It may have changed. Re-read after edits, new user rules, or compaction. |
 | "Continuous mode, so I'll take the next phase too" | Continue within the agreed scope only. Continuing never widens it. |
 | "The user asked for X this time — write it into the agreement" | Only if they meant it to last. Ask one line. |

@@ -1,6 +1,6 @@
 ---
 name: planning-for-delegation
-description: Use after a plan is drafted and before any task is handed to an executor — settles how detailed this project's plans are (asking once and recording it in the working agreement), keeps spec and plan at their own altitudes, runs nine structural checks that catch the errors which send an executor confidently in the wrong direction, and assigns every task to an agent from the team file, grouped into waves that can run in parallel.
+description: Use after a plan is drafted and before any task is handed to an executor — settles how detailed this project's plans are (asking once and recording it in the working agreement), keeps spec and plan at their own altitudes, runs nine structural checks that catch the errors which send an executor confidently in the wrong direction, and assigns every task to an agent from the team file, grouped into waves as wide as the project's execution mode (parallel or sequential, from the working agreement) calls for.
 ---
 
 # Planning for Delegation
@@ -136,6 +136,25 @@ hardest requirement to an agent with evidence for that kind of work.
 - The coordinator is a valid assignee (**C**): foundation, concurrency,
   verification code, and anything where precision beats delegation.
 
+### Read the execution mode first
+
+Before drawing waves, read the execution-mode line in the working agreement
+(`project-working-agreement`). It decides what a one-task wave costs:
+
+- **Prefer parallel** → design for width. Split every shape-only edge (next
+  sections), and every wave holding a single task carries its reason in the table —
+  the collision (file, artifact, contract being shaped, resource) or the behaviour
+  the next task needs. A plan whose waves are all one wide, without those reasons,
+  is not ready for handoff.
+- **Prefer sequential** → one task per wave; skip the contract split unless the
+  user asked for parallel on this plan. Still draw the dependency graph — the order
+  comes from it.
+- **No line** → ask the user once, batched with the plan's other open questions
+  (the two options in `project-working-agreement`), and record the answer there.
+  Do not default to sequential because it is easier to write.
+
+State the mode in the plan header next to the plan-detail convention.
+
 ### Waves
 
 A **wave** is a set of tasks that run at the same time; the next wave starts only
@@ -151,7 +170,8 @@ it (next section). Whatever a
 task holds goes in its *Giữ* column — that column becomes the "do not touch" list
 in every other prompt of the wave.
 
-Wave width has three limits — take the smallest:
+Wave width has three limits — take the smallest (and the agreement's *tối đa cùng
+lúc*, if it sets one):
 
 - **The team:** an agent appears twice in one wave only if the roster says it can
   run independent sessions side by side. Otherwise its second task moves to the
@@ -227,7 +247,9 @@ approved (a subagent where the team file records none, say) goes back to the use
 
 ### Check the table before handoff
 
-With the nine checks: every task assigned · every assignee exists in the team file ·
+With the nine checks: the plan header states the execution mode · in parallel mode,
+every one-task wave says why ·
+every task assigned · every assignee exists in the team file ·
 no two tasks in a wave hold the same file, artifact, contract, or resource ·
 every edge that waits only on a shape has been split into a contract task ·
 no reviewer reviews its own code · the widest wave fits the team, quota, and review
@@ -256,6 +278,7 @@ invisible afterwards.
 | "Acceptance is that the tests pass" | Then the tasks whose requirement is only observable on infrastructure have no acceptance at all. |
 | "The executor will ask if something is ambiguous" | It will not. It picks, silently, and reports success. |
 | "'9 services' — I counted earlier" | Every number is a claim. Verify before an executor acts on it. |
+| "One task per wave is safest" | Only if the agreement says sequential. In parallel mode, each one-task wave needs a stated collision or behaviour edge. |
 | "I'll decide who does what when I dispatch" | Then parallelism gets improvised one task at a time. Put the waves and assignees in the plan. |
 | "Agent X is good, give it the whole wave" | One agent, one task at a time unless the roster says it runs parallel sessions. Pick by evidence in the team file. |
 | "B depends on A, so B waits" | Ask whether B needs A's behaviour or only its shape. Only the shape → lay the contract first and run both. |

@@ -274,7 +274,10 @@ Parallel dispatch is where throughput comes from, and where the coordinator's
 mistakes get multiplied.
 
 - **Run the waves the plan drew** — which tasks run together was settled in the
-  assignment table, not improvised at dispatch.
+  assignment table, not improvised at dispatch. If the agreement says *prefer
+  parallel* and the plan runs everything one at a time with no reasons given, send
+  the plan back through `planning-for-delegation` before dispatching — don't
+  quietly run it as a queue, and don't widen it on the fly either.
 - **Partition by file, and say so explicitly in every prompt** — list the files
   each other executor is holding, with "do not touch, not even to fix an error."
 - **Isolate shared resources**: ports, databases, fixture directories. Two
@@ -293,7 +296,7 @@ mistakes get multiplied.
 ## The Loop
 
 ```
-read working agreement → cadence + role limits (set it up if missing)
+read working agreement → cadence + execution mode + role limits (set it up if missing)
 read team.md → who is assigned what here; ask the user if a role is unfilled
 read the plan's assignment table → waves, assignees, what each task holds
   (no plan file, e.g. T1 → one task, one wave; pick the assignee from team.md)
