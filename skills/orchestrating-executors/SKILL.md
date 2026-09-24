@@ -53,8 +53,11 @@ Then match work to agent:
 | Mechanical: scaffolding, copying modules, CRUD, enum plumbing | The cheapest agent with quota — or yourself if it's fully specified |
 | Review of concurrency, migration, crash-gap | The review-strong agent, and never the one that wrote the code |
 
-Check the project's team file first (see below) — it records who has been assigned
-what here, and what each has actually proven.
+Start from the plan's assignment table (`planning-for-delegation`): it names who does
+each task and which tasks share a wave, picked from the project's team file (see
+below). At dispatch you only confirm it still holds — quota, and nothing new in the
+team file against that agent. A swap stays within the source of labor the user
+approved and gets written back into the table and the pointer.
 
 Reserve quota on at least one agent as a fallback and second opinion. Running
 every agent to zero leaves you unable to review what the last one produced.
@@ -270,6 +273,8 @@ launch on top of it is a duplicate dispatch.
 Parallel dispatch is where throughput comes from, and where the coordinator's
 mistakes get multiplied.
 
+- **Run the waves the plan drew** — which tasks run together was settled in the
+  assignment table, not improvised at dispatch.
 - **Partition by file, and say so explicitly in every prompt** — list the files
   each other executor is holding, with "do not touch, not even to fix an error."
 - **Isolate shared resources**: ports, databases, fixture directories. Two
@@ -288,18 +293,23 @@ mistakes get multiplied.
 ```
 read working agreement → cadence + role limits (set it up if missing)
 read team.md → who is assigned what here; ask the user if a role is unfilled
-for each task in plan:
-    check quota across roster → pick executor (assignment + strength + quota)
+read the plan's assignment table → waves, assignees, what each task holds
+  (no plan file, e.g. T1 → one task, one wave; pick the assignee from team.md)
+for each wave:
+  for each task in the wave:
+    check quota → confirm the assignee (swap within the approved source; record it)
     capture BASE commit
-    dispatch ONE task in the background (prompt → context file + task + area lessons)
+    dispatch ONE task in the background (prompt → context file + task + area lessons
+      + files the rest of the wave holds)
     attach monitor immediately (exit: new commit / process gone / silence) → record run in pointer
-    do independent work, or end the turn and wait for the notification — never poll
-    notification → match task + run → awaiting acceptance
+  do independent work, or end the turn and wait for notifications — never poll
+  per notification → match task + run → awaiting acceptance
     checkpoint-verification   (call-site + real runtime path; recompute expected numbers yourself)
     convention-commit-gate    (enums, no magic literals, commit style)
     fix or re-dispatch if a gate fails
     record any lesson learned  → lessons-ledger
     update team.md if an agent surprised you either way
+  next wave only when every task in this one is Done
 when a risky area is complete, before merge:
     adversarial-review-to-go  (converge findings to GO)
 then:

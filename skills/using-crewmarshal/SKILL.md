@@ -26,7 +26,7 @@ project-working-agreement        → load cadence + role rules (set up once if m
 [superpowers:brainstorming]      → design the change (steered by the profile)
 [superpowers:writing-plans]      → draft the task-by-task plan
 planning-for-delegation          → gate it: altitude, plan-detail convention,
-                                   nine structural checks, [E]/[C], phase gates
+                                   nine structural checks, assignment in waves, phase gates
 
    ┌─ executor-context           → keep the fixed context file current; handoffs point at it
    ├─ orchestrating-executors    → check quota, hand off ONE task in the background + monitor, don't poll

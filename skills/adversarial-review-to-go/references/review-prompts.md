@@ -80,7 +80,7 @@ and 3/10 findings that were cuts.
 ## 2 — Reviewing a PLAN
 
 **Attach:** the plan · the spec it derives from · `system-profile.md` · who
-executes each task (the [E]/[C] assignment) · the executor's known capability.
+executes each task (the plan's assignment table) · the executor's known capability.
 **Never attach:** an invitation to redesign. The design was settled in the spec.
 
 > You are reviewing an implementation plan that will be handed to a coding agent

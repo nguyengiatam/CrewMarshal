@@ -1,6 +1,6 @@
 ---
 name: planning-for-delegation
-description: Use after a plan is drafted and before any task is handed to an executor — settles how detailed this project's plans are (asking once and recording it in the working agreement), keeps spec and plan at their own altitudes, and runs nine structural checks that catch the errors which send an executor confidently in the wrong direction.
+description: Use after a plan is drafted and before any task is handed to an executor — settles how detailed this project's plans are (asking once and recording it in the working agreement), keeps spec and plan at their own altitudes, runs nine structural checks that catch the errors which send an executor confidently in the wrong direction, and assigns every task to an agent from the team file, grouped into waves that can run in parallel.
 ---
 
 # Planning for Delegation
@@ -116,18 +116,83 @@ findings of exactly this kind.
 Fix inline; no second pass needed. If a check keeps failing across plans, that is
 a `lessons-ledger` entry, not a habit.
 
-## Mark Who Does Each Task: [E] / [C]
+## Assign the Work: Who Does Each Task, in Which Wave
 
-Every task carries an assignment:
+A plan that only lists the work leaves the hardest coordination call — who runs
+what, and what can run at once — to be improvised mid-dispatch, one task at a time.
+The plan carries an **assignment table** instead: tasks grouped into **waves**, each
+task naming who does it and why.
 
-- **[E]** — an executor (external agent or subagent) does it.
-- **[C]** — the coordinator does it: foundation, concurrency, verification code,
-  and anything where precision beats delegation.
+### Where the names come from: the team file
 
-An unmarked task defaults to whoever reads the plan next, which in practice means
-the coordinator discovers mid-dispatch that a task was never dispatchable. It
-also makes quota planning possible: `orchestrating-executors` needs to know how
-many [E] tasks are actually queued.
+Assignees are picked from the project's team file (`docs/superpowers/team.md`, see
+`orchestrating-executors`) **by capability** — its *Phân công* table for the role,
+its *Năng lực quan sát được* table for what each agent has proven. Match the task's
+hardest requirement to an agent with evidence for that kind of work.
+
+- **No team file, or the role the task needs is unfilled** → ask the user once,
+  batched with the plan's other open questions, and record the answer in the team
+  file. Do not fill the table from memory or from whoever is listed first.
+- The coordinator is a valid assignee (**C**): foundation, concurrency,
+  verification code, and anything where precision beats delegation.
+
+### Waves
+
+A **wave** is a set of tasks that run at the same time; the next wave starts only
+when every task in the current one is Done. Waves come straight out of the
+dependency graph from checks 1–3 — a task sits in the first wave after everything
+it consumes.
+
+Two tasks share a wave only when they share **nothing a parallel run can collide
+on**: source files, committed generated artifacts, a contract/interface, or a
+runtime resource (DB, port, fixture directory) that is not isolated. Whatever a
+task holds goes in its *Giữ* column — that column becomes the "do not touch" list
+in every other prompt of the wave.
+
+Wave width has three limits — take the smallest:
+
+- **The team:** an agent appears twice in one wave only if the roster says it can
+  run independent sessions side by side. Otherwise its second task moves to the
+  next wave.
+- **Quota:** a wave that spends every agent to zero leaves nobody to review it.
+- **Review capacity:** every returned task needs acceptance. Five tasks landing at
+  once means four waiting on the coordinator — a wider wave is not faster past that.
+
+### The table
+
+```markdown
+## Phân công
+Nguồn: docs/superpowers/team.md (<ngày đọc>)
+
+| Task | Lượt | Người làm | Vì sao | Giữ | Chờ |
+|------|------|-----------|--------|-----|-----|
+| T1 schema | 1 | C | nền móng, sai là lan cả plan | db/schema.sql | — |
+| T2 API list | 2 | <agent> | <bằng chứng trong team.md> | api/list.ts | T1 |
+| T3 UI list | 2 | <agent khác> | <bằng chứng> | web/list/* | T1 |
+| G1 review lượt 2 | 3 | <agent không viết T2/T3> | phản biện | — | T2, T3 |
+```
+
+- **Every task has one assignee.** An unassigned task defaults to whoever reads the
+  plan next — in practice, the coordinator discovers mid-dispatch that it was never
+  dispatchable.
+- **Review and gate tasks go to an agent that wrote none of the code they review.**
+- **Vì sao** cites evidence from the team file, not an impression. A reason like
+  "strong coder" is the same prejudice the team file exists to prevent.
+
+### The table is a plan, not a lock
+
+It is written at plan time; quota is checked at dispatch time (`orchestrating-executors`).
+When the named agent is out of quota or has failed on this area since, the coordinator
+may swap — **within the same source of labor the user already approved** — and writes
+the swap into the table and the pointer. A swap into a source the user has not
+approved (a subagent where the team file records none, say) goes back to the user.
+
+### Check the table before handoff
+
+With the nine checks: every task assigned · every assignee exists in the team file ·
+no two tasks in a wave hold the same file, artifact, contract, or resource ·
+no reviewer reviews its own code · the widest wave fits the team, quota, and review
+capacity.
 
 ## Review Gates Between Phases
 
@@ -152,4 +217,7 @@ invisible afterwards.
 | "Acceptance is that the tests pass" | Then the tasks whose requirement is only observable on infrastructure have no acceptance at all. |
 | "The executor will ask if something is ambiguous" | It will not. It picks, silently, and reports success. |
 | "'9 services' — I counted earlier" | Every number is a claim. Verify before an executor acts on it. |
+| "I'll decide who does what when I dispatch" | Then parallelism gets improvised one task at a time. Put the waves and assignees in the plan. |
+| "Agent X is good, give it the whole wave" | One agent, one task at a time unless the roster says it runs parallel sessions. Pick by evidence in the team file. |
+| "Different files, same wave" | Also check artifacts, contracts, and shared DB/ports. What a task holds goes in *Giữ*. |
 | "I'll review everything at the end" | A phase built on an unreviewed phase compounds. Put the gates in the plan as tasks. |
