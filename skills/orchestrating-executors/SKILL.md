@@ -285,8 +285,10 @@ mistakes get multiplied.
   and destroy the isolation.
 - **Keep the checkpoint discipline per executor.** Parallel dispatch means several
   one-task handoffs at once, not one executor running several tasks.
-- Prefer parallelizing tasks that share no interface. Two tasks touching the same
-  contract should be sequential, however tempting the speedup looks.
+- **Two tasks may share a contract only when it was laid down and reviewed first**
+  and is read-only for both (`planning-for-delegation`). Say so in each prompt: the
+  contract files, and "if it is wrong, stop and report — do not edit it". A
+  contract still being shaped belongs to one task; the others wait.
 
 ## The Loop
 

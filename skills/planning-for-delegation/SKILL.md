@@ -144,8 +144,10 @@ dependency graph from checks 1–3 — a task sits in the first wave after every
 it consumes.
 
 Two tasks share a wave only when they share **nothing a parallel run can collide
-on**: source files, committed generated artifacts, a contract/interface, or a
-runtime resource (DB, port, fixture directory) that is not isolated. Whatever a
+on**: source files, committed generated artifacts, a contract/interface still being
+shaped, or a runtime resource (DB, port, fixture directory) that is not isolated.
+A contract already laid down and frozen is not a collision — both sides only read
+it (next section). Whatever a
 task holds goes in its *Giữ* column — that column becomes the "do not touch" list
 in every other prompt of the wave.
 
@@ -158,6 +160,40 @@ Wave width has three limits — take the smallest:
 - **Review capacity:** every returned task needs acceptance. Five tasks landing at
   once means four waiting on the coordinator — a wider wave is not faster past that.
 
+### Lay the Contract First, Then Fan Out
+
+Drawn naively, the graph says "UI waits for the API, the API waits for the
+service" — and a plan that could run three wide becomes a queue. Most of those
+edges wait on the **shape**, not the **behaviour**: the consumer needs to know what
+it calls and what comes back, not that it already works.
+
+For every *Chờ* edge, ask: **does B need A's behaviour, or only A's shape?** Only
+the shape → split A into a contract task and an implementation task.
+
+- **Contract task** (early wave; usually **C** or the strongest agent): lays down,
+  as committed code, everything the parallel sides build and test against — types
+  and DTOs, interface or function signatures, route/schema shapes, event payloads,
+  error cases — plus a **fake** returning fixed data and a **contract test** both
+  sides must pass. It stubs; it does not implement.
+- **Review it before fanning out.** A wrong contract is copied into every parallel
+  task, so this is the cheap place to be strict; put a gate right after it.
+- **Fan out.** The implementer builds behind the interface; consumers build
+  against the fake. The contract files sit in the contract task's *Giữ* and are
+  read-only in every prompt of the wave.
+- **Frozen during the wave.** An executor who finds the contract wrong stops and
+  reports — it does not edit it. The coordinator decides, amends the contract as
+  its own small task, and tells every task in the wave. A silent one-sided edit is
+  exactly how parallel work stops fitting together.
+- **Integration task at the end:** swap the fake for the real implementation, run
+  the contract test against it, drive the real path (`checkpoint-verification`).
+  It is a task with its own "done when" — this is where parallel work fails, if it
+  is going to.
+
+Don't split when the shape itself is still unknown (spike first, then write the
+contract), when the edge carries behaviour rather than shape (a migration whose
+data the next task reads), or when the gain is smaller than the contract task plus
+integration — two small tasks usually go faster one after the other.
+
 ### The table
 
 ```markdown
@@ -166,10 +202,12 @@ Nguồn: docs/superpowers/team.md (<ngày đọc>)
 
 | Task | Lượt | Người làm | Vì sao | Giữ | Chờ |
 |------|------|-----------|--------|-----|-----|
-| T1 schema | 1 | C | nền móng, sai là lan cả plan | db/schema.sql | — |
-| T2 API list | 2 | <agent> | <bằng chứng trong team.md> | api/list.ts | T1 |
-| T3 UI list | 2 | <agent khác> | <bằng chứng> | web/list/* | T1 |
-| G1 review lượt 2 | 3 | <agent không viết T2/T3> | phản biện | — | T2, T3 |
+| T1 contract list | 1 | C | nền móng, sai là lan cả lượt 2 | contracts/list.ts, fakes/list.ts | — |
+| G1 review contract | 1 | <agent phản biện> | chặn trước khi tỏa | — | T1 |
+| T2 API list | 2 | <agent> | <bằng chứng trong team.md> | api/list.ts | G1 (hình dạng) |
+| T3 UI list, chạy trên fake | 2 | <agent khác> | <bằng chứng> | web/list/* | G1 (hình dạng) |
+| T4 ghép thật + contract test | 3 | C | tích hợp | web/list/wire.ts | T2, T3 (hành vi) |
+| G2 review lượt 2–3 | 4 | <agent không viết T2–T4> | phản biện | — | T4 |
 ```
 
 - **Every task has one assignee.** An unassigned task defaults to whoever reads the
@@ -191,6 +229,7 @@ approved (a subagent where the team file records none, say) goes back to the use
 
 With the nine checks: every task assigned · every assignee exists in the team file ·
 no two tasks in a wave hold the same file, artifact, contract, or resource ·
+every edge that waits only on a shape has been split into a contract task ·
 no reviewer reviews its own code · the widest wave fits the team, quota, and review
 capacity.
 
@@ -219,5 +258,7 @@ invisible afterwards.
 | "'9 services' — I counted earlier" | Every number is a claim. Verify before an executor acts on it. |
 | "I'll decide who does what when I dispatch" | Then parallelism gets improvised one task at a time. Put the waves and assignees in the plan. |
 | "Agent X is good, give it the whole wave" | One agent, one task at a time unless the roster says it runs parallel sessions. Pick by evidence in the team file. |
+| "B depends on A, so B waits" | Ask whether B needs A's behaviour or only its shape. Only the shape → lay the contract first and run both. |
+| "The contract is slightly off, I'll just fix it on my side" | Frozen during the wave. Stop, report, and let the coordinator amend it for every task. |
 | "Different files, same wave" | Also check artifacts, contracts, and shared DB/ports. What a task holds goes in *Giữ*. |
 | "I'll review everything at the end" | A phase built on an unreviewed phase compounds. Put the gates in the plan as tasks. |
