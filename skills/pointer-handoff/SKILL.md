@@ -107,6 +107,23 @@ matters: `con tro: <what changed>` (or your project's equivalent), one line.
 "(fixed)" beside it. A paid-off debt item disappears from the list. Anything
 still listed is still live — that contract is what makes the file trustworthy.
 
+## Suggesting a Fresh Session
+
+A long session degrades: early detail crowds out the current task. Once the context
+passes **about 300k tokens** (or the threshold the working agreement sets), look for
+a clean point to hand over to a new session — but only when the pointer can carry
+everything that matters:
+
+- *Việc kế tiếp* is concrete and startable.
+- No investigation half-done, no hypotheses held only in context — converge first,
+  or write them into *Cảnh báo đang mở* with their evidence.
+- The last task is accepted and committed; every running executor is listed.
+
+At that point write the pointer, then **suggest** the new session to the user; the
+session does not end itself. Compaction is the strongest signal — suggest it at the
+next clean point. `multi-lane-coordination` applies the same rule to headless lane
+runs, where the reset happens without asking.
+
 ## Multi-Lane Projects
 
 When the working agreement runs several lanes (`multi-lane-coordination`), there is

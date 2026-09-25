@@ -219,8 +219,9 @@ before the next.
 
 ## The Chief's Own Session
 
-The Chief is interactive, so it does not reset itself. The same two conditions
-apply, with the same threshold: when they hold, it writes its pointer and **suggests** a new session to the
+The Chief is interactive, so it does not reset itself — it follows *Suggesting a
+Fresh Session* in `pointer-handoff`, like any single coordinator. The same two
+conditions apply, with the same threshold: when they hold, it writes its pointer and **suggests** a new session to the
 user. Its pointer stays short by holding the lane board, not the lanes' detail.
 
 ## Red Flags
