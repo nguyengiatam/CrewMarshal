@@ -83,8 +83,8 @@ both fail open if something goes wrong.
 | Hook | When | What |
 |------|------|------|
 | `dispatch_gate.py` (PreToolUse, Bash) | An external executor is launched in the foreground (patterns in `hooks/dispatch-commands.txt`) | Adds one reminder: a real dispatch belongs in the background with a monitor. The command still runs — testing an executor or checking quota is fine. |
-| `pointer_gate.py` (Stop) | HEAD is 3+ commits past the last commit touching `docs/superpowers/STATUS.md`, and the pointer has no pending edit | Holds the end of the turn once and asks for a pointer update. At most once per HEAD; inert in projects without that file and on `lane/*` branches. Claude Code labels this "Stop hook error" — that is its name for any Stop hook that holds a turn. |
-| `lane_commons_gate.py` (PreToolUse, Edit/Write) | On a multi-lane `lane/*` branch, an edit under `docs/superpowers/` | Adds one reminder: shared project documents belong to the Chief; ask through the outbox. Inert on every other branch. |
+| `pointer_gate.py` (Stop) | HEAD is 3+ commits past the last commit touching `docs/superpowers/STATUS.md`, and the pointer has no pending edit | Holds the end of the turn once and asks for a pointer update. At most once per HEAD; inert in projects without that file and in lane sessions. Claude Code labels this "Stop hook error" — that is its name for any Stop hook that holds a turn. |
+| `lane_commons_gate.py` (PreToolUse, Edit/Write) | In a multi-lane lane session (`CREWMARSHAL_LANE` set by the Chief, or a `lane/*` branch), an edit under the project root's `docs/superpowers/` — even from another repo of the workspace | Adds one reminder: shared project documents belong to the Chief; ask through the outbox. Inert outside lane sessions. |
 
 ## Skills
 

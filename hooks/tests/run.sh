@@ -50,6 +50,15 @@ check "lane edits own code: no reminder" '' "$(lane services/billing/a.py)"
 check "lane edits absolute docs path: reminded" 'additionalContext' "$(lane "$repo/docs/superpowers/team.md")"
 git -C "$repo" checkout -q -
 check "main edits docs/superpowers: no reminder" '' "$(lane docs/superpowers/STATUS.md)"
+ws="$(mktemp -d)"; mkdir -p "$ws/docs/superpowers" "$ws/api"; git -C "$ws/api" init -q
+envlane() { printf '{"cwd":"%s","tool_name":"Write","tool_input":{"file_path":"%s"}}' "$ws/api" "$1" | CREWMARSHAL_LANE=billing CREWMARSHAL_PROJECT_ROOT="$ws" python3 "$HOOKS/lane_commons_gate.py"; }
+check "workspace lane edits root docs: reminded" 'lane billing' "$(envlane "$ws/docs/superpowers/team.md")"
+check "workspace lane edits its repo: no reminder" '' "$(envlane "$ws/api/src/a.py")"
+check "workspace lane edits docs-lookalike: no reminder" '' "$(envlane "$ws/docs/superpowers-old/x.md")"
+c 9; c 10; c 11
+check "lane env: pointer gate silent" '' "$(printf '{"cwd":"%s","stop_hook_active":false}' "$repo" | CREWMARSHAL_LANE=billing python3 "$HOOKS/pointer_gate.py")"
+check "same repo without lane env: nudge" '"block"' "$(pointer "$repo")"
+rm -rf "$ws"
 check "lane gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/lane_commons_gate.py")"
 nop="$(mktemp -d)"; git -C "$nop" init -q
 check "project without pointer: no nudge" '' "$(pointer "$nop")"

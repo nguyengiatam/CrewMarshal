@@ -1,6 +1,6 @@
 # Lane Files — Templates
 
-All four live in `<git-common-dir>/crewmarshal/lanes/<name>/`. Prose stays in the
+All four live in `<project-root>/.crewmarshal/lanes/<name>/`. Prose stays in the
 project's working language. Each file has one writer.
 
 ## charter.md — Chief writes
@@ -8,11 +8,13 @@ project's working language. Each file has one writer.
 ```markdown
 # Lane: <tên>
 
-**Cập nhật:** YYYY-MM-DD · main @<sha>
-**Worktree:** <đường dẫn> · **Nhánh:** lane/<tên>
+**Cập nhật:** YYYY-MM-DD
+**Project root:** <đường dẫn tuyệt đối> · **Nhánh:** lane/<tên>
+**Repo và worktree:**
+- <repo> @<sha main lúc mở> → <project-root>/.crewmarshal/worktrees/<tên>/<repo>
 
 ## Phạm vi
-- Được ghi: <thư mục>
+- Được ghi: <repo>/<thư mục>
 - Chỉ đọc: <thư mục>
 - Commons (xin Chief, không tự sửa): <lockfile, CI, lib chung, contract…>
 
@@ -47,14 +49,14 @@ The `pointer-handoff` format, plus one line at the top:
 
 ```markdown
 ## #<n> · YYYY-MM-DD · <giao việc | trả lời #<outbox n> | contract đổi | tài liệu chung đổi | tìm điểm dừng>
-<nội dung; với thay đổi trên main: đổi gì, @sha>
+<nội dung; với thay đổi tài liệu chung/contract: đổi gì, @sha nếu có version>
 ```
 
 ## outbox.md — lane writes, append only
 
 ```markdown
 ## #<n> · YYYY-MM-DD · <sẵn sàng tích hợp | câu hỏi | escalation | đề xuất bài học | chờ job | reset>
-<sẵn sàng: @sha, test x/y
+<sẵn sàng: <repo>@sha cho từng repo, test x/y
  câu hỏi: câu hỏi, các phương án, đề xuất của lane
  escalation: cần gì, bằng chứng
  đề xuất bài học: theo mẫu lessons-ledger
@@ -67,6 +69,6 @@ The `pointer-handoff` format, plus one line at the top:
 ```
 Bạn là coordinator của lane <tên>, chạy headless, không có người dùng.
 Làm theo skill multi-lane-coordination, mục "A Lane Run".
-Charter: <git-common-dir>/crewmarshal/lanes/<tên>/charter.md
+Charter: $CREWMARSHAL_PROJECT_ROOT/.crewmarshal/lanes/$CREWMARSHAL_LANE/charter.md
 Gặp quyết định vượt charter: ghi outbox, dừng — không đoán.
 ```

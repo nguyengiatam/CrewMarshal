@@ -1,6 +1,6 @@
 ---
 name: multi-lane-coordination
-description: Use when the working agreement sets coordination mode to multi-lane, or when design finds two or more services or large independent areas that could each carry their own coordinator — covers the lane test, what the Chief owns versus each lane, the shared state directory, opening a lane, headless lane runs that always start fresh from the lane pointer, when a lane run should stop for a clean reset, and how the Chief integrates.
+description: Use when the working agreement sets coordination mode to multi-lane, or when design finds two or more services or large independent areas that could each carry their own coordinator — in one repo or a workspace of several — covers the lane test, what the Chief owns versus each lane, the project root and shared state directory, opening a lane, headless lane runs that always start fresh from the lane pointer, when a lane run should stop for a clean reset, and how the Chief integrates.
 ---
 
 # Multi-Lane Coordination
@@ -31,8 +31,8 @@ of the user dealing with one agent.
 
 An area becomes a lane only if **all** of these hold:
 
-- **Own directory** it alone writes — a service, or a feature folder large enough
-  to matter.
+- **Own repo or own directory** it alone writes — a service, or a feature folder
+  large enough to matter.
 - **Own tests and build** that run without the other lanes' code changing.
 - **No file written by two lanes.** Anything two lanes would both touch is
   *commons* (below), not part of either lane.
@@ -64,28 +64,49 @@ to the Chief. A lane that needs a change there asks for it.
 
 **Contracts are frozen while lanes run**, the same rule `planning-for-delegation`
 applies to a wave, one level up. A lane that finds a contract wrong stops and asks;
-the Chief amends it on `main`, then tells every lane that consumes it.
+the Chief amends it where the project keeps contracts, then tells every lane that
+consumes it.
 
 ## Layout
 
-- **Code:** each lane works in its own git worktree on branch `lane/<name>`, cut
-  from `main`. Default path `../<repo>.lanes/<name>`, outside the repo so nothing
-  needs ignoring.
-- **Coordination state:** outside every branch, in the directory all worktrees
-  share — `$(git rev-parse --path-format=absolute --git-common-dir)/crewmarshal/`.
-  Not versioned; no history is kept.
+A project may be one repo or a workspace of several (a folder holding an API repo,
+a web repo, a docs repo…). Everything below is anchored to the **project root**:
+the directory that holds the shared documents, `docs/superpowers/`, and where the
+Chief's session runs.
+
+| Project shape | Project root |
+|---------------|--------------|
+| One repo | The repo's root |
+| Workspace of repos | Wherever the project already keeps `docs/superpowers/` — the workspace folder, or a docs repo inside it. Never two. |
+
+- **Coordination state:** `<project-root>/.crewmarshal/`. Not versioned, no history.
+  If the project root is itself a git repo, the Chief adds `.crewmarshal/` to its
+  `.gitignore` once, when opening the first lane.
+- **Code:** a lane writes in one repo or several. For each, it gets a git worktree
+  on branch `lane/<name>`, cut from that repo's `main`, at
+  `<project-root>/.crewmarshal/worktrees/<name>/<repo>/` — one ignored place for
+  all of it.
+- **Shared documents** stay at `<project-root>/docs/superpowers/`. Lanes read them
+  there by absolute path, whichever repo they work in.
 
 ```
-<git-common-dir>/crewmarshal/lanes/<name>/
-├── charter.md    ← Chief writes: scope, contracts, pool, what shared docs to read
-├── STATUS.md     ← lane writes: the lane pointer (pointer-handoff format)
-├── inbox.md      ← Chief writes: numbered entries — assignments, answers, contract changes, "tìm điểm dừng"
-├── outbox.md     ← lane writes: numbered entries — ready @sha, questions, escalations, lesson proposals, reset
-├── jobs/         ← lane's detached executor jobs: <id>.log, <id>.exit
-└── runs/         ← one output file per lane run, written by the Chief's launch
+<project-root>/.crewmarshal/
+├── lanes/<name>/
+│   ├── charter.md    ← Chief writes: repos and paths, contracts, pool, what shared docs to read
+│   ├── STATUS.md     ← lane writes: the lane pointer (pointer-handoff format)
+│   ├── inbox.md      ← Chief writes: numbered entries — assignments, answers, contract changes, "tìm điểm dừng"
+│   ├── outbox.md     ← lane writes: numbered entries — ready @sha, questions, escalations, lesson proposals, reset
+│   ├── jobs/         ← lane's detached executor jobs: <id>.log, <id>.exit
+│   └── runs/         ← one output file per lane run, written by the Chief's launch
+└── worktrees/<name>/<repo>/
 ```
 
 Templates: [references/lane-files.md](references/lane-files.md).
+
+The Chief launches every lane run with two environment variables,
+`CREWMARSHAL_PROJECT_ROOT` and `CREWMARSHAL_LANE`. They tell the run — and the
+plugin's hooks — where the project root is and which lane this session is,
+whatever repo or directory it was started in.
 
 The Chief's own pointer stays the project pointer (`docs/superpowers/STATUS.md`)
 and carries a **lane board** — see `pointer-handoff`.
@@ -95,8 +116,8 @@ and carries a **lane board** — see `pointer-handoff`.
 After the shared design is done — profile, agreement, team, cross-service spec,
 frozen contracts — the Chief, per lane:
 
-1. Creates the worktree and branch from `main`.
-2. Writes the charter: owned paths, read-only paths, contracts provided and
+1. Creates a worktree and branch in every repo the lane writes.
+2. Writes the charter: the project root, repos and worktree paths, owned paths, read-only paths, contracts provided and
    consumed, executor pool, any tightened rules, **which shared documents (and
    which sections) the lane must read** — a lane never loads everything.
 3. Writes inbox entry #1: the first milestone.
@@ -109,11 +130,13 @@ session drags its whole history back into context, which is what the reset exist
 to shed. The charter, the lane pointer and the inbox are the only memory a run has.
 
 **Start:**
-1. Merge `main` into `lane/<name>`. This brings in contract changes and updated
-   shared docs. It cannot conflict when every lane stays inside its owned paths — a
-   conflict means a boundary was crossed: write an escalation and stop.
-2. Read the charter, then the shared documents it names, from the worktree.
-3. Read the lane pointer and reconcile it with `git log` of the branch
+1. In each of its worktrees, merge that repo's `main` into `lane/<name>`. This
+   brings in what the Chief and other lanes landed there. It cannot conflict when
+   every lane stays inside its owned paths — a conflict means a boundary was
+   crossed: write an escalation and stop.
+2. Read the charter, then the shared documents and contracts it names, from the
+   project root.
+3. Read the lane pointer and reconcile it with `git log` of its branches
    (`pointer-handoff`). A run that hit the hard ceiling last time left it stale.
 4. Read the inbox from the entry after the last one the pointer acknowledges.
 
@@ -133,7 +156,7 @@ one outbox entry:
 
 | Ends because | Outbox entry |
 |--------------|--------------|
-| Milestone done | `sẵn sàng tích hợp @<sha>` + test counts |
+| Milestone done | `sẵn sàng tích hợp` + `<repo>@<sha>` per repo + test counts |
 | A decision it may not make | The question, the options, what it recommends |
 | Blocked, or needs commons or another lane | Escalation with evidence |
 | Waiting on executor jobs | `chờ job: <ids>` |
@@ -194,20 +217,21 @@ Outbox handling:
 |-------|------------|
 | Ready @sha | Integrate (below), then the next milestone in the inbox — or close the lane |
 | Question | Answer from settled rules if it can; otherwise ask the user, batched with other lanes' questions; write the answer to the inbox; start a new run |
-| Escalation | Resolve: amend commons or a contract on `main`, re-split lanes, or ask the user |
+| Escalation | Resolve: amend commons or a contract, re-split lanes, or ask the user |
 | Lesson proposal | Record it in the ledger (`lessons-ledger`) |
 | Reset / waiting | Start a new run when there is something to do |
 
-When the Chief changes anything shared on `main`, it writes one inbox line to every
-lane affected, naming what changed and at which SHA. **Committing to `main` is
-publishing** — uncommitted edits in the Chief's tree reach no lane.
+When the Chief changes anything shared, it writes one inbox line to every lane
+affected, naming what changed (and the SHA, where it is versioned). Lanes read shared
+documents straight from the project root, so **a saved edit is already published**:
+the Chief edits a shared document only when the change is ready.
 
 ## Integration
 
 The Chief does not re-review a lane's tasks — the lane accepted each one with
 `checkpoint-verification`. The Chief checks what no lane can see:
 
-1. Merge the lane branch at the reported SHA into `main`.
+1. Merge each lane branch at the reported SHA into that repo's `main`.
 2. Run the contract tests and the cross-service paths end to end — drive the real
    runtime path across the services (`checkpoint-verification`), not just each
    side's own tests.
@@ -232,6 +256,7 @@ user. Its pointer stays short by holding the lane board, not the lanes' detail.
 | "The lane can wait for its executor in the background" | Headless background work dies with the session. Detach, record, stop. |
 | "I'll ask the user directly, faster than going through the Chief" | Lanes never talk to the user. Stop the run and ask the Chief. |
 | "Small fix in the shared lib, quicker than an escalation" | Commons belong to the Chief. The next merge from `main` will show the crossing. |
+| "State dir goes in this repo's `.git`" | A workspace has several repos. State lives at the project root, next to `docs/superpowers/`. |
 | "Chief should look over each lane's tasks to be safe" | The lane already verified them. The Chief verifies what crosses lanes. |
 | "Session is long, reset now" while three hypotheses are open | Converge first, or write them down. A reset loses whatever the pointer doesn't hold. |
 | "Two areas are small but let's make them lanes anyway" | A lane is a coordinator's worth of work. Otherwise stay single. |

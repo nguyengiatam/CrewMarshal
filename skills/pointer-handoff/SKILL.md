@@ -141,11 +141,11 @@ one pointer **per coordinator**, each with one writer:
   ```
 
 - **Each lane's pointer** lives in the shared state directory, not in any branch
-  (`<git-common-dir>/crewmarshal/lanes/<name>/STATUS.md`), in the format above plus
+  (`<project-root>/.crewmarshal/lanes/<name>/STATUS.md`), in the format above plus
   the last inbox entry it has handled. Only that lane writes it; the Chief reads it.
 
 Reconciling works the same way at both levels. The Chief compares each lane's
-pointer with the real HEAD of its branch — a branch several commits past its
+pointer with the real HEAD of its branches — a branch several commits past its
 pointer usually means a run stopped dirty. A lane run reconciles its own pointer
 against its branch before trusting it.
 

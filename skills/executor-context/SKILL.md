@@ -68,8 +68,9 @@ look competent, destroys the finding you most needed.
 Two layers, never two copies. The project file holds what is true for every lane
 and is the Chief's (`multi-lane-coordination`). What is true for one lane only —
 its scope dirs, its test and build commands — lives in that lane's charter. A
-handoff inside a lane points at both. Lanes read the project file from their own
-worktree after merging `main`; they never edit it — a missing convention goes to
+handoff inside a lane points at both by absolute path — the project file sits at the
+project root, which in a workspace of several repos is not inside the executor's
+repo. Lanes never edit it — a missing convention goes to
 the Chief through the outbox.
 
 ## What Doesn't Belong

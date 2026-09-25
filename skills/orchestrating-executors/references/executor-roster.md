@@ -72,10 +72,11 @@ agent there when you add it here.
 
 Used by `multi-lane-coordination`. Verified on Claude Code 2.1.282, macOS, 2026-09-25.
 
-- **Launch a lane run (Chief, Claude Code):** from the lane's worktree, via Bash
-  `run_in_background` — the exit is the Chief's notification:
-  `claude -p --output-format stream-json --verbose --max-turns <M> "<lane-run prompt>" < /dev/null > "$LANE/runs/<ts>.jsonl" 2>&1`
-  where `$LANE` is `<git-common-dir>/crewmarshal/lanes/<name>`. Always a new
+- **Launch a lane run (Chief, Claude Code):** from one of the lane's worktrees, via
+  Bash `run_in_background` — the exit is the Chief's notification:
+  `CREWMARSHAL_PROJECT_ROOT=<root> CREWMARSHAL_LANE=<name> claude -p --output-format stream-json --verbose --max-turns <M> "<lane-run prompt>" < /dev/null > "$LANE/runs/<ts>.jsonl" 2>&1`
+  where `$LANE` is `<root>/.crewmarshal/lanes/<name>`. Both variables reach the
+  run's hooks (verified 2026-09-25). Always a new
   session — never `--resume` / `--continue`.
 - **Permissions:** a headless run cannot answer permission prompts. Give it the
   project's chosen mode (`--permission-mode`, or an allowlist in the project's
