@@ -203,6 +203,14 @@ step 0: profile → step 1: tier + detect layers
 Every phase is re-tiered independently. A large roadmap can be mostly T1 phases —
 and those take the T1 shortcut; nobody writes a spec for each.
 
+### When the system has several large areas
+
+While profiling, note the services or large independent areas the repo shows. If
+**two or more pass the lane test** in `multi-lane-coordination`, and the working
+agreement has no coordination-mode line, ask the coordination-mode question from
+`project-working-agreement` in the same batched message as the profile questions.
+Fewer than two → ask nothing; the project stays single.
+
 ## Keeping It Current
 
 - Reality diverges from the profile (turns out there are 50k users, not 200) →

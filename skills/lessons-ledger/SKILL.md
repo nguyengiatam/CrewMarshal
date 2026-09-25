@@ -126,6 +126,15 @@ Rules:
 - **Prune what stopped being true.** A lesson about a system that was rewritten is
   a trap of its own — delete it and say why in the commit.
 
+### On a multi-lane project
+
+One ledger, written by the Chief (`multi-lane-coordination`). A lane that learns a
+lesson writes it as a **proposal** in its outbox, in the lesson-file format, with
+the areas it touches; the Chief records it and the index line. That way a lesson
+from one lane reaches the others as soon as it is committed to `main`, not when the
+lane is next integrated. Lanes look up the ledger the normal way, filtered by their
+own area.
+
 ## Boundaries
 
 | Content | Where |

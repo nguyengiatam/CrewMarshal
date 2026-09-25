@@ -155,6 +155,13 @@ Before drawing waves, read the execution-mode line in the working agreement
 
 State the mode in the plan header next to the plan-detail convention.
 
+While drawing the dependency graph, look at its shape too: if it falls into two or
+more clusters that each pass the lane test (`multi-lane-coordination`) and the
+agreement has no coordination-mode line, ask that question in the same batch. In
+multi-lane mode the Chief's plan stops at the cross-service level — contracts and
+lane milestones — and each lane coordinator plans its own tasks with this skill,
+inside its charter.
+
 ### Waves
 
 A **wave** is a set of tasks that run at the same time; the next wave starts only

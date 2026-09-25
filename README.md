@@ -57,7 +57,7 @@ Remove with `codex plugin remove crewmarshal` and
 
 - **No superpowers.** `brainstorming`, `writing-plans`, and
   `finishing-a-development-branch` are Claude Code plugins. On Codex, do those
-  steps directly; the ten delta skills work standalone.
+  steps directly; the eleven delta skills work standalone.
 - **No verified notification channel yet.** `orchestrating-executors` requires
   every dispatch to run in the background with a monitor that notifies the
   coordinator. On Codex that channel is unverified, so a dispatch there does not
@@ -99,6 +99,7 @@ both fail open if something goes wrong.
 | `executor-context` | One fixed context file the coordinator maintains, so handoffs point at it instead of retyping conventions. |
 | `checkpoint-verification` | Refuses green tests as proof; inspect call-site + drive the real runtime path. |
 | `planning-for-delegation` | The gate a plan passes before the first dispatch: spec/plan altitude, the project's plan-detail convention (asked once, kept in the working agreement), nine structural checks, an assignment table (who does each task, grouped into parallel waves, picked from the team file by capability), phase gates. |
+| `multi-lane-coordination` | For projects with several services: a Chief keeps design, contracts, integration and the only conversation with the user; headless lane coordinators each own one service, always start from a fresh session and their lane pointer, and stop at a clean point to reset. Only when the working agreement opts in. |
 | `adversarial-review-to-go` | External adversarial reviewer locked to the altitude of what it reviews — spec, plan or diff; every finding carries 1-2 fix directions (a direction, never a patch) at that altitude; converging rounds to GO on a diff, one round on a document; re-verify every finding. |
 | `convention-commit-gate` | Centralized enums, no magic literals, project commit style. |
 
@@ -140,5 +141,5 @@ file for your machine/agents; the skills stay unchanged.
 ## Relationship to superpowers
 
 On Claude Code, CrewMarshal is a delta: it assumes superpowers is installed for the
-brainstorm / plan / finish bookends. The ten delta skills also work standalone,
+brainstorm / plan / finish bookends. The eleven delta skills also work standalone,
 which is how they run on Codex.

@@ -63,6 +63,15 @@ Section 6's "stop and report" and section 8's last item are the load-bearing
 ones. An executor that quietly fixes what it shouldn't, or files a clean report to
 look competent, destroys the finding you most needed.
 
+## On a Multi-Lane Project
+
+Two layers, never two copies. The project file holds what is true for every lane
+and is the Chief's (`multi-lane-coordination`). What is true for one lane only —
+its scope dirs, its test and build commands — lives in that lane's charter. A
+handoff inside a lane points at both. Lanes read the project file from their own
+worktree after merging `main`; they never edit it — a missing convention goes to
+the Chief through the outbox.
+
 ## What Doesn't Belong
 
 | Content | Where |

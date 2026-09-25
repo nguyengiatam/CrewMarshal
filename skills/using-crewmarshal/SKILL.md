@@ -50,6 +50,12 @@ consulted before working in an area, and written the moment a diagnosis proves
 wrong or verification catches what the tests missed; its project-wide lessons get
 crystallized into the `executor-context` file rather than pasted into prompts.
 
+Projects with several services can run **multi-lane** once the working agreement
+says so: the Chief runs this arc up to frozen contracts and a charter per lane,
+then each lane coordinator runs the plan-to-commit part of the arc headless inside
+its lane, always from a fresh session and its lane pointer; the Chief integrates.
+Small projects never see it — see `multi-lane-coordination`.
+
 Large layered work inserts one step: `concept-briefing` produces a **roadmap** of
 phases from foundation upward, then each phase runs the arc above on its own,
 with its own tier. Detailed plans are written per phase, never in advance.
@@ -78,6 +84,7 @@ batched. Verification gates are never skipped when real code gets written.
 | Deciding what to build | `superpowers:brainstorming` |
 | Turning a spec into tasks | `superpowers:writing-plans` |
 | Checking a plan before anyone is dispatched | `planning-for-delegation` |
+| Several services, several coordinators, one Chief | `multi-lane-coordination` |
 | Handing a task to an external agent | `orchestrating-executors` |
 | Writing project context executors reuse every dispatch | `executor-context` |
 | Accepting an executor's result | `checkpoint-verification` |
@@ -117,7 +124,7 @@ and Codex both do). Two things differ by harness — neither changes the discipl
 
 - **Bookend skills.** `brainstorming`, `writing-plans`, and
   `finishing-a-development-branch` ship with superpowers on Claude Code. Elsewhere,
-  do those steps directly; the ten delta skills work standalone.
+  do those steps directly; the eleven delta skills work standalone.
 - **Background work.** `orchestrating-executors` requires every dispatch to run in
   the background with a monitor that notifies this session. Where the harness has
   no verified channel for that, the dispatch does not meet the contract — say so,
