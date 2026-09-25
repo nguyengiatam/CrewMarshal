@@ -154,7 +154,9 @@ when the pointer can carry everything that matters. Reset needs **both**:
 
 **1. The session is long** — any of:
 - It has accepted about as many tasks as the agreement's lane-run limit.
-- Its context has grown past the threshold the Chief watches.
+- Its context has grown past the threshold the Chief watches — the agreement's
+  number, or **about 300k tokens** when it sets none (a proposed `~` value until
+  the user confirms one).
 - It was compacted. Strongest signal: reset at the next clean point.
 
 **2. What remains is clear and converging:**
@@ -218,7 +220,7 @@ before the next.
 ## The Chief's Own Session
 
 The Chief is interactive, so it does not reset itself. The same two conditions
-apply: when they hold, it writes its pointer and **suggests** a new session to the
+apply, with the same threshold: when they hold, it writes its pointer and **suggests** a new session to the
 user. Its pointer stays short by holding the lane board, not the lanes' detail.
 
 ## Red Flags
