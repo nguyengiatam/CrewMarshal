@@ -20,6 +20,8 @@ check "agy foreground reminded" 'additionalContext' "$(dispatch '{"tool_name":"B
 check "word containing agy allowed" '' "$(dispatch '{"tool_name":"Bash","tool_input":{"command":"ls stagy"}}')"
 check "grep for agy allowed" '' "$(dispatch '{"tool_name":"Bash","tool_input":{"command":"grep agy notes.md"}}')"
 check "cd then codex exec reminded" 'additionalContext' "$(dispatch '{"tool_name":"Bash","tool_input":{"command":"cd /x && timeout 600 codex exec \"go\""}}')"
+check "foreground claude -p (lane run) reminded" 'additionalContext' "$(dispatch '{"tool_name":"Bash","tool_input":{"command":"cd ../x.lanes/a && claude -p \"lane\" < /dev/null"}}')"
+check "claude --version allowed" '' "$(dispatch '{"tool_name":"Bash","tool_input":{"command":"claude --version"}}')"
 check "malformed input fails open" '' "$(printf 'not json' | python3 "$HOOKS/dispatch_gate.py")"
 
 # --- pointer_gate ---
@@ -44,5 +46,25 @@ nop="$(mktemp -d)"; git -C "$nop" init -q
 check "project without pointer: no nudge" '' "$(pointer "$nop")"
 check "not a git repo: fails open" '' "$(pointer "$(mktemp -d)")"
 rm -rf "$repo" "$nop"
+
+# --- watch_lane_run (multi-lane-coordination) ---
+WATCH="$HOOKS/../skills/multi-lane-coordination/scripts/watch_lane_run.py"
+run="$(mktemp)"
+cat > "$run" <<'JSONL'
+Warning: no stdin data received in 3s, proceeding without it.
+{"type":"system","subtype":"init"}
+{"type":"assistant","message":{"usage":{"input_tokens":10,"cache_read_input_tokens":90000,"cache_creation_input_tokens":5000}}}
+{"type":"assistant","message":{"usage":{"input_tokens":10,"cache_read_input_tokens":160000,"cache_creation_input_tokens":0}}}
+{"type":"assistant","message":{"usage":{"input_tokens":10,"cache_read_input_tokens":170000,"cache_creation_input_tokens":0}}}
+{"type":"system","subtype":"compact_boundary"}
+{"type":"result","subtype":"success","num_turns":7}
+JSONL
+out="$(python3 "$WATCH" "$run" 150000)"
+check "watch: context crossing reported" 'context 160010' "$out"
+check "watch: context reported once" '' "$(printf '%s' "$out" | grep -c '^context' | grep -v '^1$')"
+check "watch: compaction reported" 'compacted' "$out"
+check "watch: end reported" 'ended success turns=7' "$out"
+check "watch: below threshold, no context line" '' "$(python3 "$WATCH" "$run" 999999 | grep '^context')"
+rm -f "$run"
 
 exit $fail

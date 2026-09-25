@@ -68,6 +68,45 @@ agent there when you add it here.
   usually means a child process is holding a pipe waiting for EOF — inspect
   children of `kiro-cli-chat` and kill the pipe holder, not the parent by pattern.
 
+## Headless lane coordinators (multi-lane projects only)
+
+Used by `multi-lane-coordination`. Verified on Claude Code 2.1.282, macOS, 2026-09-25.
+
+- **Launch a lane run (Chief, Claude Code):** from the lane's worktree, via Bash
+  `run_in_background` — the exit is the Chief's notification:
+  `claude -p --output-format stream-json --verbose --max-turns <M> "<lane-run prompt>" < /dev/null > "$LANE/runs/<ts>.jsonl" 2>&1`
+  where `$LANE` is `<git-common-dir>/crewmarshal/lanes/<name>`. Always a new
+  session — never `--resume` / `--continue`.
+- **Permissions:** a headless run cannot answer permission prompts. Give it the
+  project's chosen mode (`--permission-mode`, or an allowlist in the project's
+  settings) — the working agreement records which; do not pick one silently.
+- **Gotcha — stdin:** without `< /dev/null` the CLI waits 3s for stdin and prints a
+  warning line into the output.
+- **Gotcha — background work dies with the run:** a `run_in_background` task
+  started inside a headless run is killed when the run exits (verified: a 40s sleep
+  never finished, the run ended at 14s). A `nohup … &` process survives.
+- **Watch context size:** each `assistant` event in the stream-json output carries
+  `message.usage`; input + cache-read + cache-creation tokens is the run's current
+  context. Attach
+  `python3 <multi-lane-coordination skill dir>/scripts/watch_lane_run.py "$LANE/runs/<ts>.jsonl" <threshold>`
+  as a `Monitor`: it prints `context <n>` once past the threshold (→ write
+  `tìm điểm dừng` to the inbox), `compacted` on a `compact_boundary` event (from
+  the SDK's message types; not yet observed here), and `ended …` when the run ends.
+- **Codex as a lane coordinator:** `codex exec` is the candidate, but its
+  stream output, context reporting and survival of detached children are not
+  verified yet. Verify before assigning it a lane.
+
+**Executors launched from inside a lane run** are detached, and leave an exit file
+the Chief can watch:
+
+```
+J="$LANE/jobs"; id=<task-id>
+nohup sh -c '<executor command> > "$0/$1.log" 2>&1; echo $? > "$0/$1.exit"' "$J" "$id" >/dev/null 2>&1 &
+```
+
+The Chief waits on them with one background Bash command that exits when every
+file has landed: `until [ -f "$J/a.exit" ] && [ -f "$J/b.exit" ]; do sleep 15; done`.
+
 ## agy (executor — mechanical/docs, general implementation)
 
 - **Invoke:** write the task to a scratch file, then

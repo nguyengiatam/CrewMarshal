@@ -7,3 +7,4 @@
 (^|[;&|]|\n)\s*(timeout\s+\S+\s+)?codex\s+exec\b
 (^|[;&|]|\n)\s*(timeout\s+\S+\s+)?kiro-cli\s+chat\b
 (^|[;&|]|\n)\s*(timeout\s+\S+\s+)?opencode\s+run\b
+(^|[;&|]|\n)\s*(timeout\s+\S+\s+)?claude\s+(-p|--print)\b
