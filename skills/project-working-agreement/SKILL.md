@@ -1,6 +1,6 @@
 ---
 name: project-working-agreement
-description: Use before executing or dispatching work on a project, and whenever the user changes how the work should run — keeps one project file of working rules (stop after each task or continue, parallel or sequential executors by default, what coordinator/executor/reviewer may decide, plan detail, commit and language conventions), set up once by asking the user and reused by every later session and every executor.
+description: Use before executing or dispatching work on a project, and whenever the user changes how the work should run — keeps one project file of working rules (stop after each task or continue, parallel or sequential executors by default, one coordinator or several lanes once the project qualifies, what coordinator/executor/reviewer may decide, plan detail, commit and language conventions), set up once by asking the user and reused by every later session and every executor.
 ---
 
 # Project Working Agreement
@@ -78,12 +78,32 @@ reads it when it draws the waves; `orchestrating-executors` runs what the plan d
 It is not a dispatch-time override: a plan written sequentially does not become
 parallel at dispatch, and a parallel plan still respects the wave limits.
 
+### The coordination-mode question is asked only when it applies
+
+Execution mode says how many *executors* run at once; coordination mode says how
+many *coordinators* do. Unlike the two questions above, this one is **not asked by
+default** — a small project never sees it and runs as it always has:
+
+1. **Single** *(what an unanswered project runs)* — one coordinator, the arc as
+   `using-crewmarshal` draws it. No lanes, no extra files.
+2. **Multi-lane** — a Chief keeps design, contracts, integration and the only
+   conversation with the user; lane coordinators, each owning one service or one
+   large independent area, run headless under it. See `multi-lane-coordination`.
+
+Ask it when design or planning finds **at least two areas that qualify as lanes**
+(the lane test in `multi-lane-coordination`) — `concept-briefing` when it profiles
+the system, or `planning-for-delegation` when it draws the waves. Offer both, never
+pick for the user. If they choose multi-lane, also settle the lane-run limits:
+roughly how many accepted tasks one lane run may take before it looks for a clean
+stop, and the hard turn ceiling as a safety net.
+
 ## The Groups
 
 | Group | What to settle |
 |-------|----------------|
 | Cadence | Stop after each task, or continue within scope; what "a task" is |
 | Execution mode | Prefer parallel or sequential executors; widest wave, if the user sets one |
+| Coordination mode | Single or multi-lane — only once two areas qualify as lanes; lane-run limits if multi-lane |
 | Coordinator | Design, breakdown, dispatch, dependency calls, acceptance, keeping state |
 | Executor | What it may decide alone, what it must verify, what its report contains |
 | Reviewer | Scope, evidence a finding needs, fix directions, what happens on disagreement |

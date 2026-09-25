@@ -18,6 +18,8 @@ Leave a section out rather than filling it with guesses; mark open lines
 - **Một "task" là:** <task trong plan | phase | PR>
 - **Chế độ chạy executor:** <ưu tiên song song — tuần tự phải có lý do | ưu tiên tuần tự — song song khi user yêu cầu>
 - **Tối đa cùng lúc:** <số executor, hoặc bỏ dòng này>
+- **Chế độ điều phối:** <một coordinator | nhiều lane — chỉ ghi khi đã hỏi; bỏ dòng = một coordinator>
+- **Giới hạn một lane run:** <~N task nghiệm thu rồi tìm điểm dừng sạch · trần cứng M lượt — chỉ khi nhiều lane>
 
 ## Coordinator
 - <thiết kế, phân rã, giao việc, xử lý phụ thuộc, nghiệm thu, giữ pointer>
