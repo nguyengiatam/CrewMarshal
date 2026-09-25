@@ -4,8 +4,8 @@
 Blocks the end of a turn when HEAD is at least COMMITS_BEFORE_NUDGE commits past
 the last commit that touched the pointer and the pointer has no pending edit.
 Nudges at most once per HEAD, so a turn without new progress is never blocked
-again. Only runs in projects that keep the pointer at the default path. Fails
-open: any error allows the stop.
+again. Only runs in projects that keep the pointer at the default path, and never
+on a multi-lane `lane/*` branch. Fails open: any error allows the stop.
 """
 import json
 import os
@@ -16,6 +16,7 @@ POINTER_PATH = "docs/superpowers/STATUS.md"
 COMMITS_BEFORE_NUDGE = 3
 STATE_DIR_NAME = "crewmarshal"
 STATE_FILE_NAME = "pointer-nudged-head"
+LANE_BRANCH_PREFIX = "lane/"
 
 
 def git(cwd, *args):
@@ -30,6 +31,8 @@ def main():
         return
     cwd = event.get("cwd") or os.getcwd()
     root = git(cwd, "rev-parse", "--show-toplevel")
+    if git(root, "rev-parse", "--abbrev-ref", "HEAD").startswith(LANE_BRANCH_PREFIX):
+        return  # a lane's pointer lives in the shared state dir, not this file
     if not os.path.isfile(os.path.join(root, POINTER_PATH)):
         return
     if git(root, "status", "--porcelain", "--", POINTER_PATH):

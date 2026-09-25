@@ -42,6 +42,15 @@ c 5; echo s2 > "$repo/docs/superpowers/STATUS.md"
 check "pointer being edited: no nudge" '' "$(pointer "$repo")"
 git -C "$repo" add -A && git -C "$repo" commit -qm "pointer update"
 check "pointer just committed: no nudge" '' "$(pointer "$repo")"
+git -C "$repo" checkout -qb lane/billing; c 6; c 7; c 8
+check "lane branch: no nudge" '' "$(pointer "$repo")"
+lane() { printf '{"cwd":"%s","tool_name":"Edit","tool_input":{"file_path":"%s"}}' "$repo" "$1" | python3 "$HOOKS/lane_commons_gate.py"; }
+check "lane edits docs/superpowers: reminded" 'additionalContext' "$(lane docs/superpowers/STATUS.md)"
+check "lane edits own code: no reminder" '' "$(lane services/billing/a.py)"
+check "lane edits absolute docs path: reminded" 'additionalContext' "$(lane "$repo/docs/superpowers/team.md")"
+git -C "$repo" checkout -q -
+check "main edits docs/superpowers: no reminder" '' "$(lane docs/superpowers/STATUS.md)"
+check "lane gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/lane_commons_gate.py")"
 nop="$(mktemp -d)"; git -C "$nop" init -q
 check "project without pointer: no nudge" '' "$(pointer "$nop")"
 check "not a git repo: fails open" '' "$(pointer "$(mktemp -d)")"
