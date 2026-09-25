@@ -94,8 +94,8 @@ Ask it when design or planning finds **at least two areas that qualify as lanes*
 (the lane test in `multi-lane-coordination`) — `concept-briefing` when it profiles
 the system, or `planning-for-delegation` when it draws the waves. Offer both, never
 pick for the user. If they choose multi-lane, also settle the lane-run limits:
-roughly how many accepted tasks one lane run may take before it looks for a clean
-stop, and the hard turn ceiling as a safety net.
+roughly how many accepted tasks one lane run may take, and how large its context
+may grow, before it looks for a clean stop; and the hard turn ceiling as a safety net.
 
 ## The Groups
 
