@@ -2,8 +2,9 @@
 """PreToolUse(Edit|Write|MultiEdit|NotebookEdit): remind a lane coordinator that
 shared project documents belong to the Chief.
 
-On a multi-lane project (multi-lane-coordination) a lane never edits
-`docs/superpowers/` under the project root — the Chief owns it. A session is a lane
+On a multi-lane project (multi-lane-coordination) a lane never edits the
+CrewMarshal documents in the project root's `docs/` (or the older
+`docs/superpowers/`) — the Chief owns them. A session is a lane
 when the Chief launched it with CREWMARSHAL_LANE (and CREWMARSHAL_PROJECT_ROOT, which
 may sit outside the repo being edited, in a workspace of several repos), or — for a
 lane worktree opened by hand — when its branch is `lane/<name>`. An edit there is
@@ -17,7 +18,13 @@ import sys
 LANE_ENV = "CREWMARSHAL_LANE"
 ROOT_ENV = "CREWMARSHAL_PROJECT_ROOT"
 LANE_BRANCH_PREFIX = "lane/"
-CHIEF_OWNED_DIR = os.path.join("docs", "superpowers")
+# The Chief's documents under <project root>/docs/, plus the whole of the
+# docs/superpowers/ directory earlier versions used.
+CHIEF_OWNED = [
+    os.path.join("docs", name)
+    for name in ("STATUS.md", "system-profile.md", "working-agreement.md", "team.md",
+                 "executor-context.md", "lessons", "specs", "plans", "superpowers")
+]
 
 
 def git(cwd, *args):
@@ -49,9 +56,10 @@ def main():
     if not found:
         return
     lane, root = found
-    owned = os.path.join(os.path.realpath(root), CHIEF_OWNED_DIR)
+    root = os.path.realpath(root)
     path = os.path.realpath(os.path.join(cwd, path))
-    if os.path.commonpath([path, owned]) != owned:
+    owned = [os.path.join(root, rel) for rel in CHIEF_OWNED]
+    if not any(os.path.commonpath([path, o]) == o for o in owned):
         return
     json.dump({
         "hookSpecificOutput": {

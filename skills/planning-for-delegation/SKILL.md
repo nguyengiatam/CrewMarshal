@@ -125,7 +125,7 @@ task naming who does it and why.
 
 ### Where the names come from: the team file
 
-Assignees are picked from the project's team file (`docs/superpowers/team.md`, see
+Assignees are picked from the project's team file (`docs/team.md`, see
 `orchestrating-executors`) **by capability** — its *Phân công* table for the role,
 its *Năng lực quan sát được* table for what each agent has proven. Match the task's
 hardest requirement to an agent with evidence for that kind of work.
@@ -225,7 +225,7 @@ integration — two small tasks usually go faster one after the other.
 
 ```markdown
 ## Phân công
-Nguồn: docs/superpowers/team.md (<ngày đọc>)
+Nguồn: docs/team.md (<ngày đọc>)
 
 | Task | Lượt | Người làm | Vì sao | Giữ | Chờ |
 |------|------|-----------|--------|-----|-----|

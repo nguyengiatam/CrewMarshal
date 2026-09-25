@@ -96,7 +96,7 @@ choice is out of quota).
 
 ### The team file
 
-`docs/superpowers/team.md` in the project — assignments belong to the project
+`docs/team.md` in the project — assignments belong to the project
 (this project writes code with one model, the next may not), while
 [the roster](references/executor-roster.md) holds what exists on this machine and
 how to invoke it. Different lifetimes, different files.

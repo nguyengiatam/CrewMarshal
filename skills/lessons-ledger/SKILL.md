@@ -20,7 +20,7 @@ wrong.**
 ## The Store
 
 ```
-docs/superpowers/lessons/
+docs/lessons/
 ├── INDEX.md              ← one line per lesson; the only file read by default
 └── <slug>.md             ← one lesson each; opened only when the index matches
 ```

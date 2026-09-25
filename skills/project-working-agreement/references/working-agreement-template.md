@@ -1,6 +1,6 @@
 # Working Agreement — Template
 
-Copy to `docs/superpowers/working-agreement.md` (or merge into the project's
+Copy to `docs/working-agreement.md` (or merge into the project's
 existing `AGENTS.md` / `CLAUDE.md`). Prose stays in the project's working language.
 Leave a section out rather than filling it with guesses; mark open lines
 `CHƯA CHỐT`.

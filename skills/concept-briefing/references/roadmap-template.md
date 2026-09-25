@@ -1,6 +1,6 @@
 # Roadmap — Template
 
-Copy to `docs/superpowers/plans/YYYY-MM-DD-<topic>-roadmap.md`. Sections marked
+Copy to `docs/plans/YYYY-MM-DD-<topic>-roadmap.md`. Sections marked
 **[REQUIRED]** always appear; the rest are added when the project needs them.
 
 Prose stays in the project's working language.
@@ -15,7 +15,7 @@ Prose stays in the project's working language.
 > sau mỗi phase.
 
 **Ngày lập:** YYYY-MM-DD  ·  **Căn cứ:** <tài liệu yêu cầu>
-**Hồ sơ hệ thống:** docs/superpowers/system-profile.md
+**Hồ sơ hệ thống:** docs/system-profile.md
 **Mục tiêu:** <1–2 câu, kết quả cuối cùng>
 
 ## Phạm vi                                            [REQUIRED]

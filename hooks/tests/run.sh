@@ -53,6 +53,9 @@ check "main edits docs/superpowers: no reminder" '' "$(lane docs/superpowers/STA
 ws="$(mktemp -d)"; mkdir -p "$ws/docs/superpowers" "$ws/api"; git -C "$ws/api" init -q
 envlane() { printf '{"cwd":"%s","tool_name":"Write","tool_input":{"file_path":"%s"}}' "$ws/api" "$1" | CREWMARSHAL_LANE=billing CREWMARSHAL_PROJECT_ROOT="$ws" python3 "$HOOKS/lane_commons_gate.py"; }
 check "workspace lane edits root docs: reminded" 'lane billing' "$(envlane "$ws/docs/superpowers/team.md")"
+check "workspace lane edits root docs/team.md: reminded" 'lane billing' "$(envlane "$ws/docs/team.md")"
+check "workspace lane edits root docs/lessons/: reminded" 'lane billing' "$(envlane "$ws/docs/lessons/x.md")"
+check "workspace lane edits other root docs: no reminder" '' "$(envlane "$ws/docs/billing-guide.md")"
 check "workspace lane edits its repo: no reminder" '' "$(envlane "$ws/api/src/a.py")"
 check "workspace lane edits docs-lookalike: no reminder" '' "$(envlane "$ws/docs/superpowers-old/x.md")"
 c 9; c 10; c 11
@@ -60,6 +63,11 @@ check "lane env: pointer gate silent" '' "$(printf '{"cwd":"%s","stop_hook_activ
 check "same repo without lane env: nudge" '"block"' "$(pointer "$repo")"
 rm -rf "$ws"
 check "lane gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/lane_commons_gate.py")"
+new="$(mktemp -d)"; git -C "$new" init -q && git -C "$new" config user.email t@t && git -C "$new" config user.name t
+mkdir -p "$new/docs" && echo s > "$new/docs/STATUS.md" && git -C "$new" add -A && git -C "$new" commit -qm pointer
+for i in 1 2 3; do echo $i > "$new/f$i" && git -C "$new" add -A && git -C "$new" commit -qm "c$i"; done
+check "pointer at docs/STATUS.md: nudge" 'docs/STATUS.md' "$(pointer "$new")"
+rm -rf "$new"
 nop="$(mktemp -d)"; git -C "$nop" init -q
 check "project without pointer: no nudge" '' "$(pointer "$nop")"
 check "not a git repo: fails open" '' "$(pointer "$(mktemp -d)")"

@@ -55,12 +55,13 @@ once without overwriting each other.
 | `team.md` | Every agent and its proven record | The lane's executor pool — a subset the Chief assigns |
 | Executor context | Project-wide conventions | Scope dirs, test and build commands of this service |
 | Roadmap, cross-service spec, contracts | Written and frozen before lanes open | Which contracts the lane provides and consumes |
-| Plan | — | The lane coordinator writes its own, inside the charter |
+| Plan | — | The lane coordinator writes its own, inside the charter, in `.crewmarshal/lanes/<name>/plans/` |
 | `lessons-ledger` | One shared ledger | Lanes **propose** lessons in their outbox; the Chief records them |
 
 **Commons** — lockfiles, root manifests, CI config, compose files, migration
-numbering, shared libraries, contract files and all of `docs/superpowers/` — belong
-to the Chief. A lane that needs a change there asks for it.
+numbering, shared libraries, contract files and the project's CrewMarshal documents in `docs/` (pointer,
+profile, agreement, team, executor context, lessons, specs, plans) — belong to the
+Chief. A lane that needs a change there asks for it.
 
 **Contracts are frozen while lanes run**, the same rule `planning-for-delegation`
 applies to a wave, one level up. A lane that finds a contract wrong stops and asks;
@@ -71,13 +72,13 @@ consumes it.
 
 A project may be one repo or a workspace of several (a folder holding an API repo,
 a web repo, a docs repo…). Everything below is anchored to the **project root**:
-the directory that holds the shared documents, `docs/superpowers/`, and where the
+the directory whose `docs/` holds the shared documents, and where the
 Chief's session runs.
 
 | Project shape | Project root |
 |---------------|--------------|
 | One repo | The repo's root |
-| Workspace of repos | Wherever the project already keeps `docs/superpowers/` — the workspace folder, or a docs repo inside it. Never two. |
+| Workspace of repos | Wherever the project already keeps those documents — the workspace folder, or a docs repo inside it. Never two. |
 
 - **Coordination state:** `<project-root>/.crewmarshal/`. Not versioned, no history.
   If the project root is itself a git repo, the Chief adds `.crewmarshal/` to its
@@ -86,7 +87,7 @@ Chief's session runs.
   on branch `lane/<name>`, cut from that repo's `main`, at
   `<project-root>/.crewmarshal/worktrees/<name>/<repo>/` — one ignored place for
   all of it.
-- **Shared documents** stay at `<project-root>/docs/superpowers/`. Lanes read them
+- **Shared documents** stay at `<project-root>/docs/`. Lanes read them
   there by absolute path, whichever repo they work in.
 
 ```
@@ -108,7 +109,7 @@ The Chief launches every lane run with two environment variables,
 plugin's hooks — where the project root is and which lane this session is,
 whatever repo or directory it was started in.
 
-The Chief's own pointer stays the project pointer (`docs/superpowers/STATUS.md`)
+The Chief's own pointer stays the project pointer (`docs/STATUS.md`)
 and carries a **lane board** — see `pointer-handoff`.
 
 ## Opening a Lane
@@ -256,7 +257,7 @@ user. Its pointer stays short by holding the lane board, not the lanes' detail.
 | "The lane can wait for its executor in the background" | Headless background work dies with the session. Detach, record, stop. |
 | "I'll ask the user directly, faster than going through the Chief" | Lanes never talk to the user. Stop the run and ask the Chief. |
 | "Small fix in the shared lib, quicker than an escalation" | Commons belong to the Chief. The next merge from `main` will show the crossing. |
-| "State dir goes in this repo's `.git`" | A workspace has several repos. State lives at the project root, next to `docs/superpowers/`. |
+| "State dir goes in this repo's `.git`" | A workspace has several repos. State lives at the project root, beside the shared `docs/`. |
 | "Chief should look over each lane's tasks to be safe" | The lane already verified them. The Chief verifies what crosses lanes. |
 | "Session is long, reset now" while three hypotheses are open | Converge first, or write them down. A reset loses whatever the pointer doesn't hold. |
 | "Two areas are small but let's make them lanes anyway" | A lane is a coordinator's worth of work. Otherwise stay single. |

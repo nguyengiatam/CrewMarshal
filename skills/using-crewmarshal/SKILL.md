@@ -6,12 +6,12 @@ description: Use when starting delegated multi-agent delivery on a project — m
 # Using CrewMarshal
 
 CrewMarshal is the delivery discipline for work where **Claude architects and
-reviews while external coding agents implement.** It is a thin delta over
-superpowers — it does not replace `brainstorming`, `writing-plans`, or
-`finishing-a-development-branch`; it slots the delegation-and-review loop
-between them. The one place it overrides superpowers is how detailed a plan
-is, and even there the project decides, not the plugin — see
-`planning-for-delegation`.
+reviews while external coding agents implement.** It stands on its own. When
+superpowers is installed it works alongside it — using `brainstorming`,
+`writing-plans` and `finishing-a-development-branch` for the design, plan and
+integration steps, and slotting the delegation-and-review loop between them — but
+it does not depend on it. Where the two disagree on how detailed a plan is, the
+project decides, not either plugin — see `planning-for-delegation`.
 
 ## The Arc
 
@@ -72,6 +72,18 @@ with its own tier. Detailed plans are written per phase, never in advance.
 Skipping a step at T0/T1 requires the user's OK — `concept-briefing` asks once,
 batched. Verification gates are never skipped when real code gets written.
 
+## Where the Files Live
+
+Every project document CrewMarshal keeps sits in the project's `docs/`: the pointer
+(`STATUS.md`), `system-profile.md`, `working-agreement.md`, `team.md`,
+`executor-context.md`, `lessons/`, and specs and plans under `specs/` and `plans/`
+unless the working agreement puts them elsewhere. Multi-lane state goes in
+`.crewmarshal/` beside it.
+
+Projects set up by earlier versions keep these files in `docs/superpowers/`. Leave
+them there or move them all at once — one location per project, never both. The
+hooks look in both.
+
 ## When to Use Which Skill
 
 | Situation | Skill |
@@ -123,8 +135,8 @@ CrewMarshal installs on any agent harness that loads `SKILL.md` folders (Claude 
 and Codex both do). Two things differ by harness — neither changes the discipline:
 
 - **Bookend skills.** `brainstorming`, `writing-plans`, and
-  `finishing-a-development-branch` ship with superpowers on Claude Code. Elsewhere,
-  do those steps directly; the eleven delta skills work standalone.
+  `finishing-a-development-branch` come from superpowers where it is installed.
+  Without it, do those steps directly; every CrewMarshal skill works standalone.
 - **Background work.** `orchestrating-executors` requires every dispatch to run in
   the background with a monitor that notifies this session. Where the harness has
   no verified channel for that, the dispatch does not meet the contract — say so,

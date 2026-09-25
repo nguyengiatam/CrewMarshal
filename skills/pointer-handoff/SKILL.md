@@ -21,7 +21,7 @@ It holds state, nothing else:
 
 ## The File
 
-Default location `docs/superpowers/STATUS.md`. If the project already keeps a
+Default location `docs/STATUS.md`. If the project already keeps a
 pointer somewhere else, use that — one pointer per project, never two (one per
 coordinator on a multi-lane project, see below).
 

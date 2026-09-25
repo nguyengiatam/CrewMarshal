@@ -12,7 +12,7 @@ runs through the whole plan — and executors never hear the rules at all.
 
 ## The File
 
-Default location `docs/superpowers/working-agreement.md`, next to
+Default location `docs/working-agreement.md`, next to
 `system-profile.md`. Template:
 [references/working-agreement-template.md](references/working-agreement-template.md).
 

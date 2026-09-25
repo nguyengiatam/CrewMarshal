@@ -4,7 +4,7 @@
 Blocks the end of a turn when HEAD is at least COMMITS_BEFORE_NUDGE commits past
 the last commit that touched the pointer and the pointer has no pending edit.
 Nudges at most once per HEAD, so a turn without new progress is never blocked
-again. Only runs in projects that keep the pointer at the default path, and never
+again. Only runs in projects that keep the pointer at a known path, and never
 in a multi-lane lane session (CREWMARSHAL_LANE set, or a `lane/*` branch). Fails open: any error allows the stop.
 """
 import json
@@ -12,7 +12,9 @@ import os
 import subprocess
 import sys
 
-POINTER_PATH = "docs/superpowers/STATUS.md"
+# docs/STATUS.md is the default; docs/superpowers/STATUS.md is where earlier
+# versions put it. The first that exists is the pointer.
+POINTER_PATHS = ("docs/STATUS.md", "docs/superpowers/STATUS.md")
 COMMITS_BEFORE_NUDGE = 3
 STATE_DIR_NAME = "crewmarshal"
 STATE_FILE_NAME = "pointer-nudged-head"
@@ -36,11 +38,13 @@ def main():
     root = git(cwd, "rev-parse", "--show-toplevel")
     if git(root, "rev-parse", "--abbrev-ref", "HEAD").startswith(LANE_BRANCH_PREFIX):
         return  # a lane worktree opened by hand: same reason
-    if not os.path.isfile(os.path.join(root, POINTER_PATH)):
+    found = [p for p in POINTER_PATHS if os.path.isfile(os.path.join(root, p))]
+    if not found:
         return
-    if git(root, "status", "--porcelain", "--", POINTER_PATH):
+    pointer_path = found[0]
+    if git(root, "status", "--porcelain", "--", pointer_path):
         return  # pointer is being edited right now
-    pointer_commit = git(root, "log", "-1", "--format=%H", "--", POINTER_PATH)
+    pointer_commit = git(root, "log", "-1", "--format=%H", "--", pointer_path)
     if not pointer_commit:
         return
     behind = int(git(root, "rev-list", "--count", pointer_commit + "..HEAD"))
@@ -61,7 +65,7 @@ def main():
             "pointer-handoff, update it now with the current state, evidence (SHA, "
             "test counts) and the next action — or, if nothing it says has changed, "
             "tell the user why and stop. This reminder fires once per HEAD."
-            % (behind, POINTER_PATH)
+            % (behind, pointer_path)
         ),
     }, sys.stdout)
 

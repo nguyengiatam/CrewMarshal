@@ -1,6 +1,6 @@
 # System Profile: CrewMarshal (Claude Code plugin)
 
-**Cập nhật:** 2026-09-23
+**Cập nhật:** 2026-09-25
 **Trạng thái:** ĐÃ CHỐT — user xác nhận 2026-08-05
 **Ký hiệu:** `~` = Claude suy từ repo, chưa ai xác nhận · `✓` = user đã chốt
 
@@ -86,7 +86,9 @@ luật không tồn tại.
     `conductor` → `crewmarshal`, `using-conductor` → `using-crewmarshal`).
   - `references/executor-roster.md` là **chỗ duy nhất** chứa lệnh theo máy; thân
     skill phải bất khả tri về agent.
-  - CrewMarshal là **delta trên superpowers**, không thay thế: `brainstorming`,
-    `writing-plans`, `finishing-a-development-branch` vẫn là của superpowers.
-- ~ Phụ thuộc ngoài: superpowers (bookend), các CLI executor (Codex, agy, …) chỉ
-  qua roster.
+  - ✓ CrewMarshal **đứng độc lập, không lệ thuộc superpowers** (user chốt
+    2026-09-25). Có superpowers thì dùng kèm `brainstorming`, `writing-plans`,
+    `finishing-a-development-branch`; không có thì làm thẳng các bước đó. Tài
+    liệu dự án nằm ở `docs/`, không phải `docs/superpowers/`.
+- ~ Phụ thuộc ngoài: các CLI executor (Codex, agy, …) chỉ qua roster; superpowers
+  là tùy chọn.

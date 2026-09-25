@@ -1,6 +1,6 @@
 # System Profile — Template
 
-Copy to `docs/superpowers/system-profile.md`. Prose stays in the project's working
+Copy to `docs/system-profile.md`. Prose stays in the project's working
 language; the headings below are Vietnamese because that is this project's.
 
 Every line carries exactly one marker: `~` inferred by Claude from the repo,

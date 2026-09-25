@@ -4,8 +4,8 @@ A plugin packaging a **multi-agent delivery discipline**: the coordinating agent
 architects and reviews while external coding agents (agy, Codex, kiro, opencode,
 …) implement — under adversarial review-to-GO and real-runtime verification.
 
-Installs on **Claude Code** and **Codex**. On Claude Code it extends
-[superpowers](https://github.com/obra/superpowers) rather than replacing it.
+Installs on **Claude Code** and **Codex**. It stands on its own, and works alongside
+[superpowers](https://github.com/obra/superpowers) when that is installed.
 
 ## Install — Claude Code
 
@@ -57,7 +57,7 @@ Remove with `codex plugin remove crewmarshal` and
 
 - **No superpowers.** `brainstorming`, `writing-plans`, and
   `finishing-a-development-branch` are Claude Code plugins. On Codex, do those
-  steps directly; the eleven delta skills work standalone.
+  steps directly; every CrewMarshal skill works standalone.
 - **No verified notification channel yet.** `orchestrating-executors` requires
   every dispatch to run in the background with a monitor that notifies the
   coordinator. On Codex that channel is unverified, so a dispatch there does not
@@ -83,8 +83,8 @@ both fail open if something goes wrong.
 | Hook | When | What |
 |------|------|------|
 | `dispatch_gate.py` (PreToolUse, Bash) | An external executor is launched in the foreground (patterns in `hooks/dispatch-commands.txt`) | Adds one reminder: a real dispatch belongs in the background with a monitor. The command still runs — testing an executor or checking quota is fine. |
-| `pointer_gate.py` (Stop) | HEAD is 3+ commits past the last commit touching `docs/superpowers/STATUS.md`, and the pointer has no pending edit | Holds the end of the turn once and asks for a pointer update. At most once per HEAD; inert in projects without that file and in lane sessions. Claude Code labels this "Stop hook error" — that is its name for any Stop hook that holds a turn. |
-| `lane_commons_gate.py` (PreToolUse, Edit/Write) | In a multi-lane lane session (`CREWMARSHAL_LANE` set by the Chief, or a `lane/*` branch), an edit under the project root's `docs/superpowers/` — even from another repo of the workspace | Adds one reminder: shared project documents belong to the Chief; ask through the outbox. Inert outside lane sessions. |
+| `pointer_gate.py` (Stop) | HEAD is 3+ commits past the last commit touching the pointer (`docs/STATUS.md`, or `docs/superpowers/STATUS.md` in projects set up by earlier versions), and the pointer has no pending edit | Holds the end of the turn once and asks for a pointer update. At most once per HEAD; inert in projects without that file and in lane sessions. Claude Code labels this "Stop hook error" — that is its name for any Stop hook that holds a turn. |
+| `lane_commons_gate.py` (PreToolUse, Edit/Write) | In a multi-lane lane session (`CREWMARSHAL_LANE` set by the Chief, or a `lane/*` branch), an edit to the Chief's documents in the project root's `docs/` (pointer, profile, agreement, team, executor context, lessons, specs, plans) — even from another repo of the workspace | Adds one reminder: shared project documents belong to the Chief; ask through the outbox. Inert outside lane sessions. |
 
 ## Skills
 
@@ -140,6 +140,7 @@ file for your machine/agents; the skills stay unchanged.
 
 ## Relationship to superpowers
 
-On Claude Code, CrewMarshal is a delta: it assumes superpowers is installed for the
-brainstorm / plan / finish bookends. The eleven delta skills also work standalone,
+CrewMarshal does not depend on superpowers. When superpowers is installed, its
+brainstorm / plan / finish skills cover those bookends; without it, those steps are
+done directly. Every CrewMarshal skill works standalone,
 which is how they run on Codex.
