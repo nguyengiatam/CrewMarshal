@@ -22,7 +22,8 @@ It holds state, nothing else:
 ## The File
 
 Default location `docs/superpowers/STATUS.md`. If the project already keeps a
-pointer somewhere else, use that — one pointer per project, never two.
+pointer somewhere else, use that — one pointer per project, never two (one per
+coordinator on a multi-lane project, see below).
 
 ```markdown
 **Cập nhật:** YYYY-MM-DD · <evidence: version / test counts / HEAD>
@@ -105,6 +106,31 @@ matters: `con tro: <what changed>` (or your project's equivalent), one line.
 **Close things out explicitly.** A resolved warning gets deleted, not left with
 "(fixed)" beside it. A paid-off debt item disappears from the list. Anything
 still listed is still live — that contract is what makes the file trustworthy.
+
+## Multi-Lane Projects
+
+When the working agreement runs several lanes (`multi-lane-coordination`), there is
+one pointer **per coordinator**, each with one writer:
+
+- **The Chief's pointer is the project pointer** — same path, same format, plus a
+  lane board under *Đang ở đâu*. It holds each lane's state, not its detail:
+
+  ```markdown
+  ## Bảng lane
+  | Lane | Nhánh @HEAD | Trạng thái | Inbox / outbox | Việc Chief đang nợ |
+  |------|-------------|------------|----------------|--------------------|
+  | billing | lane/billing @a1b2c3d | chờ job 2 executor | in #7 · out #9 | — |
+  | search | lane/search @e4f5a6b | câu hỏi #4 chờ user | in #3 · out #4 | hỏi user về index |
+  ```
+
+- **Each lane's pointer** lives in the shared state directory, not in any branch
+  (`<git-common-dir>/crewmarshal/lanes/<name>/STATUS.md`), in the format above plus
+  the last inbox entry it has handled. Only that lane writes it; the Chief reads it.
+
+Reconciling works the same way at both levels. The Chief compares each lane's
+pointer with the real HEAD of its branch — a branch several commits past its
+pointer usually means a run stopped dirty. A lane run reconciles its own pointer
+against its branch before trusting it.
 
 ## What Doesn't Go In
 
