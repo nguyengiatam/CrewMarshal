@@ -1,6 +1,6 @@
 ---
 name: adversarial-review-to-go
-description: Use when a spec, a plan, or an implemented diff needs an external adversarial reviewer — locks the reviewer to the altitude of what is being reviewed, converges diff findings to zero (GO), gives a small document one round and a large one a guarded multi-round loop that converges on blocking findings only, and re-verifies every finding on real source before acting.
+description: Use when a spec, a plan, or an implemented diff needs an external adversarial reviewer — locks the reviewer to the altitude of what is being reviewed, converges diff findings to zero (GO), re-reviews a spec or plan until a round leaves fewer than 5 findings, mostly low severity, and re-verifies every finding on real source before acting.
 ---
 
 # Adversarial Review to GO
@@ -23,75 +23,76 @@ agent's output.
 
 ## Where the Loop Applies
 
-Converging to zero assumes the surface being reviewed is **finite**. A diff is:
-patching it changes bounded code. A document is not: every patch writes new
-prose, and new prose is new surface to attack. Run the wrong loop on a document
-and you get growth, not convergence.
+Both surfaces loop, but they stop at different places.
 
-| Surface | Rounds | Why |
-|---------|--------|-----|
-| **Diff / implemented code** | loop until zero → GO | Finite surface. The last round is where subtle findings surface. |
-| **Small spec / plan** | **one round, then stop** | Each patch adds prose that invites the next finding. |
-| **Large spec / plan** | **guarded loop until zero *blocking* → GO** (cap 3, then the user decides) | One pass cannot cover it; the guards below keep the surface from growing. |
+| Surface | Rounds | GO |
+|---------|--------|----|
+| **Diff / implemented code** | loop until zero | a round with zero surviving findings. Finite surface — the last round is where subtle findings surface. |
+| **Spec / plan** | loop while the last round still found enough | a round with **fewer than 5 surviving findings, most of them low severity**. |
 
-Measured on a real document review, *without* the guards: two rounds went
-**10 → 11** findings and the document grew **300 → 720 lines**. That is not a
-slow convergence, it is a different shape of curve — so a document never runs
-the diff loop as-is.
+A document never needs zero. Every patch writes new prose and new prose is new
+surface, so the finding count on a document has a floor that is not zero —
+chasing zero is what once took a document from **300 → 720 lines** with findings
+going **10 → 11**. But one round is not enough either: whether to go again is
+decided by **what the previous round caught**, not by how long the document is.
 
-But one round is not enough on a large document either. The reviewer's attention
-spreads thin across hundreds of lines or a dozen tasks: round 1 goes deep on some
-sections and skims the rest, and the skimmed sections ship unreviewed. Treat a
-document as **large** when a spec runs past ~300 lines or spans several
-subsystems, or a plan has ~10+ tasks or more than one wave. Below that, one round.
+## The Document Loop (spec and plan)
 
-## The Document Loop (large specs and plans)
+Every finding carries a **severity** (see the finding format):
 
-What made documents diverge was not the second round, it was running it with
-nothing to stop the surface growing. Every round after the first runs under all
-five guards:
+| Severity | Spec / plan meaning |
+|----------|---------------------|
+| **High** | sends the design or the executor the wrong way: a wrong decision, a hard boundary broken, a DoD that goes green while the goal is unmet, a task that cannot run, a false parallel, an undecided "or" with data or security consequences |
+| **Medium** | forces rework or a guess: a missing constraint, an acceptance that measures the easy part, a dependency stated loosely |
+| **Low** | clarity, wording, a gap an executor would resolve correctly on its own |
+
+After each round, re-verify every finding (the Golden Rule), patch the valid
+ones, then count the **surviving** findings — the ones that held up on
+re-verification, not what the reviewer sent:
+
+- **Fewer than 5 surviving, and more than half of them Low → GO.** Stop.
+- **Otherwise → another round.** A round that still catches 5 or more real
+  defects, or catches few but mostly Medium/High, is evidence the next round will
+  catch more.
+
+Surviving findings are patched before deciding, including the round that reaches
+GO. Severity is judged against `system-profile.md`, and the reviewer's label is
+re-verified like the finding itself — a finding inflated to High to keep the
+loop running, or deflated to Low to end it, is re-labelled by the owner.
+
+Every round after the first runs with these guards, which are what keep the
+loop converging:
 
 1. **Altitude-locked prompt** — the spec/plan template, never a generic one.
-   Uncalibrated, rounds diverge; calibrated, the same document went 283 → 339
-   lines instead of 300 → 720.
-2. **Coverage report.** Every round, the reviewer lists which sections it
-   examined deeply and which it only skimmed. Round N+1 targets **round-N
-   patches first, then the skimmed sections** — not a fresh sweep of what was
-   already covered.
-3. **Raised bar from round 2.** Only **blocking** findings: a wrong decision, a
-   missing constraint with a stated consequence, a DoD that goes green for the
-   wrong reason, a task that cannot run, a false parallel, an undecided "or"
-   with data or security consequences. Clarity, wording, "could also mention" —
-   out. Non-blocking notes go into one list the owner may take or leave; they do
-   not count toward convergence and do not keep the loop alive.
-4. **Growth budget.** Record the line count every round. Patches are the
-   smallest change that closes the finding, and cuts from the reverse altitude
-   check land in the same round. If the document grows more than ~15% in one
-   round, stop and run the altitude check before the next.
-5. **Fresh reviewer thread each round**, with the self-contained prompt — a
+   Uncalibrated, the loop diverges; calibrated, most findings stay at the
+   document's own layer and some are cuts.
+2. **Coverage report.** The reviewer lists which sections it examined deeply
+   and which it only skimmed. Round N+1 targets **round-N patches first, then the
+   skimmed sections** — not a fresh sweep of what was already covered.
+3. **Smallest patch.** Each patch is the smallest change that closes the
+   finding, and cuts from the reverse altitude check land in the same round.
+4. **Fresh reviewer thread each round**, with the self-contained prompt — a
    resumed thread defends its earlier findings and anchors on what it already
    read.
 
-**GO for a document** = a round with zero surviving blocking findings and no
-section left skimmed. **Cap: 3 rounds.** Still not at GO after three, report the
-curve (findings and line count per round) and the remaining blockers to the user,
-who decides whether to run another round, restructure, or accept. The general
-Stop Rule below still applies on top.
-
 ## The Stop Rule
 
-**If findings do not decrease across two consecutive rounds, stop. Do not run
-another round.** A non-decreasing count is evidence about the *process*, not
-about the artifact. Check, in this order:
+**If findings do not decrease across two consecutive rounds, the process is
+broken — fix it before the next round.** On a diff, stop and do not run another
+round until it is fixed. On a document, same: the next round only runs after the
+cause is fixed, and the GO condition above is still the only way out. Check, in
+this order:
 
 1. **Altitude** — is the reviewer being invited to find things that belong one
    layer down? (Reviewing a spec with a source-file list attached is the
    classic.) Fix the prompt, not the artifact.
-2. **Surface** — is this a document being run through the diff loop, without
-   the Document Loop's guards?
-3. **Patch-induced findings** — see below.
+2. **Patch-induced findings** — see below. Were the patches larger than the
+   findings needed?
+3. **Severity drift** — are Low findings being counted as Medium to keep the
+   loop alive?
 
-Only after one of those is fixed does another round mean anything.
+If the cause cannot be found, show the user the per-round curve (count and
+severity split) and let them decide.
 
 ## Lock the Reviewer to the Altitude
 
@@ -251,11 +252,9 @@ repeat:
 until a round yields zero surviving findings  → GO
 ```
 
-For a small spec or plan: dispatch once, re-verify, patch, **stop**. Re-review
-only if the artifact was restructured, not because wording changed. For a large
-one, run the same loop under the five guards of the Document Loop: blocking
-findings only from round 2, targets = patched sites + skimmed sections, growth
-checked every round, cap 3 then the user decides.
+For a spec or a plan, the same loop with two differences: targets are the
+patched sites plus the sections the previous round skimmed, and the exit is
+**fewer than 5 surviving findings, more than half Low** instead of zero.
 
 ## Practical Notes
 
@@ -264,8 +263,8 @@ checked every round, cap 3 then the user decides.
 - The reviewer may run out of quota mid-loop. A purely formal confirmation round
   can be skipped if the user agrees; already-verified mechanical fixes don't
   need another round.
-- Record the convergence (e.g. "4 rounds, 5→2→1→0"; for a document add the
-  line count, e.g. "3 rounds, 9→3→0 blocking, 410→452→447 lines") and the accepted residual
+- Record the convergence (e.g. "4 rounds, 5→2→1→0"; for a document with the
+  severity split, e.g. "3 rounds, 12 (5H) → 7 (2H) → 3 (0H, 2L)") and the accepted residual
   trade-offs in the merge commit or plan notes. Record a non-convergence too,
   with what the altitude check found — that is a `lessons-ledger` entry.
 
@@ -275,9 +274,10 @@ checked every round, cap 3 then the user decides.
 |---------|---------|
 | "Reviewer flagged it, just apply it" | Re-verify on source first. Reviewers are sometimes wrong. |
 | "One round was clean enough" | On a diff, converge to zero. The last round is where subtle ones surface. |
-| "Large plan, one round covered it" | Check the coverage report. Skimmed sections have not been reviewed yet. |
-| "Round 3 on the spec found more wording issues, keep going" | From round 2 only blocking findings count. Wording does not keep the loop alive. |
-| "Findings went up — run another round" | Findings went up because the surface grew or the altitude is wrong. Another round makes it worse. |
+| "One round on the spec is enough" | Count what that round caught. 5+ surviving, or mostly Medium/High, means go again. |
+| "The spec is short, skip the second round" | Length does not decide. The previous round's findings do. |
+| "Only 3 findings left, but they're High — ship it" | GO needs fewer than 5 **and** mostly Low. Go again. |
+| "Findings went up — run another round" | Findings went up because the altitude, the patches or the severity labels are off. Fix that first. |
 | "I'll give the reviewer the file list so it can check properly" | On a spec or plan that is the bug. It invites implementation-layer findings you then patch into the document. |
 | "The reviewer will figure out what layer to work at" | It will not. It answers the prompt you wrote; a file list is an instruction. |
 | "Round 2 should look at everything again" | Round 2 looks at round 1's patches first. That is where the new defects are. |

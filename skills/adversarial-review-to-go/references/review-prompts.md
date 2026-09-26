@@ -23,6 +23,11 @@ hands the owner a blank page at the moment the reviewer's context is richest.
 >
 > - **Finding** — what is wrong, at the cited place.
 > - **Failure** — the concrete consequence. Not "risky": say what breaks.
+> - **Severity** — High / Medium / Low, judged against the system profile.
+>   High: sends the design or the executor the wrong way, or breaks a hard
+>   boundary. Medium: forces rework or a guess. Low: clarity or wording, a gap
+>   the next reader would resolve correctly anyway. Label honestly — the owner
+>   re-checks the label, and the review loop stops on it.
 > - **Fix options** — 1 or 2 **directions**, not patches. Each names the approach
 >   and where it applies, *at the altitude of this review*, in at most two
 >   sentences, followed by its cost: what it breaks, what it slows, what it
@@ -43,18 +48,12 @@ hands the owner a blank page at the moment the reviewer's context is richest.
 > one that is easiest to accept. Spending your budget drafting an implementation
 > is attention taken from finding the next defect.
 
-## Round N+1 on a Large Spec or Plan — Add to Template 1 or 2
+## Round N+1 on a Spec or Plan — Add to Template 1 or 2
 
 > Round <N+1>. The previous round patched these sites: <list>, and only skimmed
 > these sections: <list from its coverage report>. Review the patched sites
 > **first**, then the skimmed sections. Do not re-sweep sections already
 > examined deeply unless a patch changed what they depend on.
->
-> Report **blocking** findings only: a wrong decision, a missing constraint with
-> a stated consequence, a done-line that goes green for the wrong reason, a task
-> that cannot run, a false parallel, an undecided "or" with data or security
-> consequences. Anything else — clarity, wording, "could also mention" — goes in
-> one short separate list marked non-blocking, or is left out.
 >
 > Every patch you propose adds text to a document that will be reviewed again.
 > Prefer the fix that adds least, and keep listing what should be cut.

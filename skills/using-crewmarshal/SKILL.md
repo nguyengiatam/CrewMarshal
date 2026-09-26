@@ -117,8 +117,8 @@ hooks look in both.
 - Every finding from any reviewer is re-verified on real source before it is
   applied — never blindly.
 - Reviewers are locked to the altitude of what they review, and only a finite
-  surface (a diff) can be converged to zero. A small document gets one round; a
-  large one a guarded loop — blocking findings only, growth budget, cap 3.
+  surface (a diff) can be converged to zero. A spec or plan is re-reviewed
+  until a round leaves fewer than 5 findings, mostly low severity.
 - Anything about the future — growth, expected load — is asked, never inferred.
   The repo holds no evidence about it, so a guess there is a guess that hardens
   into a fact.
