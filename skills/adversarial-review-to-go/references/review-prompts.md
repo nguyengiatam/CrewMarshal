@@ -34,10 +34,30 @@ hands the owner a blank page at the moment the reviewer's context is richest.
 >   real trade-off for the owner to settle, write "owner decides" and say what the
 >   decision turns on.
 >
+> **Coverage.** End the report with a list of the sections (or tasks) you
+> examined deeply and those you only skimmed. Do not claim depth you did not
+> spend — the next round is aimed at what you skimmed.
+>
 > These fixes are read as suggestions: the owner re-verifies every finding on the
 > real source before applying anything. Write the option you would defend, not the
 > one that is easiest to accept. Spending your budget drafting an implementation
 > is attention taken from finding the next defect.
+
+## Round N+1 on a Large Spec or Plan — Add to Template 1 or 2
+
+> Round <N+1>. The previous round patched these sites: <list>, and only skimmed
+> these sections: <list from its coverage report>. Review the patched sites
+> **first**, then the skimmed sections. Do not re-sweep sections already
+> examined deeply unless a patch changed what they depend on.
+>
+> Report **blocking** findings only: a wrong decision, a missing constraint with
+> a stated consequence, a done-line that goes green for the wrong reason, a task
+> that cannot run, a false parallel, an undecided "or" with data or security
+> consequences. Anything else — clarity, wording, "could also mention" — goes in
+> one short separate list marked non-blocking, or is left out.
+>
+> Every patch you propose adds text to a document that will be reviewed again.
+> Prefer the fix that adds least, and keep listing what should be cut.
 
 ---
 
