@@ -1,6 +1,6 @@
 ---
 name: orchestrating-executors
-description: Use when a plan is ready and implementation will be delegated to external coding agents or subagents — covers knowing your workforce and what each has proven, choosing between a subagent and an external agent (confirming with the user the first time), role separation, quota management, one-task handoffs, asynchronous dispatch with a monitor on every run (no polling), parallel-run isolation, and the per-task checkpoint protocol.
+description: Use when a plan is ready and implementation will be delegated to external coding agents or subagents — covers knowing your workforce and what each has proven, choosing between a subagent and an external agent (confirming with the user the first time), role separation, quota management, one-task handoffs, asynchronous dispatch with a monitor on every run (no polling), feeding a freed agent the next ready task in the same turn, parallel-run isolation, and the per-task checkpoint protocol.
 ---
 
 # Orchestrating External Executors
@@ -257,6 +257,41 @@ launch on top of it is a duplicate dispatch.
 
 **Only Done is done.** Nothing else counts as a completed task — in the pointer or anywhere else.
 
+### Before ending a turn: nobody idle while work is ready
+
+An executor that finished and sits idle while the next task waits for the user to
+say "go on" is throughput thrown away — and it happens exactly at the moment the
+coordinator feels done: a notification came in, acceptance passed, a report got
+written, the turn ended. **The notification that frees an agent is also the cue to
+feed it.** In the same turn, before you stop, check:
+
+1. **Any agent free?** Its last run is Done, Failed, or Cancelled, it has no run in
+   Dispatched/Running, and its quota holds.
+2. **Any task ready?** Not yet dispatched, every dependency Done, it is in the
+   current wave (or the wave just finished — then the next wave is current), and
+   it holds nothing a running task holds.
+3. **Does the agreement allow it?** Cadence *continue* and the task within the
+   agreed scope.
+
+All three yes → **dispatch now**, by the same rules as any dispatch (assignee from
+the table, BASE, monitor, pointer). Don't report "task 3 done" and stop while
+task 4 is ready and its executor is idle.
+
+Awaiting acceptance counts too: a result you have not verified is the work that
+frees the next dispatch, so verify it now rather than leaving it for the next turn.
+
+Ending the turn is right only when one of these holds — **and your message says
+which**:
+
+- every free agent has nothing ready (the rest of the wave is still running);
+- cadence is *stop after each task* — report and wait, as agreed;
+- the next task is Blocked on a decision or permission only the user can give —
+  ask that one question;
+- quota is out on everyone who could take it.
+
+"Waiting for the user" without one of these reasons is not a state; it is an idle
+workforce.
+
 ### Rules paid for in lost time
 
 1. **Capture the BASE commit at dispatch and give it to the monitor.** Without a
@@ -314,7 +349,9 @@ for each wave:
     fix or re-dispatch if a gate fails
     record any lesson learned  → lessons-ledger
     update team.md if an agent surprised you either way
-  next wave only when every task in this one is Done
+    an agent is free → a task ready and allowed? dispatch it now, same turn
+  next wave only when every task in this one is Done — then start it at once
+before ending any turn: free agent + ready task + cadence continue → dispatch, don't stop
 when a risky area is complete, before merge:
     adversarial-review-to-go  (converge findings to GO)
 then:
@@ -336,6 +373,8 @@ then:
 | "I've got a watcher on it" (but didn't start one) | Say "no monitor — dispatch doesn't meet the async contract." A described-but-unstarted watch costs you the whole idle period. |
 | "Let me peek at the log, see if it's done" | The monitor will tell you. Check by hand only on a wrong-looking signal, a suspected dead monitor, or a user request. |
 | "Nothing else to do, I'll check every minute" | End the turn and wait for the notification. |
+| "Task accepted, report to the user and stop" | Free agent + ready task + cadence continue → dispatch it in this turn. Stop only with a stated reason. |
+| "I'll accept that result next turn" | Unverified work holds up the next dispatch. Verify it now. |
 | "Exit 0 and a new commit — mark it done" | That's progress. It's awaiting acceptance until `checkpoint-verification` passes. |
 | "Monitor failed, relaunch the whole thing" | Check whether the executor is already running first. Two launches = a duplicate dispatch. |
 | "It's been quiet, it must be working" | Silence is ambiguous. Check quota, process state, and whether any file changed. |

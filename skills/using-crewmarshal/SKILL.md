@@ -29,7 +29,7 @@ planning-for-delegation          → gate it: altitude, plan-detail convention,
                                    nine structural checks, assignment in waves, phase gates
 
    ┌─ executor-context           → keep the fixed context file current; handoffs point at it
-   ├─ orchestrating-executors    → check quota, hand off ONE task in the background + monitor, don't poll
+   ├─ orchestrating-executors    → check quota, hand off ONE task in the background + monitor, don't poll; free agent + ready task → dispatch now
    │     checkpoint-verification  → inspect call-site + drive real runtime path
    │     convention-commit-gate   → enums, no magic literals, commit style
    └─  (loop per task; fix or re-dispatch if a gate fails; re-tier if scope diverges)
