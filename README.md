@@ -63,7 +63,7 @@ Remove with `codex plugin remove crewmarshal` and
   coordinator. On Codex that channel is unverified, so a dispatch there does not
   meet the contract — the skill says so and uses the project's allowed fallback
   or asks, instead of polling silently.
-- **No hooks.** The two hooks below are Claude Code only; on Codex the skills
+- **No hooks.** The hooks below are Claude Code only; on Codex the skills
   carry the same rules without the reminders.
 
 ### Maintainer note
@@ -77,11 +77,12 @@ Hook tests: `bash hooks/tests/run.sh`.
 
 ## Hooks (Claude Code)
 
-Three reminders at points the agent cannot skip past. Neither refuses anything;
-both fail open if something goes wrong.
+Reminders at points the agent cannot skip past. None refuses anything; all fail
+open if something goes wrong.
 
 | Hook | When | What |
 |------|------|------|
+| `session_context.py` (SessionStart) | Every session start, including after `/clear` and compaction, in a project with `docs/working-agreement.md` (or `docs/superpowers/working-agreement.md`) at the project root (`CREWMARSHAL_PROJECT_ROOT` in a lane run) | Loads the working agreement into context so its rules are known before the first task. Claude Code caps injected context at 10,000 characters; a longer agreement is cut at the last heading that fits and the agent is told which line to read on from. |
 | `dispatch_gate.py` (PreToolUse, Bash) | An external executor is launched in the foreground (patterns in `hooks/dispatch-commands.txt`) | Adds one reminder: a real dispatch belongs in the background with a monitor. The command still runs — testing an executor or checking quota is fine. |
 | `pointer_gate.py` (Stop) | HEAD is 3+ commits past the last commit touching the pointer (`docs/STATUS.md`, or `docs/superpowers/STATUS.md` in projects set up by earlier versions), and the pointer has no pending edit | Holds the end of the turn once and asks for a pointer update. At most once per HEAD; inert in projects without that file and in lane sessions. Claude Code labels this "Stop hook error" — that is its name for any Stop hook that holds a turn. |
 | `lane_commons_gate.py` (PreToolUse, Edit/Write) | In a multi-lane lane session (`CREWMARSHAL_LANE` set by the Chief, or a `lane/*` branch), an edit to the Chief's documents in the project root's `docs/` (pointer, profile, agreement, team, executor context, lessons, specs, plans) — even from another repo of the workspace | Adds one reminder: shared project documents belong to the Chief; ask through the outbox. Inert outside lane sessions. |

@@ -27,7 +27,9 @@ question you still owe the user.
 
 ## Reading It — before executing or dispatching
 
-1. Read it before the first task you execute or hand off in a session.
+1. Read it before the first task you execute or hand off in a session. On Claude
+   Code the plugin's SessionStart hook already loads it (again after compaction);
+   read the file yourself only when the hook says it was cut, or on another harness.
 2. **Re-read when it may have changed:** the file was edited, the user stated a new
    rule, or context was compacted. A rule changed mid-session applies from the
    **next relevant step** — never keep the old one because you read it first.

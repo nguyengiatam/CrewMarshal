@@ -73,6 +73,31 @@ check "project without pointer: no nudge" '' "$(pointer "$nop")"
 check "not a git repo: fails open" '' "$(pointer "$(mktemp -d)")"
 rm -rf "$repo" "$nop"
 
+# --- session_context ---
+session() { printf '{"cwd":"%s","source":"startup"}' "$1" | python3 "$HOOKS/session_context.py"; }
+wa="$(mktemp -d)"; git -C "$wa" init -q; mkdir -p "$wa/docs/superpowers" "$wa/src"
+check "no agreement: nothing loaded" '' "$(session "$wa")"
+printf '# Quy ước\n\n## Nhịp\n- ✓ dừng sau mỗi task\n' > "$wa/docs/superpowers/working-agreement.md"
+check "old location loaded" 'dừng sau mỗi task' "$(session "$wa")"
+check "loaded from a subdirectory" 'dừng sau mỗi task' "$(session "$wa/src")"
+printf '# Quy ước\n- ✓ chạy liền mạch\n' > "$wa/docs/working-agreement.md"
+check "docs/ wins over old location" 'chạy liền mạch' "$(session "$wa")"
+check "short agreement not cut" '' "$(session "$wa" | grep 'Cut to fit')"
+python3 - "$wa/docs/working-agreement.md" <<'PY'
+import sys
+parts = ["# Quy ước\n"] + ["## Mục %d\n%s\n" % (i, "- ✓ quy tắc dài dòng\n" * 60) for i in range(1, 9)]
+open(sys.argv[1], "w").write("".join(parts))
+PY
+big="$(session "$wa")"
+check "long agreement: cut and points at the rest" 'Read the rest of' "$big"
+check "long agreement: fits the 10k cap" 'ok' "$(printf '%s' "$big" | python3 -c 'import json,sys; c=json.load(sys.stdin)["hookSpecificOutput"]["additionalContext"]; print("ok" if len(c)<=10000 else len(c))')"
+check "long agreement: cut at a heading" 'ok' "$(printf '%s' "$big" | python3 -c 'import json,sys,re; c=json.load(sys.stdin)["hookSpecificOutput"]["additionalContext"]; n=int(re.search(r"from line (\d+)",c).group(1)); l=open(sys.argv[1]).read().splitlines(); print("ok" if l[n-1].startswith("## ") else l[n-1])' "$wa/docs/working-agreement.md")"
+ws="$(mktemp -d)"; mkdir -p "$ws/docs" "$ws/api"; git -C "$ws/api" init -q
+echo '- ✓ quy ước workspace' > "$ws/docs/working-agreement.md"
+check "lane run reads project root" 'quy ước workspace' "$(printf '{"cwd":"%s"}' "$ws/api" | CREWMARSHAL_PROJECT_ROOT="$ws" python3 "$HOOKS/session_context.py")"
+check "session hook malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/session_context.py")"
+rm -rf "$wa" "$ws"
+
 # --- watch_lane_run (multi-lane-coordination) ---
 WATCH="$HOOKS/../skills/multi-lane-coordination/scripts/watch_lane_run.py"
 run="$(mktemp)"
