@@ -1,8 +1,13 @@
 # CrewMarshal
 
-A plugin packaging a **multi-agent delivery discipline**: the coordinating agent
-architects and reviews while external coding agents (agy, Codex, kiro, opencode,
-…) implement — under adversarial review-to-GO and real-runtime verification.
+A plugin packaging a **coordination discipline for multi-agent delivery**. The
+coordinating agent sizes each request to just enough process, designs, and hands
+one task at a time to subagents or external coding agents (agy, Codex, kiro,
+opencode, …), then verifies every result on the real code. Short shared project
+files — profile, working agreement, executor context, pointer, lessons — carry
+context across agents and sessions, so nothing is retyped and a fresh session
+resumes cheaply. Projects with several services can split into lanes, each with
+its own coordinator.
 
 Installs on **Claude Code** and **Codex**. It stands on its own, and works alongside
 [superpowers](https://github.com/obra/superpowers) when that is installed.
@@ -93,7 +98,7 @@ open if something goes wrong.
 |-------|---------|
 | `pointer-handoff` | One short pointer file per project: current state + next action. Read on resume, written before the session ends. |
 | `lessons-ledger` | Per-project lessons indexed by code area and work type, so only the relevant ones load; project-wide ones get crystallized into the executor context file. |
-| `concept-briefing` | Locks a user-confirmed system profile, tiers each request, and routes it to the right amount of process — including a phased roadmap for layered work. |
+| `concept-briefing` | Locks a user-confirmed project profile — a short core plus only the questions that matter for what is being built (service, UI, app, tool, library, data) — tiers each request, and routes it to the right amount of process — including a phased roadmap for layered work. |
 | `project-working-agreement` | One project file of working rules — stop after each task or continue, what each role may decide, plan detail, commit/language — asked once, reused by every session and executor. |
 | `using-crewmarshal` | Index/map of the workflow arc and where it meets superpowers. |
 | `orchestrating-executors` | Workforce management: who is on the team and what they proved, subagent-vs-external choice, quota, one-task handoffs, async dispatch with a monitor (no polling), a freed agent gets the next ready task in the same turn, parallel isolation, checkpoint protocol. |

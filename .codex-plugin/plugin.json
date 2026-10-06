@@ -1,7 +1,7 @@
 {
   "name": "crewmarshal",
-  "version": "0.25.0",
-  "description": "Multi-agent delivery discipline: the coordinator architects and reviews while external executors implement, under adversarial review-to-GO and real-runtime verification.",
+  "version": "0.26.0",
+  "description": "Coordination discipline for multi-agent delivery: the coordinator sizes each request to just enough process, hands one task at a time to subagents or external coding agents, and verifies every result on the real code. Shared project files carry context across agents and sessions so nothing is retyped. Scales to several services with lane coordinators; works standalone.",
   "author": {
     "name": "Nguyễn Gia Tâm"
   },
@@ -11,6 +11,7 @@
   "keywords": [
     "orchestration",
     "multi-agent",
+    "delegation",
     "code-review",
     "verification",
     "workflow"
@@ -18,13 +19,13 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "CrewMarshal",
-    "shortDescription": "Delegate implementation, keep the review discipline",
-    "longDescription": "A delivery discipline for work where the coordinator designs, reviews, and verifies while external coding agents implement. Covers system profiling, request tiering, phased roadmaps, workforce management, per-task checkpoints, adversarial review, and session handoff.",
+    "shortDescription": "Coordinate agents, verify every result",
+    "longDescription": "A coordination discipline for work where the coordinator designs, dispatches, and verifies while subagents or external coding agents implement. Covers a project profile asked per kind of work, request tiering to just enough process, phased roadmaps, a working agreement, workforce management with async dispatch, per-task checkpoints, adversarial review at spec, plan and diff altitude, multi-lane coordination for several services, and session handoff through short shared files.",
     "developerName": "Nguyễn Gia Tâm",
     "category": "Productivity",
     "capabilities": ["Interactive", "Write"],
     "defaultPrompt": [
-      "Set up a system profile for this project before we design anything.",
+      "Profile this project before we design anything.",
       "Plan this rebuild as phases from the foundation up.",
       "Hand this task to an executor and verify the result properly."
     ]

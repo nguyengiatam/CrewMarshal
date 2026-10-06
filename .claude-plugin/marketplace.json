@@ -1,14 +1,14 @@
 {
   "name": "crewmarshal-marketplace",
-  "description": "Marketplace for the CrewMarshal multi-agent delivery plugin",
+  "description": "Marketplace for CrewMarshal, a multi-agent coordination plugin",
   "owner": {
     "name": "Nguyễn Gia Tâm"
   },
   "plugins": [
     {
       "name": "crewmarshal",
-      "description": "Multi-agent delivery discipline: Claude architects and reviews while external executors implement, under adversarial review-to-GO and real-runtime verification. Works standalone or alongside superpowers.",
-      "version": "0.25.0",
+      "description": "Coordination discipline for multi-agent delivery: the coordinator sizes each request to just enough process, hands one task at a time to subagents or external coding agents, and verifies every result on the real code. Shared project files carry context across agents and sessions so nothing is retyped. Scales to several services with lane coordinators; works standalone or alongside superpowers.",
+      "version": "0.26.0",
       "source": "./",
       "author": {
         "name": "Nguyễn Gia Tâm"
