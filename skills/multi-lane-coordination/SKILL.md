@@ -97,7 +97,7 @@ Chief's session runs.
 │   ├── STATUS.md     ← lane writes: the lane pointer (pointer-handoff format)
 │   ├── inbox.md      ← Chief writes: numbered entries — assignments, answers, contract changes, "tìm điểm dừng"
 │   ├── outbox.md     ← lane writes: numbered entries — ready @sha, questions, escalations, lesson proposals, reset
-│   ├── jobs/         ← lane's detached executor jobs: <id>.log, <id>.exit
+│   ├── jobs/         ← lane's detached executor jobs: <id>.pid, <id>.log, <id>.exit
 │   └── runs/         ← one output file per lane run, written by the Chief's launch
 └── worktrees/<name>/<repo>/
 ```
@@ -144,12 +144,13 @@ to shed. The charter, the lane pointer and the inbox are the only memory a run h
 **Working:** the normal arc, inside the charter. After **every accepted task**,
 re-read the inbox — it is the only way the Chief reaches a running lane.
 
-**Executors inside a lane run** are launched **detached**, each writing its exit
-code to `jobs/<id>.exit` when it ends. A headless session kills its own background
+**Executors inside a lane run** are launched **detached**, each under a fresh id
+per launch, writing its exit code to `jobs/<id>.exit` when it ends. A headless session kills its own background
 tasks when it exits (verified on Claude Code 2.1.282: `run_in_background` work died
 with the session, a `nohup … &` process survived). So a lane run never waits on an
 executor: it dispatches, records every job in its pointer's *Đang dở*, and stops.
-The Chief watches the exit files and starts the next run when they land. Exact
+The Chief watches the exit files (and the processes, for a job that dies before
+writing one) and starts the next run when they land. Exact
 commands are in the roster (`orchestrating-executors`).
 
 **A run ends on exactly one of these**, always with the pointer written first and

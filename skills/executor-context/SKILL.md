@@ -47,17 +47,22 @@ each one earned by a real failure mode:
    "registers" a new file manually breaks the mechanism.
 5. **Test-group conventions.** How groups declare themselves, what a group must
    never call, which database tests may touch, and the exact commands to run.
-6. **How to work.** TDD order if that's the discipline; use the plan's code
-   rather than inventing an alternative; **stop and report when the plan is wrong
-   instead of improvising**; never edit outside scope just to make lint or tests
+6. **How to work.** TDD order if that's the discipline; meet the plan's goal,
+   constraints and acceptance criteria — use its code where it gives code, but
+   don't expect code where the project's plans only point
+   (`planning-for-delegation`); **stop and report when the plan is wrong instead
+   of improvising**; never edit outside scope just to make lint or tests
    green; commit or don't commit. Role limits and cadence come from the working
    agreement (`project-working-agreement`) — point at its executor part, don't
    copy it.
-7. **Running in parallel with other executors.** Whose files are held, and how to
-   tell foreign lint/typecheck errors from your own.
-8. **What the final report must contain.** Files changed, test results before and
-   after with counts, scoped lint result, and — most important — everything that
-   looked suspicious or couldn't be decided alone.
+7. **Running in parallel with other executors.** How to behave when files are
+   held by someone else, and how to tell foreign lint/typecheck errors from your
+   own. *Which* files are held changes per dispatch — that goes in the prompt.
+8. **What the final report must contain.** The result against the task's
+   acceptance criteria, with the evidence for it (for code: files changed, test
+   results before and after with counts, scoped lint result); long output stays
+   in a log the report points at; and — most important — what is unfinished or
+   unverified, and everything that looked suspicious or couldn't be decided alone.
 
 Section 6's "stop and report" and section 8's last item are the load-bearing
 ones. An executor that quietly fixes what it shouldn't, or files a clean report to

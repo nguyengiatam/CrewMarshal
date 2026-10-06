@@ -161,8 +161,9 @@ branch → executor stops → you review.** Enforce all of:
    convention) and halts.
 3. You review before releasing the next task: `checkpoint-verification`, then
    `convention-commit-gate`, on the actual diff — never on the executor's summary.
-4. Verification output is real and pasted. "Tests pass" without the run output is
-   not acceptance.
+4. Verification output is real and seen. "Tests pass" without the run output is
+   not acceptance — but quote the lines that decide it and point at the log for
+   the rest; a pasted full log costs context on every later turn.
 
 If an executor violated the protocol (ran ahead, skipped verification, edited
 another repo), stop and reconcile before continuing — do not paper over it.
@@ -218,6 +219,10 @@ Until all three hold, the task is *dispatched*, not *running*. Say which.
 Before relaunching after a monitor failure, confirm the executor is not already
 running. A broken monitor on a live executor is two facts — record both; a second
 launch on top of it is a duplicate dispatch.
+
+The same holds for any re-dispatch of a task: each attempt is a new run with its
+own id, and it never shares a worktree with an earlier attempt that may still be
+writing. Confirm the old one is gone, or give the new one its own worktree.
 
 ### After dispatch: work or wait, never poll
 

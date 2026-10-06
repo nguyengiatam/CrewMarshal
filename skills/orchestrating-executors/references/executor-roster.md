@@ -93,6 +93,9 @@ Used by `multi-lane-coordination`. Verified on Claude Code 2.1.282, macOS, 2026-
   as a `Monitor`: it prints `context <n>` once past the threshold (→ write
   `tìm điểm dừng` to the inbox), `compacted` on a `compact_boundary` event (from
   the SDK's message types; not yet observed here), and `ended …` when the run ends.
+  A run that dies before its `result` event leaves the watcher waiting: pass the
+  run's PID as a third argument when you have it (it then prints `gone`), or stop
+  the monitor when the launch's exit notification arrives.
 - **Codex as a lane coordinator:** `codex exec` is the candidate, but its
   stream output, context reporting and survival of detached children are not
   verified yet. Verify before assigning it a lane.
@@ -101,12 +104,24 @@ Used by `multi-lane-coordination`. Verified on Claude Code 2.1.282, macOS, 2026-
 the Chief can watch:
 
 ```
-J="$LANE/jobs"; id=<task-id>
-nohup sh -c '<executor command> > "$0/$1.log" 2>&1; echo $? > "$0/$1.exit"' "$J" "$id" >/dev/null 2>&1 &
+J="$LANE/jobs"; id=<task-id>-$(date +%s)
+nohup sh -c 'echo $$ > "$0/$1.pid"; <executor command> > "$0/$1.log" 2>&1; echo $? > "$0/$1.exit"' "$J" "$id" >/dev/null 2>&1 &
 ```
 
+The id is fresh on every launch: a retry that reused the task id would find the
+last attempt's `.exit` and look finished before it started.
+
 The Chief waits on them with one background Bash command that exits when every
-file has landed: `until [ -f "$J/a.exit" ] && [ -f "$J/b.exit" ]; do sleep 15; done`.
+job has either landed its exit file or lost its process — a wrapper killed before
+writing `.exit` would otherwise be waited on forever:
+
+```
+landed() { [ -f "$J/$1.exit" ] || { [ -f "$J/$1.pid" ] && ! kill -0 "$(cat "$J/$1.pid")" 2>/dev/null; }; }
+until landed <id-a> && landed <id-b>; do sleep 15; done
+```
+
+A job with a `.pid` but no `.exit` died unfinished — its log is the only
+evidence, and its worktree may hold half an edit.
 
 ## agy (executor — mechanical/docs, general implementation)
 

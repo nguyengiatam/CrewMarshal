@@ -116,6 +116,9 @@ check "watch: context reported once" '' "$(printf '%s' "$out" | grep -c '^contex
 check "watch: compaction reported" 'compacted' "$out"
 check "watch: end reported" 'ended success turns=7' "$out"
 check "watch: below threshold, no context line" '' "$(python3 "$WATCH" "$run" 999999 | grep '^context')"
-rm -f "$run"
+head -4 "$run" > "$run.cut"; sh -c 'exit 0' & dead=$!; wait $dead
+check "watch: dead pid without result reports gone" 'gone' "$(python3 "$WATCH" "$run.cut" 150000 "$dead")"
+check "watch: dead pid still reports events read" 'context 160010' "$(python3 "$WATCH" "$run.cut" 150000 "$dead")"
+rm -f "$run" "$run.cut"
 
 exit $fail
