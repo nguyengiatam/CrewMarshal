@@ -117,6 +117,11 @@ how to invoke it. Different lifetimes, different files.
 |-------|---------|---------------|-------------------|
 | <agent> | <việc + bằng chứng> | <sự cố + bằng chứng> | <ngày / phase> |
 
+## Tạm dừng
+| Agent | Dừng từ | Lỗi gặp phải | Thử lại từ |
+|-------|---------|--------------|------------|
+| <agent> | <YYYY-MM-DD HH:MM> | <lỗi + bằng chứng, vd: hết quota, reset 23:00> | <YYYY-MM-DD HH:MM> \| Đến khi được yêu cầu |
+
 ## Chưa quyết
 - <vai chưa có ai đảm nhiệm — phải hỏi user khi công việc cần tới>
 ```
@@ -130,6 +135,33 @@ one that failed for a reason you've since fixed.
 Update it when a phase ends, and whenever an agent surprises you in either
 direction. An assignment table nobody maintains sends the next phase's work to
 whoever happened to be listed first.
+
+### Pausing an agent, not dropping it
+
+An agent that hit a problem is paused **until a time**, not crossed off. A failure
+recorded with no way back quietly shrinks the team to whoever has not had a bad
+day yet.
+
+When an agent fails, first decide which kind of failure it is:
+
+- **The agent can't do this kind of work** — wrong output on a class of task,
+  repeated, with evidence → *Đã hỏng ở đâu*, for that kind of work only. It stays
+  available for everything else. Not a pause.
+- **Something outside the work blocks it right now** — quota, rate limit, provider
+  outage, an expired login, a broken CLI version, network → a row in *Tạm dừng*:
+  when it stopped, the error you saw, and when to try again.
+
+Estimate the retry time from what the error tells you: a quota's reset time when
+the roster or the error states it; otherwise your best guess for that kind of
+failure (an outage: an hour or two; a rate limit: minutes). When nothing you can
+see will clear it on its own — a login, a payment, an install only the user can
+do — write `Đến khi được yêu cầu`, and tell the user what it is waiting on.
+
+When assigning, a paused agent whose retry time has passed is available again.
+Its next real task is the retry — no separate probe; run the roster's quota check
+first if there is one. It works → delete the row. It fails the same way → a new
+row with a longer wait. Rows that are cleared get deleted, not archived: the file
+is re-read at every assignment, and history already lives in git.
 
 ## Quota Management
 
@@ -342,7 +374,7 @@ read the plan's assignment table → waves, assignees, what each task holds
   (no plan file, e.g. T1 → one task, one wave; pick the assignee from team.md)
 for each wave:
   for each task in the wave:
-    check quota → confirm the assignee (swap within the approved source; record it)
+    check quota and Tạm dừng → confirm the assignee (swap within the approved source; record it)
     capture BASE commit
     dispatch ONE task in the background (prompt → context file + task + area lessons
       + files the rest of the wave holds)
@@ -373,6 +405,7 @@ then:
 | "I'll just assign it, quota is probably fine" | Check first. Silent quota failure looks exactly like "did nothing". |
 | "Everything else is out of quota — I'll spin up a subagent" | That spends the user's current session instead. If the project has no subagent history, ask which kind and for what role. |
 | "The user won't care which agent does this" | They pay for it, in different budgets. Silent substitution spends their resources for them. |
+| "It failed last time, I'll leave it out" | Check *Tạm dừng*. Past its retry time, it is back on the team — the next task is the retry. |
 | "I remember this agent is bad at that" | Check the team file. If the memory isn't recorded with evidence, it's prejudice — and the reason it failed may already be fixed. |
 | "I'll check on it in a while" | Attach a monitor at dispatch, with a real exit condition and a BASE commit. |
 | "I've got a watcher on it" (but didn't start one) | Say "no monitor — dispatch doesn't meet the async contract." A described-but-unstarted watch costs you the whole idle period. |

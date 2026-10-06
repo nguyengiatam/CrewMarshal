@@ -128,7 +128,9 @@ task naming who does it and why.
 Assignees are picked from the project's team file (`docs/team.md`, see
 `orchestrating-executors`) **by capability** — its *Phân công* table for the role,
 its *Năng lực quan sát được* table for what each agent has proven. Match the task's
-hardest requirement to an agent with evidence for that kind of work.
+hardest requirement to an agent with evidence for that kind of work. An agent in
+*Tạm dừng* is still a candidate: assign it if its retry time falls before the task
+is due, and pick a fallback for that row in case the retry fails.
 
 - **No team file, or the role the task needs is unfilled** → ask the user once,
   batched with the plan's other open questions, and record the answer in the team
