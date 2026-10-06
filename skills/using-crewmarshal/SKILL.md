@@ -108,8 +108,9 @@ hooks look in both.
 
 - Process depth matches the work. Mechanical work gets no spec; critical work
   gets everything. Measuring size without changing what runs is just ceremony.
-- The system profile is confirmed by the user, not inferred and assumed. Scale,
-  users, and what wins a trade-off decide architecture — a machine guess there
+- The system profile is confirmed by the user, not inferred and assumed. Who uses
+  it, where it's heading, what wins a trade-off — and, per kind of work, scale or
+  design source — decide the design — a machine guess there
   propagates into every downstream prompt.
 - Claude does not write business code — it designs, reviews, and verifies.
   (Exception: foundation/concurrency/verification code where precision beats

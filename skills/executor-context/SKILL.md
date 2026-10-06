@@ -33,8 +33,8 @@ each one earned by a real failure mode:
 
 1. **What the project is.** Two or three sentences, plus the stack. Then **the
    handful of facts that govern every decision**, pulled from
-   `concept-briefing`'s `system-profile.md`: the real scale, what wins when
-   priorities collide, what must never be traded away. Executors over-engineer
+   `concept-briefing`'s `system-profile.md`: who uses it and at what scale, what
+   wins when priorities collide, the design source for UI work, what must never be traded away. Executors over-engineer
    small systems and under-scrutinize critical ones precisely because nobody told
    them which they're in.
 2. **Scope boundaries — violating them breaks someone else's work.** A table of

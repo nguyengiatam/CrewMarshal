@@ -1,14 +1,16 @@
 ---
 name: concept-briefing
-description: Use as the first step on any new request, before design begins — locks a user-confirmed system profile (scale today and expected, users, trade-off priorities) and tiers the request to route it to the right amount of process, so mechanical work skips spec/plan entirely and layered work gets a phased roadmap instead of one giant plan.
+description: Use as the first step on any new request, before design begins — locks a user-confirmed project profile (a short core of who uses it, where it's heading and what wins a trade-off, plus only the questions that matter for what is being built: service, frontend, app, tool, library, data) and tiers the request to route it to the right amount of process, so mechanical work skips spec/plan entirely and layered work gets a phased roadmap instead of one giant plan.
 ---
 
 # Concept Briefing
 
 Two things before design starts, in this order:
 
-- **Step 0 — System profile.** What kind of system is this? Scale, users, what
-  wins when priorities collide. Persisted per project, **confirmed by the user**,
+- **Step 0 — System profile.** What is being built, who uses it, where it's
+  heading, what wins when priorities collide — and the few facts that matter for
+  *that kind* of work (scale for a service, the design source for a UI, who runs
+  it for a tool). Persisted per project, **confirmed by the user**,
   reused by every later request. Architecture choices depend on it.
 - **Step 1 — Tier and route.** How big is this request, and therefore **which
   steps of the arc actually run**? A measurement that changes nothing downstream
@@ -18,20 +20,31 @@ Two things before design starts, in this order:
 
 File: `docs/system-profile.md` (no date in the name — it outlives any
 one request). Template: [references/system-profile-template.md](references/system-profile-template.md).
+What to ask per kind of work: [references/profile-lenses.md](references/profile-lenses.md).
+
+**Ask what this kind of work needs, not a fixed form.** The profile is a core every
+project answers, plus one section per *lens* — service, frontend/UI, app, tool,
+library, data — picked for what is being built, several when they combine. A
+scale question put to a CLI tool, or a design-source question put to a worker
+queue, is noise the user has to wade through. The lenses are starting points: drop
+a line whose every answer leads to the same design, add one the work demands.
 
 **Exists and confirmed** → read it. Check for *observed contradictions*, not an
 age threshold: the repo says otherwise (profile says "one instance is enough" but
 a HPA just appeared), or this very request implies otherwise ("handle 10k
 concurrent users" against a profile of 200 internal users). Contradiction → ask
-one line about that line only. No contradiction → use it, ask nothing.
+one line about that line only. The request is a kind of work the profile has no
+lens for (a backend-only profile, and now the first screen) → ask only that
+lens's questions and add its section. Otherwise → use it, ask nothing.
 
 **Exists but unconfirmed** → finish the confirmation round; do not move on.
 
 **Missing** → draft it from the repo: `README`, `CLAUDE.md`, compose/k8s
 manifests, config files, migrations, CI config, package manifest, service count.
 Mark every inferred line `~` — **except lines about the future, which are never
-inferred at all** (see below). Then ask the user **in one batched message**: the
-five mandatory lines below, plus any low-confidence draft lines. Write the file
+inferred at all** (see below). Pick the lenses from the request and the repo.
+Then ask the user **in one batched message**: the core lines below, the bold lines
+of the chosen lenses, and any low-confidence draft lines. Write the file
 as `ĐÃ CHỐT`, commit.
 
 ### The gate
@@ -50,23 +63,24 @@ At T2+, `concept-briefing` does not finish and **design does not start choosing
 approaches** while the profile is `CHƯA CHỐT`. (On Claude Code the design step is
 `superpowers:brainstorming`; elsewhere it's whatever you design with.)
 
-**Five lines the user must answer directly** — never fill these in and call it
-done: real user count today, **expected scale plus the horizon it applies to**,
-scaling need, trade-off priority order, and what must never be traded away.
-Everything else you draft and they confirm in a batch.
+**Core lines the user must answer directly** — never fill these in and call it
+done: who uses it and in what situation, **where it is heading and by when**,
+trade-off priority order, and what must never be traded away. Each chosen lens
+adds its own bold lines (for a service: users today, expected scale and its
+horizon; for a UI: the design source). Everything else you draft and they confirm
+in a batch.
 
-**The repo contains no future.** Every line about what the system will become —
-growth, expected load, planned users — must be answered by the user. It may never
-carry `~`, because a `~` there is not an inference from evidence, it is a guess
+**The repo contains no future.** Every line about what the project will become —
+growth, expected load, planned users, where it's heading — must be answered by
+the user. It may never carry `~`, because a `~` there is not an inference from evidence, it is a guess
 that freezes into "fact" and then propagates into every downstream prompt. That
 is precisely what the `~`/`✓` markers exist to prevent. If the user cannot say
 yet, the line is `CHƯA CHỐT` — an honest gap that stops an architecture decision
 is cheaper than a confident invention that steers one.
 
-Alongside it, the profile records **which horizon the system is being designed
-for** — today's numbers or the expected ones. That choice is currently invisible,
-so each session picks differently and the answers disagree without anyone
-noticing.
+For a service, the profile also records **which horizon the design targets** —
+today's numbers or the expected ones. Left invisible, each session picks
+differently and the answers disagree without anyone noticing.
 
 How the team works — cadence, role limits, how detailed plans are — is not
 profile material. It lives in the working agreement (`project-working-agreement`);
@@ -240,7 +254,9 @@ Fewer than two → ask nothing; the project stays single.
 | Thought | Reality |
 |---------|---------|
 | "Obviously small, I'll start brainstorming" | Say the tier in one line first. An unstated assumption is what drifts. |
-| "I'll infer the user count and scaling need myself" | Those are two of the four lines only the user can answer. Drafting them is fine; calling them settled is not. |
+| "I'll infer who uses it and where it's heading myself" | Those are lines only the user can answer. Drafting them is fine; calling them settled is not. |
+| "I'll ask the full list to be thorough" | Ask what changes a design choice for this kind of work. Scale questions for a script, design questions for a worker — noise the user pays for. |
+| "It's a UI, I'll pick a look" | Ask the design source first. Implementing a finished design and inventing one are different jobs. |
 | "They didn't object, so the profile is confirmed" | Silence is not consent. Unconfirmed means unconfirmed. |
 | "T1, but I'll skip spec/plan without asking" | Skipping steps is the user's call. Ask once, batched. |
 | "Nearly done — I'll finish before raising the tier" | Stop now. That's how a schema change ships without a spec. |
