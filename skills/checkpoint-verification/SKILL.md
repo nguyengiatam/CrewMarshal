@@ -37,6 +37,25 @@ for delegated work: the call-site and the real operational path.
       THEN start service), follow it exactly — init state runs at startup.
 - [ ] Only then accept the checkpoint.
 
+## After Acceptance: Clean Up the Task's Disk
+
+A delegated task leaves copies behind: the worktree it ran in (often with its own
+`node_modules` or build output), the scratch copy of the repo made for seeded
+mutations, the executor's job logs. Nothing else removes them, and across a
+project they fill the disk. Once the task is accepted and its commit is on the
+branch it belongs to, remove what **this task** created:
+
+- its worktree, with `git worktree remove <path>` — not `rm -rf`, so git's record
+  goes too; then `git branch -d` the task branch if one was cut (`-d` refuses an
+  unmerged branch, which is the check you want);
+- the scratch copies made for its review;
+- its job files and logs.
+
+Only what you can name as this task's — paths recorded at dispatch, in the
+pointer or the task's handoff. Never sweep a directory by pattern: another run may
+still be writing there. A task that failed or was rejected keeps its worktree and
+logs until the cause is diagnosed — they are the evidence.
+
 ## Why Green E2E Is Not Enough
 
 - Tests that `insert` straight into the DB skip the write path that a real
@@ -59,4 +78,5 @@ the evidence that exposed it. The same blindness will be there next phase.
 | "Suite is green, accept it" | Green over dead code is still dead code. Check call-sites. |
 | "The unit test covers it" | Unit tests bypass wiring. Drive the real path. |
 | "The field is in the schema, it's saved" | Schema default masks a missing write. Confirm persist + re-hydrate. |
+| "Accepted, on to the next task" | Remove this task's worktree, scratch copies and logs first. |
 | "e2e failed once, must be flaky" | Reproduce with the exact setup order before blaming flake. |

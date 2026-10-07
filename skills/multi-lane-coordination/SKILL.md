@@ -325,6 +325,11 @@ The Chief does not re-review a lane's tasks — the lane accepted each one with
 Lanes that ship on the same milestone are merged one at a time, each verified
 before the next.
 
+A lane whose work is fully merged and that will not open again is cleaned up like
+an accepted task (`checkpoint-verification`): `git worktree remove` each of its
+worktrees, `git branch -d lane/<name>`, delete its `jobs/`. Its charter, inbox,
+outbox and pointer stay — they are the lane's record.
+
 ## The Chief's Own Session
 
 The Chief is interactive, so it does not reset itself — it follows *Suggesting a
