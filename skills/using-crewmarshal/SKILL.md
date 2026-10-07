@@ -81,6 +81,11 @@ Every project document CrewMarshal keeps sits in the project's `docs/`: the poin
 unless the working agreement puts them elsewhere. Multi-lane state goes in
 `.crewmarshal/` beside it.
 
+Before writing a spec, plan, brief or roadmap, read the spec/plan line of the
+working agreement; empty or absent means `docs/specs/` and `docs/plans/`. This
+overrides any default path of the skill doing the writing — superpowers'
+`brainstorming` and `writing-plans` default to `docs/superpowers/`.
+
 Projects set up by earlier versions keep these files in `docs/superpowers/`. Leave
 them there or move them all at once — one location per project, never both. The
 hooks look in both.

@@ -138,7 +138,8 @@ The user always beats the measurement. They can raise a tier; take it.
 - **T0:** no file. State the tier in chat and move on.
 - **T1:** no `concept-brief.md`. Tier and checklist live in the conversation.
   Writing a brief file for T1 work is precisely the ceremony being removed.
-- **T2/T3:** write `docs/plans/YYYY-MM-DD-<topic>-concept-brief.md` —
+- **T2/T3:** write `docs/plans/YYYY-MM-DD-<topic>-concept-brief.md` (or the plan
+  folder the working agreement names) —
   tier, business-criticality, the requester's expectation, which steps will run,
   and the depth implication for each. It references the profile; it never copies
   it. Pick the `<topic>` slug yourself and reuse it for the spec/plan filenames.
@@ -164,7 +165,8 @@ A roadmap is **a route from foundation to finished result**, each phase standing
 on the one before — like building from the ground up, or learning step by step.
 Not a flat list of tasks.
 
-File: `docs/plans/YYYY-MM-DD-<topic>-roadmap.md`. Template and worked
+File: `docs/plans/YYYY-MM-DD-<topic>-roadmap.md` (or the plan folder the working
+agreement names). Template and worked
 example: [references/roadmap-template.md](references/roadmap-template.md).
 
 **A phase is a meaningful layer**, satisfying all three:

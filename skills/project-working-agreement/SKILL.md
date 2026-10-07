@@ -125,6 +125,9 @@ re-verified on real source.
 **Plan detail** lives here, in *Project rules* — `planning-for-delegation` asks it
 the first time a plan is written and records it here, not upfront.
 
+**Where specs and plans go** is not asked: it defaults to `docs/specs/` and
+`docs/plans/`. Change the line only when the user names another place.
+
 ## Changing It
 
 - A request the user makes now applies **within what it covers**. It becomes a

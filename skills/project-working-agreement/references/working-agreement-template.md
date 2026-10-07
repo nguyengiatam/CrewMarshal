@@ -44,7 +44,7 @@ Leave a section out rather than filling it with guesses; mark open lines
 ## Quy ước riêng
 - **Độ chi tiết plan:** <plan trỏ, executor tự viết cài đặt | plan chép đủ code>
 - Ai thực thi phần lớn task: <executor ngoài | subagent | coordinator>
-- Nơi đặt spec/plan: <đường dẫn>
+- Nơi đặt spec/plan: <mặc định `docs/specs/` và `docs/plans/` — chỉ sửa khi user muốn chỗ khác>
 - Ngôn ngữ: <...>
 - Commit/PR: <kiểu message, có footer không, ai push>
 - Báo tiến độ: <...>

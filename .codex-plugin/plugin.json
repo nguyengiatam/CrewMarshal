@@ -1,6 +1,6 @@
 {
   "name": "crewmarshal",
-  "version": "0.28.1",
+  "version": "0.28.2",
   "description": "Coordination discipline for multi-agent delivery: the coordinator sizes each request to just enough process, hands one task at a time to subagents or external coding agents, and verifies every result on the real code. Shared project files carry context across agents and sessions so nothing is retyped. Scales to several services with lane coordinators; works standalone.",
   "author": {
     "name": "Nguyễn Gia Tâm"
