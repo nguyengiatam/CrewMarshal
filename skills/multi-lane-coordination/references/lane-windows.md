@@ -18,6 +18,22 @@ this plugin — probe before relying on it.
 | tmux (any OS) | `TMUX` set | `tmux new-window -n lane-<tên> 'bash <launch.sh>'` — the user switches with the tmux prefix | unverified |
 | Linux · GNOME Terminal | `GNOME_TERMINAL_SCREEN` set | `gnome-terminal --tab --title=lane-<tên> -- bash <launch.sh>` | unverified |
 
+## Closing a lane window at reset
+
+Only after the lane's `reset` entry is in the outbox and `ListAgents` shows it
+idle. End the session first, matching the exact name, then close the window:
+
+| Environment | End the session | Close the window | Status |
+|-------------|-----------------|------------------|--------|
+| macOS · Terminal.app | `kill $(pgrep -f '^claude -n lane-<tên>-r<run>( |$)')` | `osascript -e 'tell application "Terminal" to close window id <N> saving no'` — `<N>` from `lanes/<tên>/window` | **verified** (Claude Code 2.1.292) |
+| macOS · iTerm2 | same `pgrep`/`kill` | Tab closes itself when its command exits | unverified |
+| tmux | — | `tmux kill-window -t lane-<tên>` ends both | unverified |
+| Linux · GNOME Terminal | same `pgrep`/`kill` | Tab closes itself when its command exits (default profile) | unverified |
+| Windows | `Get-CimInstance Win32_Process -Filter "Name='claude.exe'" \| Where-Object CommandLine -match 'lane-<tên>-r<run>' \| ForEach-Object { Stop-Process -Id $_.ProcessId }` | `-NoExit` keeps the tab open: tell the user which one to close | unverified |
+
+Check the match before killing: one process, its command line naming that lane and
+run. Several matches or none means stop and look, not kill them all.
+
 Windows launch file (`launch.ps1`):
 
 ```powershell

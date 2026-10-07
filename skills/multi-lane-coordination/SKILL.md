@@ -100,7 +100,8 @@ Chief's session runs.
 │   ├── outbox.md     ← lane writes: numbered entries — ready @sha, questions, escalations, lesson proposals, reset
 │   ├── jobs/         ← lane's detached executor jobs: <id>.pid, <id>.log, <id>.exit
 │   ├── runs/         ← one output file per lane run, written by the Chief's launch (headless)
-│   └── launch.sh     ← interactive only: env vars + claude command the window runs (launch.ps1 on Windows), prompt in prompt.txt
+│   ├── launch.sh     ← interactive only: env vars + claude command the window runs (launch.ps1 on Windows), prompt in prompt.txt
+│   └── window        ← interactive only: Chief writes what the launch returned (window id, tmux window…) so it can close it
 └── worktrees/<name>/<repo>/
 ```
 
@@ -209,7 +210,8 @@ worktree, export `CREWMARSHAL_PROJECT_ROOT` and `CREWMARSHAL_LANE`, then
 `claude -n lane-<name>-r<run> <permission flag>` with the lane-run prompt read
 from `prompt.txt` beside it. The window runs that file — quoting a whole prompt
 through AppleScript or `wt.exe` is where launches break. The run number in the name keeps a new run distinct from an old
-window still open. The permission mode must match the Chief's: a session in another
+window still open. The Chief writes whatever the launch returned that identifies
+the window (macOS: `window id N`) to `lanes/<name>/window`. The permission mode must match the Chief's: a session in another
 mode holds peer messages for its user's approval, and they expire unseen.
 
 ### What changes in a run
@@ -234,8 +236,14 @@ differ:
   window does not kill them. The lane may wait on them with a monitor instead of
   ending its run.
 - **Reset:** at a clean point the lane writes its pointer and `reset`, messages the
-  Chief, and tells the user in its window that it can be closed. The Chief opens the
-  next run in a new window — never `/clear` or `--resume` in the old one.
+  Chief, and stops. The Chief closes the old window, then opens the next run in a
+  new one — never `/clear` or `--resume` in the old one. To close, only after the
+  `reset` entry is in the outbox and `ListAgents` shows the lane idle: find the
+  process whose command is exactly `claude -n lane-<name>-r<run>`, end it, then
+  close the window recorded in `lanes/<name>/window` (commands per environment in
+  `lane-windows.md`). Ending the process first keeps the terminal from asking
+  whether to kill it. Where the environment has no way to close a window, the
+  Chief ends the process and tells the user which window to close.
 
 ### The Chief's side
 
