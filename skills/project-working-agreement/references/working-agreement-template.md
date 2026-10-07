@@ -20,6 +20,8 @@ Leave a section out rather than filling it with guesses; mark open lines
 - **Tối đa cùng lúc:** <số executor, hoặc bỏ dòng này>
 - **Chế độ điều phối:** <một coordinator | nhiều lane — chỉ ghi khi đã hỏi; bỏ dòng = một coordinator>
 - **Giới hạn một lane run:** <~N task nghiệm thu, hoặc context quá ~K token (gợi ý ~300k), thì tìm điểm dừng sạch · trần cứng M lượt — chỉ khi nhiều lane>
+- **Cách chạy lane:** <headless | tương tác — mỗi lane một cửa sổ, user xem và trả lời câu hỏi trong charter tại đó — chỉ khi nhiều lane>
+- **Mở cửa sổ lane:** <OS · terminal · lệnh mở (cửa sổ/tab) · cờ permission · nhắn tin giữa phiên: đã thử được | không — chỉ khi tương tác, ghi sau khi probe>
 
 ## Coordinator
 - <thiết kế, phân rã, giao việc, xử lý phụ thuộc, nghiệm thu, giữ pointer>

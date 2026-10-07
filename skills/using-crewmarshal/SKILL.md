@@ -52,8 +52,9 @@ crystallized into the `executor-context` file rather than pasted into prompts.
 
 Projects with several services can run **multi-lane** once the working agreement
 says so: the Chief runs this arc up to frozen contracts and a charter per lane,
-then each lane coordinator runs the plan-to-commit part of the arc headless inside
-its lane, always from a fresh session and its lane pointer; the Chief integrates.
+then each lane coordinator runs the plan-to-commit part of the arc inside its lane —
+headless, or in its own window the user can watch — always from a fresh session and
+its lane pointer; the Chief integrates.
 Small projects never see it — see `multi-lane-coordination`.
 
 Large layered work inserts one step: `concept-briefing` produces a **roadmap** of

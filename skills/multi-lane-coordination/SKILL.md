@@ -1,6 +1,6 @@
 ---
 name: multi-lane-coordination
-description: Use when the working agreement sets coordination mode to multi-lane, or when design finds two or more services or large independent areas that could each carry their own coordinator — in one repo or a workspace of several — covers the lane test, what the Chief owns versus each lane, the project root and shared state directory, opening a lane, headless lane runs that always start fresh from the lane pointer, when a lane run should stop for a clean reset, and how the Chief integrates.
+description: Use when the working agreement sets coordination mode to multi-lane, or when design finds two or more services or large independent areas that could each carry their own coordinator — in one repo or a workspace of several — covers the lane test, what the Chief owns versus each lane, the project root and shared state directory, opening a lane, headless lane runs that always start fresh from the lane pointer, the interactive alternative where each lane runs in its own terminal window the user can watch and answer in, when a lane run should stop for a clean reset, and how the Chief integrates.
 ---
 
 # Multi-Lane Coordination
@@ -19,13 +19,14 @@ and nothing here applies — small projects keep the arc exactly as it is.
 | Role | Does | Never does |
 |------|------|------------|
 | **Chief** (the user's session) | Design, system profile, working agreement, team file, cross-service spec and contracts, splitting lanes, launching lane runs, answering lane questions (asking the user when needed), integration | Re-review a lane's individual tasks; edit a lane's files |
-| **Lane coordinator** (headless, one per lane) | Plans, dispatches and accepts the tasks of one lane, inside its charter, with the normal arc (`planning-for-delegation`, `orchestrating-executors`, `checkpoint-verification`) | Talk to the user; edit outside its owned paths; edit commons |
+| **Lane coordinator** (one per lane, headless or interactive) | Plans, dispatches and accepts the tasks of one lane, inside its charter, with the normal arc (`planning-for-delegation`, `orchestrating-executors`, `checkpoint-verification`) | Talk to the user (headless) or settle anything beyond its charter with them (interactive); edit outside its owned paths; edit commons |
 | **Executor** | One task, as today | — |
 
 **The user talks to the Chief only.** A lane that needs a decision stops its run
 and asks the Chief in writing; the Chief batches questions to the user and writes
 the answers back. It costs more tokens than letting lanes ask directly — the price
-of the user dealing with one agent.
+of the user dealing with one agent. *Interactive Lanes* below relax this, inside
+the charter only.
 
 ## The Lane Test
 
@@ -98,7 +99,8 @@ Chief's session runs.
 │   ├── inbox.md      ← Chief writes: numbered entries — assignments, answers, contract changes, "tìm điểm dừng"
 │   ├── outbox.md     ← lane writes: numbered entries — ready @sha, questions, escalations, lesson proposals, reset
 │   ├── jobs/         ← lane's detached executor jobs: <id>.pid, <id>.log, <id>.exit
-│   └── runs/         ← one output file per lane run, written by the Chief's launch
+│   ├── runs/         ← one output file per lane run, written by the Chief's launch (headless)
+│   └── launch.sh     ← interactive only: env vars + claude command the window runs (launch.ps1 on Windows), prompt in prompt.txt
 └── worktrees/<name>/<repo>/
 ```
 
@@ -170,6 +172,78 @@ prevent: the answer lands in code before the user ever sees the question.
 Before exiting, the run checks its pointer against one test: **could an empty
 session, given only the charter, this pointer and the inbox, start *Việc kế tiếp*
 immediately?** If not, the pointer is not done.
+
+## Interactive Lanes
+
+The working agreement picks how lane runs execute: **headless** (the default,
+everything above) or **interactive** — each lane run is a normal Claude Code
+session in its own terminal window or tab. The user can watch every lane and answer
+a lane's question in place instead of through the Chief.
+
+### Before the first interactive lane: settle the environment
+
+How a window is opened depends on the user's machine, so the Chief settles it once
+and records it in the working agreement before opening any lane this way:
+
+1. **Look first, ask only what it cannot see.** OS, terminal app (`$TERM_PROGRAM`,
+   `$WT_SESSION`, `$TMUX`…), whether `claude` is on the path. Ask the user what it
+   cannot detect or what is a preference: window or tab, which terminal app, and
+   any permission the method needs (macOS asks once for Automation to drive
+   Terminal; faking ⌘T for a tab also needs Accessibility).
+2. **Prove it with one probe window** before writing anything: open a window with
+   the chosen method running `claude -n lane-probe` in the same permission mode as
+   the Chief, check `ListAgents` shows it, send it a message asking for a reply,
+   receive the reply. Then the user closes it.
+3. **Record the result** in the agreement — the method, the exact launch command,
+   and whether cross-session messaging works there. Methods and known traps per
+   environment: [references/lane-windows.md](references/lane-windows.md).
+
+If messaging fails in the probe, interactive lanes still work, but every signal
+travels through the outbox and the user: the lane tells the user in its window, the
+user tells the Chief. Record that in the agreement, not as a surprise later.
+
+### Launching
+
+The Chief writes `lanes/<name>/launch.sh` (or `.ps1`): `cd` to the lane's first
+worktree, export `CREWMARSHAL_PROJECT_ROOT` and `CREWMARSHAL_LANE`, then
+`claude -n lane-<name>-r<run> <permission flag>` with the lane-run prompt read
+from `prompt.txt` beside it. The window runs that file — quoting a whole prompt
+through AppleScript or `wt.exe` is where launches break. The run number in the name keeps a new run distinct from an old
+window still open. The permission mode must match the Chief's: a session in another
+mode holds peer messages for its user's approval, and they expire unseen.
+
+### What changes in a run
+
+Start, the normal arc inside the charter, and the ending table stay as above. These
+differ:
+
+- **Questions inside the charter** — how to build something within the lane's own
+  paths — the lane asks the user in its window and waits; no new run. Anything
+  touching a contract, commons, another lane or the shared documents still goes to
+  the outbox and the Chief.
+- **Every decision the user makes in a lane window becomes an outbox entry**
+  (`quyết định`): what was decided, user-confirmed. The Chief records the ones that
+  outlive the lane where they belong. A decision held only in one window is the
+  failure this mode risks most — lane B never learns what lane A's user said.
+- **Signals are a doorbell, files are the record.** Write the outbox entry first,
+  then send the Chief one line naming its number (`SendMessage` to the Chief's
+  session name, from the charter). The Chief does the same the other way: inbox
+  first, then a message to `lane-<name>-r<run>`. A message never replaces the entry,
+  and silence never means received.
+- **Executors** still launch detached under a fresh id, so the user closing the
+  window does not kill them. The lane may wait on them with a monitor instead of
+  ending its run.
+- **Reset:** at a clean point the lane writes its pointer and `reset`, messages the
+  Chief, and tells the user in its window that it can be closed. The Chief opens the
+  next run in a new window — never `/clear` or `--resume` in the old one.
+
+### The Chief's side
+
+There is no process exit to watch. The Chief acts on the lane's messages and the
+outbox; when a lane has gone quiet past what its task should take, one
+`SendMessage` with `notify_when_idle` replaces any polling. When a lane is waiting
+on the user, the Chief tells the user in one line which window and what about — it
+does not answer for them, and it does not copy the question into its own chat.
 
 ## When to Reset
 
@@ -263,3 +337,6 @@ user. Its pointer stays short by holding the lane board, not the lanes' detail.
 | "Session is long, reset now" while three hypotheses are open | Converge first, or write them down. A reset loses whatever the pointer doesn't hold. |
 | "Two areas are small but let's make them lanes anyway" | A lane is a coordinator's worth of work. Otherwise stay single. |
 | "I'll tell the lane about the contract change when it asks" | Write the inbox line when you commit the change. |
+| "Interactive lane, the user already answered in that window — no need to write it down" | Every decision in a lane window becomes an outbox entry. Otherwise only that window knows. |
+| "I sent the lane a message, so it knows" | Inbox first, message second. Messages expire, get held, or arrive at a run that is gone. |
+| "Open the lane windows the way it worked on my machine" | The method is per environment: probe once, record it in the agreement. |

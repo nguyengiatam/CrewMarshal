@@ -10,6 +10,7 @@ project's working language. Each file has one writer.
 
 **Cập nhật:** YYYY-MM-DD
 **Project root:** <đường dẫn tuyệt đối> · **Nhánh:** lane/<tên>
+**Cách chạy:** <headless | tương tác — phiên Chief: <tên trong ListAgents>; Chief cập nhật dòng này khi mở phiên mới>
 **Repo và worktree:**
 - <repo> @<sha main lúc mở> → <project-root>/.crewmarshal/worktrees/<tên>/<repo>
 
@@ -55,10 +56,11 @@ The `pointer-handoff` format, plus one line at the top:
 ## outbox.md — lane writes, append only
 
 ```markdown
-## #<n> · YYYY-MM-DD · <sẵn sàng tích hợp | câu hỏi | escalation | đề xuất bài học | chờ job | reset>
+## #<n> · YYYY-MM-DD · <sẵn sàng tích hợp | câu hỏi | escalation | quyết định | đề xuất bài học | chờ job | reset>
 <sẵn sàng: <repo>@sha cho từng repo, test x/y
  câu hỏi: câu hỏi, các phương án, đề xuất của lane
  escalation: cần gì, bằng chứng
+ quyết định (lane tương tác): user chốt gì trong cửa sổ lane, ảnh hưởng tới đâu
  đề xuất bài học: theo mẫu lessons-ledger
  chờ job: danh sách id
  reset: lý do>
@@ -72,3 +74,25 @@ Làm theo skill multi-lane-coordination, mục "A Lane Run".
 Charter: $CREWMARSHAL_PROJECT_ROOT/.crewmarshal/lanes/$CREWMARSHAL_LANE/charter.md
 Gặp quyết định vượt charter: ghi outbox, dừng — không đoán.
 ```
+
+Interactive lanes — the prompt inside `launch.sh`:
+
+```
+Bạn là coordinator của lane <tên>, chạy trong cửa sổ riêng, user có thể xem và trả lời.
+Làm theo skill multi-lane-coordination, mục "A Lane Run" và "Interactive Lanes".
+Charter: $CREWMARSHAL_PROJECT_ROOT/.crewmarshal/lanes/$CREWMARSHAL_LANE/charter.md
+Câu hỏi trong charter: hỏi user ở đây, rồi ghi outbox "quyết định".
+Vượt charter: ghi outbox, nhắn Chief số mục, chờ — không đoán.
+```
+
+`launch.sh`:
+
+```bash
+#!/bin/bash
+cd "<worktree đầu tiên của lane>"
+export CREWMARSHAL_PROJECT_ROOT="<project root>"
+export CREWMARSHAL_LANE="<tên>"
+exec claude -n "lane-<tên>-r<run>" <cờ permission giống Chief> "$(cat "$CREWMARSHAL_PROJECT_ROOT/.crewmarshal/lanes/<tên>/prompt.txt")"
+```
+
+The prompt sits in `prompt.txt` beside it, so no layer of quoting touches it.

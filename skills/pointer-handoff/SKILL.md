@@ -138,6 +138,7 @@ one pointer **per coordinator**, each with one writer:
   |------|-------------|------------|----------------|--------------------|
   | billing | lane/billing @a1b2c3d | chờ job 2 executor | in #7 · out #9 | — |
   | search | lane/search @e4f5a6b | câu hỏi #4 chờ user | in #3 · out #4 | hỏi user về index |
+  | web | lane/web @c7d8e9f | tương tác, cửa sổ lane-web-r2, chờ user | in #2 · out #5 | — |
   ```
 
 - **Each lane's pointer** lives in the shared state directory, not in any branch

@@ -90,7 +90,8 @@ default** — a small project never sees it and runs as it always has:
    `using-crewmarshal` draws it. No lanes, no extra files.
 2. **Multi-lane** — a Chief keeps design, contracts, integration and the only
    conversation with the user; lane coordinators, each owning one service or one
-   large independent area, run headless under it. See `multi-lane-coordination`.
+   large independent area, run under it — headless by default, or each in its own
+   terminal window the user can watch and answer in. See `multi-lane-coordination`.
 
 Ask it when design or planning finds **at least two areas that qualify as lanes**
 (the lane test in `multi-lane-coordination`) — `concept-briefing` when it profiles
@@ -98,6 +99,10 @@ the system, or `planning-for-delegation` when it draws the waves. Offer both, ne
 pick for the user. If they choose multi-lane, also settle the lane-run limits:
 roughly how many accepted tasks one lane run may take, and how large its context
 may grow, before it looks for a clean stop; and the hard turn ceiling as a safety net.
+Then ask how lane runs execute: **headless** (default) or **interactive**. Interactive
+needs the environment settled before the first lane opens — detect what you can,
+ask the rest, probe one window, record method and messaging result
+(`multi-lane-coordination`, *Interactive Lanes*).
 
 ## The Groups
 
@@ -105,7 +110,7 @@ may grow, before it looks for a clean stop; and the hard turn ceiling as a safet
 |-------|----------------|
 | Cadence | Stop after each task, or continue within scope; what "a task" is |
 | Execution mode | Prefer parallel or sequential executors; widest wave, if the user sets one |
-| Coordination mode | Single or multi-lane — only once two areas qualify as lanes; lane-run limits if multi-lane |
+| Coordination mode | Single or multi-lane — only once two areas qualify as lanes; lane-run limits, headless or interactive, and for interactive the window method on this machine |
 | Coordinator | Design, breakdown, dispatch, dependency calls, acceptance, keeping state |
 | Executor | What it may decide alone, what it must verify, what its report contains |
 | Reviewer | Scope, evidence a finding needs, fix directions, what happens on disagreement |
