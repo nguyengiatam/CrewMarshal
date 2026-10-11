@@ -113,9 +113,9 @@ how to invoke it. Different lifetimes, different files.
 | Phản biện | <agent> | <model> | khác agent đã viết mã |
 
 ## Năng lực quan sát được
-| Agent | Làm tốt | Đã hỏng ở đâu | Lần dùng gần nhất |
-|-------|---------|---------------|-------------------|
-| <agent> | <việc + bằng chứng> | <sự cố + bằng chứng> | <ngày / phase> |
+| Agent | Làm tốt | Đã hỏng ở đâu | Cỡ trần | Lần dùng gần nhất |
+|-------|---------|---------------|---------|-------------------|
+| <agent> | <việc + bằng chứng> | <sự cố + bằng chứng> | <S/M/L + bằng chứng> | <ngày / phase> |
 
 ## Tạm dừng
 | Agent | Dừng từ | Lỗi gặp phải | Thử lại từ |
@@ -132,6 +132,32 @@ DB script" are both assignments-relevant. Judgments without evidence decay into
 prejudice, and you will either over-trust an agent that got lucky once or refuse
 one that failed for a reason you've since fixed.
 
+### Two axes: how hard, and how long
+
+What an agent can do has two independent axes. *Làm tốt* records **how hard** — the
+kinds of work it gets right. *Cỡ trần* records **how long** — the largest task it
+has finished in one run without stopping. An agent can be sharp on short hard
+tasks and still run out halfway through a long one; another lasts all day on
+mechanical work. Matching only on difficulty hands the long task to the sharp
+agent, which stops at step 3 of 5.
+
+Task size is measured from the plan, not felt:
+
+| Cỡ | Dấu hiệu |
+|----|----------|
+| S | 1–2 file, một bước, một lần chạy test |
+| M | vài file, một mối quan tâm, 2–3 bước |
+| L | nhiều file hoặc nhiều tầng, 4–6 bước |
+| XL | lớn hơn L — gần như luôn phải chia |
+
+- **Cỡ trần is the largest size finished in one run**, with evidence ("T7, 6 file,
+  4 bước, xong một mạch"). An agent with no evidence yet starts at **M**; the
+  ceiling rises only when it finishes a larger task, and drops when it stops
+  mid-task (next section).
+- Hard limits of the tool itself — a timeout, a prompt-length cap, a web chat's
+  context — live in the roster. The team file holds what was observed in this
+  project.
+
 Update it when a phase ends, and whenever an agent surprises you in either
 direction. An assignment table nobody maintains sends the next phase's work to
 whoever happened to be listed first.
@@ -147,6 +173,12 @@ When an agent fails, first decide which kind of failure it is:
 - **The agent can't do this kind of work** — wrong output on a class of task,
   repeated, with evidence → *Đã hỏng ở đâu*, for that kind of work only. It stays
   available for everything else. Not a pause.
+- **The task was longer than the agent lasts** — it did the early steps right and
+  stopped partway (went silent, ran out of context, ended with the rest undone),
+  and quota was checked and is not the cause → lower its *Cỡ trần* to the size it
+  actually finished, with the evidence. Not a pause, and not a mark against the
+  kind of work. The remainder goes out as a continuation task (see *Continuation
+  task* under Dispatching One Task).
 - **Something outside the work blocks it right now** — quota, rate limit, provider
   outage, an expired login, a broken CLI version, network → a row in *Tạm dừng*:
   when it stopped, the error you saw, and when to try again.
@@ -215,6 +247,22 @@ another repo), stop and reconcile before continuing — do not paper over it.
   usually a hole in your handoff, not a defect in the executor.
 - Safety rules for this dispatch: branch, port/DB isolation if parallel, which
   files another executor is currently holding.
+
+### Continuation task
+
+When a task stopped partway, or a task too long for its agent was split into a
+chain (`planning-for-delegation`), each next piece is a **continuation**: same
+worktree, same branch, run strictly after the previous piece is accepted — never
+alongside it.
+
+- Start from the **last accepted commit**. Uncommitted leftovers of a stopped run
+  are inspected, then either committed by you as a piece of their own or discarded
+  — the next run never starts on a dirty tree it did not make.
+- The prompt names what is already done by commit SHA and what remains, as steps
+  from the plan. The executor reads the earlier commits; you do not retell them.
+- Each piece ends where build and tests pass and gets its own checkpoint. A piece
+  that cannot end in a passing state was cut in the wrong place — recut it.
+- Never restart a stopped task from scratch when its finished steps passed review.
 
 ## Dispatching Asynchronously
 

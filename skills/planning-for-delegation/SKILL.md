@@ -128,7 +128,8 @@ task naming who does it and why.
 Assignees are picked from the project's team file (`docs/team.md`, see
 `orchestrating-executors`) **by capability** — its *Phân công* table for the role,
 its *Năng lực quan sát được* table for what each agent has proven. Match the task's
-hardest requirement to an agent with evidence for that kind of work. An agent in
+hardest requirement to an agent with evidence for that kind of work, **and its size
+to the agent's *Cỡ trần*** (next section). An agent in
 *Tạm dừng* is still a candidate: assign it if its retry time falls before the task
 is due, and pick a fallback for that row in case the retry fails.
 
@@ -137,6 +138,27 @@ is due, and pick a fallback for that row in case the retry fails.
   file. Do not fill the table from memory or from whoever is listed first.
 - The coordinator is a valid assignee (**C**): foundation, concurrency,
   verification code, and anything where precision beats delegation.
+
+### Size every task against its assignee
+
+Give every task a size — S, M, L or XL, by the scale in `orchestrating-executors`
+(files touched, concerns, steps) — and compare it to the assignee's *Cỡ trần* in
+the team file. Difficulty and length are separate: the agent that can do the hard
+part is not always one that lasts to the end of it.
+
+A task larger than its assignee's ceiling has two fixes:
+
+- **Hand it to an agent that has both** — evidence for the kind of work and a
+  ceiling at least the task's size.
+- **Keep the agent, split the task into a chain** — pieces at or under its
+  ceiling, on **one worktree and one branch**, each in its own wave after the one
+  before. Cut where the build and tests pass: each piece is a checkpoint with its
+  own commit and "done when", and the next piece starts from it
+  (`orchestrating-executors`, *Continuation task*). Pieces of one chain never share
+  a wave — they hold the same files.
+
+Don't split a task the assignee has already proven it can finish: every extra
+piece costs a handoff and an acceptance. XL is split whoever takes it.
 
 ### Read the execution mode first
 
@@ -229,14 +251,15 @@ integration — two small tasks usually go faster one after the other.
 ## Phân công
 Nguồn: docs/team.md (<ngày đọc>)
 
-| Task | Lượt | Người làm | Vì sao | Giữ | Chờ |
-|------|------|-----------|--------|-----|-----|
-| T1 contract list | 1 | C | nền móng, sai là lan cả lượt 2 | contracts/list.ts, fakes/list.ts | — |
-| G1 review contract | 1 | <agent phản biện> | chặn trước khi tỏa | — | T1 |
-| T2 API list | 2 | <agent> | <bằng chứng trong team.md> | api/list.ts | G1 (hình dạng) |
-| T3 UI list, chạy trên fake | 2 | <agent khác> | <bằng chứng> | web/list/* | G1 (hình dạng) |
-| T4 ghép thật + contract test | 3 | C | tích hợp | web/list/wire.ts | T2, T3 (hành vi) |
-| G2 review lượt 2–3 | 4 | <agent không viết T2–T4> | phản biện | — | T4 |
+| Task | Cỡ | Lượt | Người làm | Vì sao | Giữ | Chờ |
+|------|----|------|-----------|--------|-----|-----|
+| T1 contract list | M | 1 | C | nền móng, sai là lan cả lượt 2 | contracts/list.ts, fakes/list.ts | — |
+| G1 review contract | S | 1 | <agent phản biện> | chặn trước khi tỏa | — | T1 |
+| T2a API list: query + DTO | M | 2 | <agent, trần M> | <bằng chứng>; T2 cỡ L nên chia chuỗi | api/list.ts | G1 (hình dạng) |
+| T3 UI list, chạy trên fake | L | 2 | <agent khác, trần L> | <bằng chứng> | web/list/* | G1 (hình dạng) |
+| T2b API list: phân trang + lỗi | M | 3 | <cùng agent T2a> | nối tiếp T2a, cùng worktree | api/list.ts | T2a |
+| T4 ghép thật + contract test | M | 4 | C | tích hợp | web/list/wire.ts | T2b, T3 (hành vi) |
+| G2 review lượt 2–4 | M | 5 | <agent không viết T2–T4> | phản biện | — | T4 |
 ```
 
 - **Every task has one assignee.** An unassigned task defaults to whoever reads the
@@ -259,6 +282,7 @@ approved (a subagent where the team file records none, say) goes back to the use
 With the nine checks: the plan header states the execution mode · in parallel mode,
 every one-task wave says why ·
 every task assigned · every assignee exists in the team file ·
+no task is larger than its assignee's *Cỡ trần*, and no XL task is left whole ·
 no two tasks in a wave hold the same file, artifact, contract, or resource ·
 every edge that waits only on a shape has been split into a contract task ·
 no reviewer reviews its own code · the widest wave fits the team, quota, and review
