@@ -265,6 +265,27 @@ the conversation.
   is checked (command, expected output) · what not to touch and when to stop and
   ask.
 
+### Say what to achieve, not how to work
+
+Newer models follow the procedure in a prompt to the letter. A rule about *how*
+to work stops being advice and becomes the run: told to read a spec "in pieces
+of at most 80 lines", with a list of files to "read first", ChatGPT agent runs
+read in slices round after round until the run's budget ran out, and ended with
+a summary of what they had read and no edit. The same model, given the same kind
+of change as a plain request, read the files whole, edited, tested and committed.
+
+- **The task comes first.** Open with what to change and what shows it done.
+  Context follows, as paths to open when needed. A long "read this first"
+  section turns reading into the job.
+- **Constrain the result and the boundaries, not the method.** Files in scope,
+  commands off-limits, when to stop: yes. How many lines to read at once, in
+  what pieces, in what order to open files: no. The executor knows its own
+  tools better than a rule written for another one.
+- **A tool limit stays with the action it limits.** "Output over the round cap
+  costs an extra round" is about command output: the rule is "send long command
+  output to a file and read its tail", never "read files in pieces". Before a
+  limit goes into the context file or a prompt, name the one action it governs.
+
 ### Continuation task
 
 When a task stopped partway, or a task too long for its agent was split into a
@@ -486,4 +507,5 @@ then:
 | "The executor is wrong, override it" | When an executor stops to question the plan, it's often right. Verify against source before dismissing. |
 | "It hit the same trap as last phase" | The lesson never reached it. Promote it into the executor context file — you are the constant in that pattern. |
 | "The prompt is clear enough, I know what I mean" | You do; the executor has only the prompt. Every "as before" or "that one" is a hole. |
+| "I'll tell it exactly how to read, to save rounds" | A method rule gets followed to the letter. State the result and the limits; leave the reading to the executor. |
 | "I'll restate the conventions in this prompt" | Point at the context file and fix the file. Retyped conventions drift and get omitted under pressure. |
