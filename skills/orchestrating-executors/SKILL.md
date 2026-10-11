@@ -248,6 +248,26 @@ another repo), stop and reconcile before continuing — do not paper over it.
 - Safety rules for this dispatch: branch, port/DB isolation if parallel, which
   files another executor is currently holding.
 
+### The prompt must stand on its own
+
+The executor sees the prompt and the files it names — nothing of your session.
+A prompt that reads clear to you can still be empty to it, and the risk grows
+with the session: the longer it runs, the more of what you "know" lives only in
+the conversation.
+
+- **Write it from files, not from memory.** Before writing, re-read the task in
+  the plan, the pointer and the recent `git log`. Nothing in the prompt may lean
+  on the conversation: no "the bug from earlier", "the second approach", "as
+  agreed", no nickname coined mid-session, no pronoun without its noun. Name the
+  thing and give its path. When the task comes from the plan, resolve its
+  references too — "like Task 3", "per spec §X" become the content or an exact
+  path and location.
+- **Cold-read it before sending.** Read it as someone holding only this prompt
+  and the files it names, and answer: what to do and what result shows it done ·
+  where (files, directories) · how acceptance is checked (command, expected
+  output) · what not to touch and when to stop and ask. Any answer you cannot
+  find in the prompt or those files — the prompt is not ready.
+
 ### Continuation task
 
 When a task stopped partway, or a task too long for its agent was split into a
@@ -468,4 +488,5 @@ then:
 | "This tiny mechanical change — delegate it" | If it's fully specified, you're faster than the round-trip. |
 | "The executor is wrong, override it" | When an executor stops to question the plan, it's often right. Verify against source before dismissing. |
 | "It hit the same trap as last phase" | The lesson never reached it. Promote it into the executor context file — you are the constant in that pattern. |
+| "The prompt is clear enough, I know what I mean" | You do; the executor has only the prompt. Cold-read it — every "as before" or "that one" is a hole. |
 | "I'll restate the conventions in this prompt" | Point at the context file and fix the file. Retyped conventions drift and get omitted under pressure. |
