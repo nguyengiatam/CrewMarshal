@@ -1,6 +1,6 @@
 # Quy ước làm việc: CrewMarshal
 
-**Cập nhật:** 2026-09-23
+**Cập nhật:** 2026-10-15
 **Ký hiệu:** `✓` = user đã chốt · `~` = đề xuất/suy luận, chưa chốt · `CHƯA CHỐT` = còn mở
 
 ## Nhịp làm việc
@@ -24,3 +24,5 @@
 - Commit: ~ một dòng tiếng Việt không dấu, dạng `<vùng>: <mô tả>`, kèm footer
   `Co-Authored-By`; bump version ở ba file manifest khi skill đổi.
 - Push: ✓ commit xong mỗi phần thì push luôn — user chốt 2026-09-23.
+- Cache TTL của coordinator: ✓ **1 giờ** (gói sub Claude Code) — user chốt
+  2026-10-15.

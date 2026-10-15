@@ -353,6 +353,30 @@ writing. Confirm the old one is gone, or give the new one its own worktree.
   in parallel beyond what was agreed, and a stop-after-each-task rhythm still
   stops after acceptance.
 
+### While waiting: the cache must not expire on a large context
+
+Your prompt cache lives for one TTL after your last request. A run that outlasts
+it means the notification lands on a cold cache, and the whole context is written
+again — about 1.25× its input price on a 5-minute TTL, 2× on a 1-hour TTL. A turn
+inside the TTL reads it back at about 0.1× and restarts the clock.
+
+What the wait must satisfy: **when a run may outlast the TTL, the result arrives
+either on a warm cache or on a context small enough that reloading it is cheap.**
+Two ways meet it:
+
+- **Keep it warm.** The monitor also exits a few minutes before the TTL runs out;
+  that turn is one short line ("still waiting") and a re-armed monitor — no file
+  reads, no log checks, nothing that grows the context. This is not polling: the
+  wake is for the cache, not to ask whether the run is done. It pays while the
+  number of warm-up turns stays under the cost of one rewrite — roughly under 20
+  on a 1-hour TTL, under 12 on 5 minutes.
+- **Make the reload cheap.** Before a long wait, write the state to the pointer
+  and let the session reset or compact; the result is accepted from a fresh
+  session that loads the pointer, not months of conversation.
+
+The TTL is a fact of the user's setup (plan, API key, harness), not a guess: read
+it from the working agreement; if it is not there, ask once and record it.
+
 ### When a notification arrives
 
 - **Match it to the task and run.** Drop duplicates and events from an older run;
@@ -464,8 +488,9 @@ for each wave:
     capture BASE commit
     dispatch ONE task in the background (prompt → context file + task + area lessons
       + files the rest of the wave holds)
-    attach monitor immediately (exit: new commit / process gone / silence) → record run in pointer
+    attach monitor immediately (exit: new commit / process gone / silence / cache TTL near) → record run in pointer
   do independent work, or end the turn and wait for notifications — never poll
+  TTL wake → one short line, re-arm the monitor (or reset to the pointer before a long wait)
   per notification → match task + run → awaiting acceptance
     checkpoint-verification   (call-site + real runtime path; recompute expected numbers yourself)
     convention-commit-gate    (enums, no magic literals, commit style)
@@ -497,6 +522,7 @@ then:
 | "I've got a watcher on it" (but didn't start one) | Say "no monitor — dispatch doesn't meet the async contract." A described-but-unstarted watch costs you the whole idle period. |
 | "Let me peek at the log, see if it's done" | The monitor will tell you. Check by hand only on a wrong-looking signal, a suspected dead monitor, or a user request. |
 | "Nothing else to do, I'll check every minute" | End the turn and wait for the notification. |
+| "It'll take hours, the cache will just reload when it's back" | That reload costs 1.25–2× the whole context. Have the monitor wake you before the TTL, or reset to the pointer before the wait. |
 | "Task accepted, report to the user and stop" | Free agent + ready task + cadence continue → dispatch it in this turn. Stop only with a stated reason. |
 | "I'll accept that result next turn" | Unverified work holds up the next dispatch. Verify it now. |
 | "Exit 0 and a new commit — mark it done" | That's progress. It's awaiting acceptance until `checkpoint-verification` passes. |

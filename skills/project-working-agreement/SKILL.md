@@ -115,7 +115,7 @@ ask the rest, probe one window, record method and messaging result
 | Executor | What it may decide alone, what it must verify, what its report contains |
 | Reviewer | Scope, evidence a finding needs, fix directions, what happens on disagreement |
 | Authority | What anyone decides alone, what needs the user, what to do when blocked |
-| Project rules | Plan detail, language, commit/PR, environment, progress reporting, anything else |
+| Project rules | Plan detail, language, commit/PR, environment (including the coordinator's prompt-cache TTL), progress reporting, anything else |
 
 These are the questions to ask, not a fixed role set to impose. Roles can merge
 (one agent coordinating and reviewing) — but the plugin's verification boundaries
