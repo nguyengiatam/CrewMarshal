@@ -98,6 +98,40 @@ check "lane run reads project root" 'quy ước workspace' "$(printf '{"cwd":"%s
 check "session hook malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/session_context.py")"
 rm -rf "$wa" "$ws"
 
+# --- warm_gate ---
+wp="$(mktemp -d)"; git -C "$wp" init -q; mkdir -p "$wp/docs"
+tr="$wp/t.jsonl"
+warm() { printf '{"cwd":"%s","transcript_path":"%s","stop_hook_active":%s}' "$wp" "$tr" "${1:-false}" | python3 "$HOOKS/warm_gate.py"; }
+prompt() { printf '{"type":"user","message":{"role":"user","content":"%s"}}\n' "$1" >> "$tr"; }
+use() { printf '{"type":"assistant","message":{"content":[{"type":"tool_use","id":"%s","name":"%s","input":%s}]}}\n' "$1" "$2" "$3" >> "$tr"; }
+result() { printf '{"type":"user","message":{"content":[{"type":"tool_result","tool_use_id":"%s","content":"ok"}]},"toolUseResult":%s}\n' "$1" "$2" >> "$tr"; }
+notify() { printf '{"type":"user","message":{"role":"user","content":"<task-notification>\\n<task-id>%s</task-id>\\n%s</task-notification>"}}\n' "$1" "$2" >> "$tr"; }
+prompt "go"
+use t1 Bash '{"command":"codex exec go","run_in_background":true}'; result t1 '{"backgroundTaskId":"bRun1"}'
+check "no agreement: silent" '' "$(warm)"
+echo '- ✓ Cache TTL: 1 giờ' > "$wp/docs/working-agreement.md"
+check "run out, no timer: reminded" 'bRun1' "$(warm)"
+check "stop_hook_active: never holds twice" '' "$(warm true)"
+use t2 Bash '{"command":"sleep 3300","run_in_background":true}'; result t2 '{"backgroundTaskId":"bSleep"}'
+check "background sleep this turn: silent" '' "$(warm)"
+notify bSleep '<status>completed</status>\n'
+check "timer from last turn: reminded again" 'bRun1' "$(warm)"
+check "sleep timer not counted as a run" '1 background run' "$(warm)"
+use t3 Monitor '{"command":"tail -F x","timeout_ms":3000000}'; result t3 '{"taskId":"bMon"}'
+check "Monitor this turn: silent" '' "$(warm)"
+notify bMon '<summary>Monitor event: x</summary>\n'
+use t4 Agent '{"description":"d","prompt":"p","run_in_background":true}'; result t4 '{"isAsync":true,"agentId":"aAgent1"}'
+check "async agent counted as a run" 'aAgent1' "$(warm)"
+notify bRun1 '<status>completed</status>\n'
+use t5 TaskStop '{"task_id":"aAgent1"}'; result t5 '{}'
+check "all runs finished or stopped: silent" '' "$(warm)"
+prompt "next"
+use t6 Bash '{"command":"sleep 20; gh run watch 1","run_in_background":true}'; result t6 '{"backgroundTaskId":"bWatch"}'
+check "sleep before real work is a run, not a timer" 'bWatch' "$(warm)"
+check "missing transcript fails open" '' "$(printf '{"cwd":"%s","transcript_path":"/nope"}' "$wp" | python3 "$HOOKS/warm_gate.py")"
+check "warm gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/warm_gate.py")"
+rm -rf "$wp"
+
 # --- watch_lane_run (multi-lane-coordination) ---
 WATCH="$HOOKS/../skills/multi-lane-coordination/scripts/watch_lane_run.py"
 run="$(mktemp)"
