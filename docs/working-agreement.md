@@ -1,6 +1,6 @@
 # Quy ước làm việc: CrewMarshal
 
-**Cập nhật:** 2026-10-15
+**Cập nhật:** 2026-10-16
 **Ký hiệu:** `✓` = user đã chốt · `~` = đề xuất/suy luận, chưa chốt · `CHƯA CHỐT` = còn mở
 
 ## Nhịp làm việc
@@ -26,3 +26,5 @@
 - Push: ✓ commit xong mỗi phần thì push luôn — user chốt 2026-09-23.
 - Cache TTL của coordinator: ✓ **1 giờ** (gói sub Claude Code) — user chốt
   2026-10-15.
+- Ngưỡng chuyển phiên: ✓ **400k** token context — user chốt 2026-10-16; quá
+  ngưỡng thì tìm điểm sạch, ghi pointer, đề nghị phiên mới.

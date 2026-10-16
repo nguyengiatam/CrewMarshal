@@ -132,6 +132,33 @@ check "missing transcript fails open" '' "$(printf '{"cwd":"%s","transcript_path
 check "warm gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/warm_gate.py")"
 rm -rf "$wp"
 
+# --- context_gate ---
+cp="$(mktemp -d)"; git -C "$cp" init -q; mkdir -p "$cp/docs"
+ct="$cp/t.jsonl"
+ctx() { printf '{"cwd":"%s","transcript_path":"%s","session_id":"%s","stop_hook_active":%s}' "$cp" "$ct" "${1:-s1}" "${2:-false}" | python3 "$HOOKS/context_gate.py"; }
+call() { printf '{"type":"assistant","isSidechain":%s,"message":{"usage":{"input_tokens":10,"cache_read_input_tokens":%s,"cache_creation_input_tokens":1000}}}\n' "${2:-false}" "$1" >> "$ct"; }
+call 350000
+check "no agreement: silent" '' "$(ctx)"
+echo '- ✓ quy ước khác' > "$cp/docs/working-agreement.md"
+check "default 300k: reminded" '300k' "$(ctx)"
+rm -rf "$cp/.git/crewmarshal"
+echo '- Ngưỡng chuyển phiên: ✓ **400k** token' >> "$cp/docs/working-agreement.md"
+check "below agreement's 400k: silent" '' "$(ctx)"
+call 420000
+check "past 400k: reminded" 'about 421k' "$(ctx)"
+check "same size band: silent" '' "$(ctx)"
+call 470000
+check "still within 100k step: silent" '' "$(ctx)"
+call 510000
+check "next 100k step: reminded again" 'about 511k' "$(ctx)"
+check "new session past threshold: reminded" '400k' "$(ctx s2)"
+call 900000 true
+check "sidechain usage ignored" '' "$(ctx s2)"
+call 520000
+check "stop_hook_active: silent" '' "$(ctx s3 true)"
+check "context gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/context_gate.py")"
+rm -rf "$cp"
+
 # --- watch_lane_run (multi-lane-coordination) ---
 WATCH="$HOOKS/../skills/multi-lane-coordination/scripts/watch_lane_run.py"
 run="$(mktemp)"
