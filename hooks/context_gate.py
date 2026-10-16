@@ -3,7 +3,7 @@
 
 pointer-handoff wants a session past about 300k tokens of context (or the
 threshold the working agreement sets) to look for a clean point, write the
-pointer and suggest a new session. The context size is the last main-thread
+pointer and open or suggest a new session. The context size is the last main-thread
 model call's input (uncached + cache read + cache write) in the transcript. The
 threshold is the number on the agreement line that names a fresh session
 (`chuyển phiên`, `phiên mới`, `fresh session`, `session reset`), e.g. `400k`;
@@ -94,8 +94,10 @@ def main():
             "fresh-session threshold (%s). Per pointer-handoff, hand over at a clean "
             "point: next action concrete, nothing half-investigated held only in "
             "context, last task accepted and committed, running executors listed. If "
-            "this is that point, write the pointer and suggest a new session to the "
-            "user; if not, say what is still open and carry on toward it."
+            "this is that point, write the pointer, then open the next session yourself "
+            "if the agreement allows it (Tự chuyển phiên) or suggest one to the user "
+            "(the first time, ask whether you may open it); if not, say what is still "
+            "open and carry on toward it."
             % (size // 1000, limit // 1000, agreements[0])
         ),
     }, sys.stdout)

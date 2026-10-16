@@ -124,6 +124,35 @@ session does not end itself. Compaction is the strongest signal — suggest it a
 next clean point. `multi-lane-coordination` applies the same rule to headless lane
 runs, where the reset happens without asking.
 
+### Opening the next session yourself
+
+Instead of suggesting, the session may open its successor in a new terminal window
+or tab — only when the working agreement says so (`Tự chuyển phiên: ✓ …`). The
+first time a handoff is due and the agreement has no such line, ask the user once:
+may the coordinator open the next session itself, and if so, which method (look up
+what you can detect first; methods and their status are in
+[`multi-lane-coordination`'s lane-windows reference](../multi-lane-coordination/references/lane-windows.md)).
+Record the answer, yes or no, with the method. macOS asks once more on its own, for
+Automation permission to drive the terminal.
+
+What the handoff must satisfy:
+
+- **The pointer is the whole handover.** It is written and committed before the
+  window opens; the new session's prompt only says to resume from it — no state in
+  the prompt that is not in the file.
+- **Same permissions as this session.** The current mode is the last
+  `permissionMode` in this session's transcript; pass it as `--permission-mode
+  <mode>` (`default` means no flag). A different mode either asks the user for
+  what this session was trusted to do or does what it was not.
+- **The window runs a launch file**, never an inline prompt: a `launch.sh` that
+  `cd`s to the project and runs `claude -n <project>-<n> --permission-mode <mode>
+  "$(cat prompt.txt)"`, both kept outside the repo tree (under
+  `$(git rev-parse --git-common-dir)/crewmarshal/handoff/`).
+- **The user knows.** Tell them the new session is open and which window, and that
+  this one is done — they close the old window; a session does not kill itself.
+
+Not for lane sessions: a lane's reset is the Chief's to run.
+
 ## Multi-Lane Projects
 
 When the working agreement runs several lanes (`multi-lane-coordination`), there is
