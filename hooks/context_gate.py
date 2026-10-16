@@ -97,7 +97,9 @@ def main():
             "this is that point, write the pointer, then open the next session yourself "
             "if the agreement allows it (Tự chuyển phiên) or suggest one to the user "
             "(the first time, ask whether you may open it); if not, say what is still "
-            "open and carry on toward it."
+            "open and carry on toward it. Opening it yourself also needs nothing "
+            "running or waiting, and afterwards this session cancels every warm-up "
+            "timer and arms nothing."
             % (size // 1000, limit // 1000, agreements[0])
         ),
     }, sys.stdout)

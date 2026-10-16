@@ -137,6 +137,10 @@ Automation permission to drive the terminal.
 
 What the handoff must satisfy:
 
+- **Nothing running, nothing waiting.** Every job this session started has
+  finished and been accepted: no executor run, background command, async agent or
+  monitor still out, no notification still expected. A run that is still going is
+  not handed over by listing it — finish and accept it first, then hand off.
 - **The pointer is the whole handover.** It is written and committed before the
   window opens; the new session's prompt only says to resume from it — no state in
   the prompt that is not in the file.
@@ -148,8 +152,13 @@ What the handoff must satisfy:
   `cd`s to the project and runs `claude -n <project>-<n> --permission-mode <mode>
   "$(cat prompt.txt)"`, both kept outside the repo tree (under
   `$(git rev-parse --git-common-dir)/crewmarshal/handoff/`).
+- **The old session really stops.** Once the new window is open, this session
+  leaves nothing that can wake it: every warm-up timer cancelled (`TaskStop` on a
+  background `sleep` or monitor, `CronDelete` on a cron, no new `ScheduleWakeup`),
+  no new work started, and its last turn arms nothing. From then on it is idle
+  until the user closes it — it never takes another turn on its own.
 - **The user knows.** Tell them the new session is open and which window, and that
-  this one is done — they close the old window; a session does not kill itself.
+  this one has stopped — they close the old window.
 
 Not for lane sessions: a lane's reset is the Chief's to run.
 
