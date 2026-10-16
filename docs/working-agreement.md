@@ -28,3 +28,7 @@
   2026-10-15.
 - Ngưỡng chuyển phiên: ✓ **400k** token context — user chốt 2026-10-16; quá
   ngưỡng thì tìm điểm sạch, ghi pointer, đề nghị phiên mới.
+- Tự chuyển phiên: ✓ **có** — user chốt 2026-10-16. Mở phiên mới trong **cửa sổ
+  Terminal.app mới** (`osascript -e 'tell application "Terminal" to do script "bash
+  <launch.sh>"'`), cùng permission mode với phiên cũ. Chỉ khi mọi job đã xong và
+  nghiệm thu; phiên cũ hủy hết timer giữ ấm rồi dừng (pointer-handoff).
