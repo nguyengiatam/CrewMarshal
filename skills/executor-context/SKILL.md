@@ -112,7 +112,7 @@ Two signals that something must be promoted into this file:
 Write each rule for the action it governs. A limit learned from one tool — long
 command output costs an extra round — reads as "send long command output to a
 file", not "read in pieces": every executor applies a rule as widely as its
-words allow, and a newer one applies it literally (`orchestrating-executors`,
+words allow, and a newer one applies it literally (`writing-handoffs`,
 *Say what to achieve, not how to work*).
 
 Conversely, prune what stopped applying. A convention for a module that was

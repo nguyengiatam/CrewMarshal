@@ -126,7 +126,7 @@ task naming who does it and why.
 ### Where the names come from: the team file
 
 Assignees are picked from the project's team file (`docs/team.md`, see
-`orchestrating-executors`) **by capability** — its *Phân công* table for the role,
+`managing-workforce`) **by capability** — its *Phân công* table for the role,
 its *Năng lực quan sát được* table for what each agent has proven. Match the task's
 hardest requirement to an agent with evidence for that kind of work, **and its size
 to the agent's *Cỡ trần*** (next section). An agent in
@@ -141,7 +141,7 @@ is due, and pick a fallback for that row in case the retry fails.
 
 ### Size every task against its assignee
 
-Give every task a size — S, M, L or XL, by the scale in `orchestrating-executors`
+Give every task a size — S, M, L or XL, by the scale in `managing-workforce`
 (files touched, concerns, steps) — and compare it to the assignee's *Cỡ trần* in
 the team file. Difficulty and length are separate: the agent that can do the hard
 part is not always one that lasts to the end of it.
@@ -154,7 +154,7 @@ A task larger than its assignee's ceiling has two fixes:
   ceiling, on **one worktree and one branch**, each in its own wave after the one
   before. Cut where the build and tests pass: each piece is a checkpoint with its
   own commit and "done when", and the next piece starts from it
-  (`orchestrating-executors`, *Continuation task*). Pieces of one chain never share
+  (`writing-handoffs`, *Continuation task*). Pieces of one chain never share
   a wave — they hold the same files.
 
 Don't split a task the assignee has already proven it can finish: every extra
@@ -271,7 +271,7 @@ Nguồn: docs/team.md (<ngày đọc>)
 
 ### The table is a plan, not a lock
 
-It is written at plan time; quota is checked at dispatch time (`orchestrating-executors`).
+It is written at plan time; quota is checked at dispatch time (`managing-workforce`).
 When the named agent is out of quota or has failed on this area since, the coordinator
 may swap — **within the same source of labor the user already approved** — and writes
 the swap into the table and the pointer. A swap into a source the user has not

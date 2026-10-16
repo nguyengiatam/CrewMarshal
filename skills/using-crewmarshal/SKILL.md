@@ -29,7 +29,9 @@ planning-for-delegation          → gate it: altitude, plan-detail convention,
                                    nine structural checks, assignment in waves, phase gates
 
    ┌─ executor-context           → keep the fixed context file current; handoffs point at it
-   ├─ orchestrating-executors    → check quota, hand off ONE task in the background + monitor, don't poll; free agent + ready task → dispatch now
+   ├─ managing-workforce         → who does it: team file, proven capability, quota, paused agents
+   ├─ orchestrating-executors    → hand off ONE task in the background + monitor, don't poll; free agent + ready task → dispatch now
+   │     writing-handoffs         → the prompt stands on its own; what to achieve, not how
    │     keeping-cache-warm       → runs out at end of turn: one session timer, re-armed, never replaced
    │     checkpoint-verification  → inspect call-site + drive real runtime path
    │     convention-commit-gate   → enums, no magic literals, commit style
@@ -104,7 +106,9 @@ hooks look in both.
 | Turning a spec into tasks | `superpowers:writing-plans` |
 | Checking a plan before anyone is dispatched | `planning-for-delegation` |
 | Several services, several coordinators, one Chief | `multi-lane-coordination` |
+| Choosing who does a task, an agent failed or ran out of quota | `managing-workforce` |
 | Handing a task to an external agent | `orchestrating-executors` |
+| Writing the prompt for that handoff | `writing-handoffs` |
 | Ending a turn while runs are still out | `keeping-cache-warm` |
 | Writing project context executors reuse every dispatch | `executor-context` |
 | Accepting an executor's result | `checkpoint-verification` |

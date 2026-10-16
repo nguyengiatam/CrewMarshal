@@ -242,7 +242,7 @@ Fewer than two → ask nothing; the project stays single.
 - **The design step** reads both: the profile decides *which approach* (how thin
   is allowed), the tier decides *how deep to probe*. On Claude Code that step is
   `superpowers:brainstorming`.
-- `orchestrating-executors` quotes from the profile in every handoff prompt: the
+- `writing-handoffs` quotes from the profile in every handoff prompt: the
   trade-off priority order, the boundaries that must not break, the expected test
   level. This is where the profile pays off most — an external executor is blind
   to all of it.
