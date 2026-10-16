@@ -128,6 +128,16 @@ check "all runs finished or stopped: silent" '' "$(warm)"
 prompt "next"
 use t6 Bash '{"command":"sleep 20; gh run watch 1","run_in_background":true}'; result t6 '{"backgroundTaskId":"bWatch"}'
 check "sleep before real work is a run, not a timer" 'bWatch' "$(warm)"
+use t7 Bash '{"command":"python3 /p/keep_warm.py set /s 3300"}'; result t7 '{"stdout":"START_WAITER due 10:00"}'
+check "keep_warm set without waiter: still reminded" 'bWatch' "$(warm)"
+use t8 Bash '{"command":"python3 /p/keep_warm.py wait /s","run_in_background":true}'; result t8 '{"backgroundTaskId":"bWaiter"}'
+check "keep_warm wait launched this turn: silent" '' "$(warm)"
+notify bWatch '<status>completed</status>\n'
+prompt "later"
+use t9 Agent '{"description":"d","prompt":"p","run_in_background":true}'; result t9 '{"isAsync":true,"agentId":"aAgent2"}'
+check "waiter not counted as a run" '1 background run' "$(warm)"
+use t10 Bash '{"command":"python3 /p/keep_warm.py set /s 3300"}'; result t10 '{"stdout":"WAITER_RUNNING due 11:00"}'
+check "keep_warm set with waiter running: silent" '' "$(warm)"
 check "missing transcript fails open" '' "$(printf '{"cwd":"%s","transcript_path":"/nope"}' "$wp" | python3 "$HOOKS/warm_gate.py")"
 check "warm gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/warm_gate.py")"
 rm -rf "$wp"

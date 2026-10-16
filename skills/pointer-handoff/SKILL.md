@@ -153,9 +153,10 @@ What the handoff must satisfy:
   "$(cat prompt.txt)"`, both kept outside the repo tree (under
   `$(git rev-parse --git-common-dir)/crewmarshal/handoff/`).
 - **The old session really stops.** Once the new window is open, this session
-  leaves nothing that can wake it: every warm-up timer cancelled (`TaskStop` on a
-  background `sleep` or monitor, `CronDelete` on a cron, no new `ScheduleWakeup`),
-  no new work started, and its last turn arms nothing. From then on it is idle
+  leaves nothing that can wake it: every warm-up timer stopped (`keep_warm.py
+  stop`, `TaskStop` on a monitor or background `sleep`, `CronDelete` on a cron —
+  `keeping-cache-warm`), no new work started, and its last turn — the stopped
+  timer's final wake-up included — arms nothing. From then on it is idle
   until the user closes it — it never takes another turn on its own.
 - **The user knows.** Tell them the new session is open and which window, and that
   this one has stopped — they close the old window.

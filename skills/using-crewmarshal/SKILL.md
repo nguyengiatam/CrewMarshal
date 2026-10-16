@@ -30,6 +30,7 @@ planning-for-delegation          → gate it: altitude, plan-detail convention,
 
    ┌─ executor-context           → keep the fixed context file current; handoffs point at it
    ├─ orchestrating-executors    → check quota, hand off ONE task in the background + monitor, don't poll; free agent + ready task → dispatch now
+   │     keeping-cache-warm       → runs out at end of turn: one session timer, re-armed, never replaced
    │     checkpoint-verification  → inspect call-site + drive real runtime path
    │     convention-commit-gate   → enums, no magic literals, commit style
    └─  (loop per task; fix or re-dispatch if a gate fails; re-tier if scope diverges)
@@ -104,6 +105,7 @@ hooks look in both.
 | Checking a plan before anyone is dispatched | `planning-for-delegation` |
 | Several services, several coordinators, one Chief | `multi-lane-coordination` |
 | Handing a task to an external agent | `orchestrating-executors` |
+| Ending a turn while runs are still out | `keeping-cache-warm` |
 | Writing project context executors reuse every dispatch | `executor-context` |
 | Accepting an executor's result | `checkpoint-verification` |
 | Committing at a checkpoint | `convention-commit-gate` |
