@@ -23,6 +23,7 @@ pointer-handoff                  → (ongoing project) read the pointer, reconci
 lessons-ledger                   → pull only the lessons matching this area + kind of work
 concept-briefing                 → confirm system profile, tier the request, route
 project-working-agreement        → load cadence + execution mode + role rules (set up once if missing)
+mapping-user-flows               → (user-facing change) confirm the UX flow BE and FE both derive from
 [superpowers:brainstorming]      → design the change (steered by the profile)
 [superpowers:writing-plans]      → draft the task-by-task plan
 planning-for-delegation          → gate it: altitude, plan-detail convention,
@@ -102,6 +103,7 @@ hooks look in both.
 | Profiling the system + tiering the request before design | `concept-briefing` |
 | Setting or changing how the team works: cadence, parallel vs sequential, role limits, plan detail | `project-working-agreement` |
 | Planning large work as phases from foundation upward | `concept-briefing` (roadmap) |
+| Mapping what users see and do before designing BE and FE | `mapping-user-flows` |
 | Deciding what to build | `superpowers:brainstorming` |
 | Turning a spec into tasks | `superpowers:writing-plans` |
 | Checking a plan before anyone is dispatched | `planning-for-delegation` |

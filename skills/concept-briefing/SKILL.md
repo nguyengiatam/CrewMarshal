@@ -239,6 +239,8 @@ Fewer than two → ask nothing; the project stays single.
 
 ## Handoff to the Rest of the Arc
 
+- **A user-facing change at T2/T3** goes through `mapping-user-flows` before the
+  design step: the confirmed flow is what BE and FE are both designed from.
 - **The design step** reads both: the profile decides *which approach* (how thin
   is allowed), the tier decides *how deep to probe*. On Claude Code that step is
   `superpowers:brainstorming`.

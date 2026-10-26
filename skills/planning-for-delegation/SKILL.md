@@ -240,6 +240,10 @@ the shape → split A into a contract task and an implementation task.
   It is a task with its own "done when" — this is where parallel work fails, if it
   is going to.
 
+When a confirmed UX flow exists (`mapping-user-flows`), the contract is read off
+its screens: everything each screen reads and sends is something the contract
+provides. A screen with nothing in the contract behind it is a missing task.
+
 Don't split when the shape itself is still unknown (spike first, then write the
 contract), when the edge carries behaviour rather than shape (a migration whose
 data the next task reads), or when the gain is smaller than the contract task plus

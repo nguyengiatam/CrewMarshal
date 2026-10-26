@@ -102,6 +102,7 @@ open if something goes wrong.
 | `pointer-handoff` | One short pointer file per project: current state + next action. Read on resume, written before the session ends. |
 | `lessons-ledger` | Per-project lessons indexed by code area and work type, so only the relevant ones load; project-wide ones get crystallized into the executor context file. |
 | `concept-briefing` | Locks a user-confirmed project profile — a short core plus only the questions that matter for what is being built (service, UI, app, tool, library, data) — tiers each request, and routes it to the right amount of process — including a phased roadmap for layered work. |
+| `mapping-user-flows` | Before BE and FE are designed for a user-facing change: a user-confirmed UX flow in text and simple diagrams — journeys to an outcome, every screen with its states, what each screen reads and sends — so the BE contract and the FE screens come from one source. |
 | `project-working-agreement` | One project file of working rules — stop after each task or continue, what each role may decide, plan detail, commit/language — asked once, reused by every session and executor. |
 | `using-crewmarshal` | Index/map of the workflow arc and where it meets superpowers. |
 | `managing-workforce` | Who is on the team and what they proved (team file), subagent-vs-external choice confirmed with the user, task size vs agent ceiling, pausing a failed agent, quota. |
@@ -122,6 +123,7 @@ which steps run. Below is the full T2/T3 path:
 ```
 pointer-handoff (resume) → lessons-ledger (what applies here?)
   → concept-briefing → project-working-agreement (cadence + execution mode + role rules)
+  → mapping-user-flows (user-facing changes)
   → brainstorming (SP) → writing-plans (SP)
   → planning-for-delegation (gate the plan before anyone is dispatched)
   → orchestrating-executors ⇄ checkpoint-verification ⇄ convention-commit-gate  (per task)
