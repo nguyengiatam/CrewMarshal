@@ -89,6 +89,26 @@ T3, or a flow touching money, permissions or data other users see: run
 `adversarial-review-to-go` on it with the **spec** template, adding to the
 prohibitions everything in the right column above. Same stop rule as a spec.
 
+## The Backend Flow Lives in the Spec
+
+How the system gets the user their outcome — the states an entity moves through,
+what moves it when no user does (a timer, an event, an external system), the
+asynchronous steps, what is compensated when a step fails, what must always hold
+— is a **design decision**, and decisions are the spec's. It gets no third
+document: two places describing one flow drift apart, which is the very gap the
+UX flow exists to close.
+
+- **The flow stops at what the user meets.** "Đơn chuyển sang *đang giao*, user
+  nhận thông báo" belongs here; what the system does to get there does not.
+- **The BE spec carries a system-flow section** whenever the work has multi-step,
+  asynchronous or stateful processing: states and transitions, non-user
+  triggers, failure and compensation, invariants — as results that must hold,
+  not mechanism. It cites the journeys (`J1`) it serves and never retells them.
+- **A rule the user can feel stays in the flow.** "Hủy được trước khi giao" is a
+  business rule the user confirms here, even though the system flow enforces it;
+  the spec points at the rule instead of restating it. A rule found while writing
+  the spec that the user would feel goes back into the flow, to be confirmed.
+
 ## Handoff to the Rest of the Arc
 
 - **The design step** (`superpowers:brainstorming` on Claude Code) starts from the
@@ -124,4 +144,6 @@ diverges from the flow is how BE and FE stop fitting.
 | "The user didn't object to the rules" | Business rules are confirmed or `CHƯA CHỐT`. Silence is not consent. |
 | "There's a Figma, I'll redraw it as a flow" | Point at the design; write only what it leaves out. |
 | "Executor found the surface needs more data — I'll patch the spec" | Update the flow first, then the spec and the tasks citing it. |
+| "I'll add a separate backend-flow doc too" | It's the spec's system-flow section. A third document is a second copy that drifts. |
+| "The spec needs a cancel rule — I'll decide it there" | A rule the user feels goes into the flow and gets confirmed; the spec points at it. |
 | "Let me map every phase's flows up front" | Never analyze ahead. Name the journeys in the roadmap; detail per phase. |

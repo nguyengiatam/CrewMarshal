@@ -25,6 +25,7 @@ bottleneck.
 | | Spec | Plan |
 |---|---|---|
 | Goal, and why | ✓ | points back at the spec, never restates it |
+| System flow — states, transitions, non-user triggers, failure and compensation (cites the UX flow's journeys, see `mapping-user-flows`) | ✓ | — |
 | Decisions + reasoning | ✓ | — |
 | Constraints | as **results that must hold** | as the steps that hold them |
 | Known risks | *how it breaks* | *what the step does about it* |
