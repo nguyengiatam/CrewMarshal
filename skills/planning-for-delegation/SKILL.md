@@ -241,8 +241,8 @@ the shape → split A into a contract task and an implementation task.
   is going to.
 
 When a confirmed UX flow exists (`mapping-user-flows`), the contract is read off
-its screens: everything each screen reads and sends is something the contract
-provides. A screen with nothing in the contract behind it is a missing task.
+its surfaces: everything each surface reads and sends is something the contract
+provides. A surface with nothing in the contract behind it is a missing task.
 
 Don't split when the shape itself is still unknown (spike first, then write the
 contract), when the edge carries behaviour rather than shape (a migration whose

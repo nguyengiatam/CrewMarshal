@@ -23,7 +23,7 @@ pointer-handoff                  → (ongoing project) read the pointer, reconci
 lessons-ledger                   → pull only the lessons matching this area + kind of work
 concept-briefing                 → confirm system profile, tier the request, route
 project-working-agreement        → load cadence + execution mode + role rules (set up once if missing)
-mapping-user-flows               → (user-facing change) confirm the UX flow BE and FE both derive from
+mapping-user-flows               → (user business flow, frontend or not) confirm the UX flow the BE derives from
 [superpowers:brainstorming]      → design the change (steered by the profile)
 [superpowers:writing-plans]      → draft the task-by-task plan
 planning-for-delegation          → gate it: altitude, plan-detail convention,

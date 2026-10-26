@@ -35,9 +35,10 @@ flowchart LR
   S2 -->|lỗi| S2
 ```
 
-## Màn hình                                            [REQUIRED]
+## Điểm chạm                                           [REQUIRED]
+Nơi người dùng gặp hệ thống: màn hình, lệnh gọi từ app client, thông báo, email…
 
-### S2 — <tên>
+### S2 — <tên>  ·  <màn hình | app client gọi | thông báo>
 - **Đọc:** <dữ liệu, bằng lời của nghiệp vụ — của ai, lọc/sắp thế nào>
 - **Gửi:** <hành động → kết quả khi được · khi lỗi>
 - **Trạng thái:** đang tải · rỗng: <thấy gì, làm được gì> · lỗi: <...> ·
@@ -49,7 +50,7 @@ flowchart LR
 | <ai được hủy đơn, đến lúc nào> | ✓ user chốt · ~ suy từ repo · CHƯA CHỐT |
 
 ## Câu hỏi còn mở                                      [nếu có]
-Mỗi dòng một câu cho user, kèm màn/hành trình bị chặn.
+Mỗi dòng một câu cho user, kèm điểm chạm/hành trình bị chặn.
 
 ## Ngoài phạm vi                                       [nếu có]
 Hành trình cố ý không làm lần này, kèm lý do.
