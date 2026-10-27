@@ -11,6 +11,7 @@ its own coordinator.
 
 Installs on **Claude Code** and **Codex**. It stands on its own, and works alongside
 [superpowers](https://github.com/obra/superpowers) when that is installed.
+The hooks need `python3`.
 
 ## Install — Claude Code
 
@@ -80,6 +81,40 @@ skill's `validate_plugin.py`. A repo-local pre-commit check refuses a commit
 when they differ — enable it once per clone with `git config core.hooksPath .githooks`.
 Hook tests: `bash hooks/tests/run.sh`.
 
+## Getting started
+
+Bring a request as usual. On a new project, `concept-briefing` asks a few
+questions to lock the project profile and tiers the request;
+`project-working-agreement` asks once how the work should run (stop after each
+task or continue, parallel or sequential executors, what each role may decide).
+Both answers are saved, so later sessions and executors reuse them instead of
+asking again. For a map of the whole workflow, invoke `using-crewmarshal`.
+
+Before the first dispatch, check `skills/orchestrating-executors/references/executor-roster.md`:
+it describes the author's machine (see [Porting](#porting-to-another-environment)).
+
+## Files in your project
+
+Everything CrewMarshal keeps lives in the project's `docs/`, short enough to load
+cheaply:
+
+| File | Holds |
+|------|-------|
+| `STATUS.md` | The pointer: current state + next action |
+| `system-profile.md` | Who uses it, where it's heading, what wins a trade-off |
+| `working-agreement.md` | How the work runs; loaded at every session start |
+| `team.md` | Agents in use, what each has proven, who is paused |
+| `executor-context.md` | Conventions every handoff points at |
+| `lessons/` | Lessons indexed by code area and work type |
+| `specs/`, `plans/` | Specs and plans (unless the working agreement says elsewhere) |
+
+Multi-lane projects add `.crewmarshal/` beside `docs/`. Projects set up by earlier
+versions may keep these under `docs/superpowers/`; the hooks look in both.
+
+The session-start, cache-warm and context hooks stay inert until
+`docs/working-agreement.md` exists, and the pointer reminder until `docs/STATUS.md`
+does.
+
 ## Hooks (Claude Code)
 
 Reminders at points the agent cannot skip past. None refuses anything; all fail
@@ -96,24 +131,31 @@ open if something goes wrong.
 
 ## Skills
 
+Listed in the order the arc uses them.
+
 | Skill | Purpose |
 |-------|---------|
-| `keeping-cache-warm` | While runs are out: one warm-up timer per session, re-armed by moving a deadline file (`scripts/keep_warm.py`) instead of killing and relaunching, so the cache stays warm without wasted wake-ups; when warming stops paying. |
+| `using-crewmarshal` | Map of the workflow arc and where it meets superpowers. |
+| **Session and context** | |
 | `pointer-handoff` | One short pointer file per project: current state + next action. Read on resume, written before the session ends. |
-| `lessons-ledger` | Per-project lessons indexed by code area and work type, so only the relevant ones load; project-wide ones get crystallized into the executor context file. |
-| `concept-briefing` | Locks a user-confirmed project profile — a short core plus only the questions that matter for what is being built (service, UI, app, tool, library, data) — tiers each request, and routes it to the right amount of process — including a phased roadmap for layered work. |
-| `mapping-user-flows` | Before BE (and any FE) is designed for a change to a user's business flow — frontend in the repo or not: a user-confirmed UX flow in text and simple diagrams — journeys to an outcome, every surface with its states, what each reads and sends — so the BE contract comes from the journey, not the data model. |
-| `project-working-agreement` | One project file of working rules — stop after each task or continue, what each role may decide, plan detail, commit/language — asked once, reused by every session and executor. |
-| `using-crewmarshal` | Index/map of the workflow arc and where it meets superpowers. |
-| `managing-workforce` | Who is on the team and what they proved (team file), subagent-vs-external choice confirmed with the user, task size vs agent ceiling, pausing a failed agent, quota. |
-| `orchestrating-executors` | Roles, one-task checkpoints, async dispatch with a monitor (no polling), a freed agent gets the next ready task in the same turn, parallel isolation, the per-task loop. |
-| `writing-handoffs` | The handoff prompt: stands on its own, says what to achieve not how, points at the context file, continuation tasks. |
-| `executor-context` | One fixed context file the coordinator maintains, so handoffs point at it instead of retyping conventions. |
-| `checkpoint-verification` | Refuses green tests as proof; inspect call-site + drive the real runtime path. |
-| `planning-for-delegation` | The gate a plan passes before the first dispatch: spec/plan altitude, the project's plan-detail convention (asked once, kept in the working agreement), nine structural checks, an assignment table (who does each task, grouped into parallel waves, picked from the team file by capability), phase gates. |
-| `multi-lane-coordination` | For projects with several services: a Chief keeps design, contracts, integration and the only conversation with the user; lane coordinators each own one service — headless, or interactive in a terminal window per lane where the user watches and answers in-charter questions — always start from a fresh session and their lane pointer, and stop at a clean point to reset. Only when the working agreement opts in. |
-| `adversarial-review-to-go` | External adversarial reviewer locked to the altitude of what it reviews — spec, plan or diff; every finding carries 1-2 fix directions (a direction, never a patch) at that altitude; converging rounds to GO on a diff, re-review a spec or plan until a round leaves fewer than 5 findings, mostly low severity; re-verify every finding. |
-| `convention-commit-gate` | Centralized enums, no magic literals, project commit style. |
+| `lessons-ledger` | Lessons indexed by code area and work type, so only the relevant ones load; project-wide ones move into the executor context file. |
+| `project-working-agreement` | One file of working rules — cadence, parallel or sequential, one coordinator or lanes, what each role may decide, plan detail, commit/language — asked once, reused everywhere. |
+| **Design** | |
+| `concept-briefing` | Locks a user-confirmed project profile, tiers each request and routes it to just enough process — including a phased roadmap for layered work. |
+| `mapping-user-flows` | A user-confirmed UX flow (journeys, surfaces with their states, what each reads and sends) before BE or FE is designed — frontend in the repo or not — so the BE contract comes from the journey. |
+| `planning-for-delegation` | The gate a plan passes before the first dispatch: spec/plan altitude, the plan-detail convention, nine structural checks, and an assignment table in waves picked from the team file. |
+| **Delegation** | |
+| `managing-workforce` | The team file: who does what, proven capability, task size vs agent ceiling, paused agents, quota; a new source of labor is confirmed with the user. |
+| `executor-context` | One fixed context file, so handoffs point at it instead of retyping conventions. |
+| `writing-handoffs` | The handoff prompt: stands on its own, says what to achieve not how, continues unfinished work as a continuation. |
+| `orchestrating-executors` | Roles, one-task checkpoints, background dispatch with a monitor (no polling), a freed agent gets the next ready task in the same turn, parallel isolation. |
+| `keeping-cache-warm` | While runs are out: one warm-up timer per session, re-armed by moving a deadline file (`scripts/keep_warm.py`) rather than relaunched. |
+| **Verification** | |
+| `checkpoint-verification` | Refuses green tests as proof; inspects the call-site and drives the real runtime path. |
+| `convention-commit-gate` | Centralized enums, no magic literals, the project's commit style. |
+| `adversarial-review-to-go` | External reviewer locked to the altitude of a spec, plan or diff; a diff converges to GO, a spec or plan until a round leaves fewer than 5 mostly-low findings; every finding re-verified. |
+| **Scale** | |
+| `multi-lane-coordination` | Several services: a Chief owns design, contracts, integration and the user; each lane coordinator owns one service, headless or in its own terminal window, always from a fresh session. Only when the working agreement opts in. |
 
 ## The Arc
 
@@ -126,7 +168,10 @@ pointer-handoff (resume) → lessons-ledger (what applies here?)
   → mapping-user-flows (user business flows)
   → brainstorming (SP) → writing-plans (SP)
   → planning-for-delegation (gate the plan before anyone is dispatched)
-  → orchestrating-executors ⇄ checkpoint-verification ⇄ convention-commit-gate  (per task)
+  → per task, in a loop:
+      managing-workforce (who) → writing-handoffs (prompt, pointing at executor-context)
+      → orchestrating-executors (background dispatch + monitor; keeping-cache-warm while out)
+      → checkpoint-verification → convention-commit-gate
   → adversarial-review-to-go
   → finishing-a-development-branch (SP)
   → pointer-handoff (record state + next action)
@@ -147,9 +192,14 @@ standing on the last, with detailed plans written per phase rather than in advan
 
 ## Porting to another environment
 
-Executor command syntax is NOT baked into the skills. It lives in
-`skills/orchestrating-executors/references/executor-roster.md`. Edit that one
-file for your machine/agents; the skills stay unchanged.
+Executor command syntax is NOT baked into the skills. Two files hold everything
+machine-specific; edit them together for your agents, and the skills stay unchanged:
+
+- `skills/orchestrating-executors/references/executor-roster.md` — how to invoke,
+  check quota for, and monitor each executor. As shipped it describes the
+  author's machine (agy, Codex, kiro-cli, opencode); treat it as an example.
+- `hooks/dispatch-commands.txt` — the command patterns `dispatch_gate.py`
+  recognizes as an executor launch.
 
 ## Relationship to superpowers
 
