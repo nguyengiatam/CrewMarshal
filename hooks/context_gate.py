@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Stop: remind once when the session's context passes the fresh-session threshold.
 
-pointer-handoff wants a session past about 300k tokens of context (or the
-threshold the working agreement sets) to look for a clean point, write the
+pointer-handoff wants a session past the fresh-session threshold the working
+agreement sets (300k without one) to look for a clean point, write the
 pointer and open or suggest a new session. The context size is the last main-thread
 model call's input (uncached + cache read + cache write) in the transcript. The
 threshold is the number on the agreement line that names a fresh session

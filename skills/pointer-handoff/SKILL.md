@@ -110,7 +110,8 @@ still listed is still live — that contract is what makes the file trustworthy.
 ## Suggesting a Fresh Session
 
 A long session degrades: early detail crowds out the current task. Once the context
-passes **about 300k tokens** (or the threshold the working agreement sets), look for
+passes the fresh-session threshold the working agreement sets (**about 300k tokens**
+without one), look for
 a clean point to hand over to a new session — but only when the pointer can carry
 everything that matters:
 
@@ -119,8 +120,9 @@ everything that matters:
   or write them into *Cảnh báo đang mở* with their evidence.
 - The last task is accepted and committed; every running executor is listed.
 
-At that point write the pointer, then **suggest** the new session to the user; the
-session does not end itself. Compaction is the strongest signal — suggest it at the
+At that point write the pointer, then **suggest** the new session to the user — or
+open it yourself when the agreement allows it (below). Either way the session never
+just ends mid-work. Compaction is the strongest signal — suggest it at the
 next clean point. `multi-lane-coordination` applies the same rule to headless lane
 runs, where the reset happens without asking.
 
