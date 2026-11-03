@@ -120,16 +120,26 @@ everything that matters:
   or write them into *Cảnh báo đang mở* with their evidence.
 - The last task is accepted and committed; every running executor is listed.
 
-At that point write the pointer, then **suggest** the new session to the user — or
-open it yourself when the agreement allows it (below). Either way the session never
-just ends mid-work. Compaction is the strongest signal — suggest it at the
-next clean point. `multi-lane-coordination` applies the same rule to headless lane
-runs, where the reset happens without asking.
+At that point write the pointer and hand over: when the agreement says the
+coordinator opens the next session (`Tự chuyển phiên: ✓`), opening it **is** the
+handover — the user is not asked to open it, and is not told "please open a new
+session"; only without that line is the new session **suggested** to the user.
+Either way the session never just ends mid-work. Compaction is the strongest
+signal — hand over at the next clean point. `multi-lane-coordination` applies the
+same rule to headless lane runs, where the reset happens without asking.
+
+**Past the threshold with jobs still out**, the session drains toward that point
+instead of stopping or handing the jobs over: it keeps every waiter and warm-up
+timer, accepts each job as it lands (a fix round the acceptance needs is part of
+that job), and starts no new task of its own accord — no next task from the plan,
+no new executor dispatch, no new long command; the next task goes into the pointer
+for the new session. The turn that accepts and commits the last job is the turn
+that writes the pointer and hands over.
 
 ### Opening the next session yourself
 
-Instead of suggesting, the session may open its successor in a new terminal window
-or tab — only when the working agreement says so (`Tự chuyển phiên: ✓ …`). The
+When the working agreement says so (`Tự chuyển phiên: ✓ …`), the session opens its
+successor itself in a new terminal window or tab instead of suggesting it. The
 first time a handoff is due and the agreement has no such line, ask the user once:
 may the coordinator open the next session itself, and if so, which method (look up
 what you can detect first; methods and their status are in
@@ -142,7 +152,9 @@ What the handoff must satisfy:
 - **Nothing running, nothing waiting.** Every job this session started has
   finished and been accepted: no executor run, background command, async agent or
   monitor still out, no notification still expected. A run that is still going is
-  not handed over by listing it — finish and accept it first, then hand off.
+  not handed over by listing it — finish and accept it first (draining, above),
+  then hand off. Jobs still running is a reason to wait, never a reason to ask
+  the user to open the session instead.
 - **The pointer is the whole handover.** It is written and committed before the
   window opens; the new session's prompt only says to resume from it — no state in
   the prompt that is not in the file.

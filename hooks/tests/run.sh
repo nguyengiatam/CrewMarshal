@@ -166,6 +166,9 @@ call 900000 true
 check "sidechain usage ignored" '' "$(ctx s2)"
 call 520000
 check "stop_hook_active: silent" '' "$(ctx s3 true)"
+check "no auto-open line: suggest" 'suggest a new session' "$(ctx s4)"
+echo '- Tự chuyển phiên: ✓ **có** — cửa sổ Terminal.app mới' >> "$cp/docs/working-agreement.md"
+check "auto-open line: open it yourself" 'do not ask the user to open' "$(ctx s5)"
 check "context gate malformed input fails open" '' "$(printf 'x' | python3 "$HOOKS/context_gate.py")"
 rm -rf "$cp"
 
