@@ -13,7 +13,7 @@ specs and plan tasks cite — keep them stable once confirmed.
 
 **Trạng thái:** CHƯA CHỐT | ĐÃ CHỐT (YYYY-MM-DD)
 **Căn cứ:** <yêu cầu / concept brief>  ·  **Hồ sơ hệ thống:** docs/system-profile.md
-**Nguồn thiết kế:** <link Figma | không có>
+**Nguồn thiết kế:** <link, công cụ bất kỳ | không có>
 
 ## Vai                                                 [REQUIRED]
 | Id | Vai | Muốn đạt gì | Dùng trên |

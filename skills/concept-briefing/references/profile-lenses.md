@@ -43,7 +43,8 @@ APIs, workers, anything that runs and serves load.
 
 Web UI, dashboard, landing page, anything whose quality is partly judged by eye.
 
-- **Design source:** a finished design (Figma or similar link) | a design system
+- **Design source:** a finished design, from any tool (Figma, Penpot, Sketch,
+  exported images, an HTML mockup) with where to find it | a design system
   or component library to follow | references or a mood only | nothing — design
   as we go. This decides whether the work is *implementing* a design or *making*
   one, which changes everything downstream.
@@ -56,6 +57,8 @@ Web UI, dashboard, landing page, anything whose quality is partly judged by eye.
 - Existing UI stack: framework, component library, CSS approach, design tokens.
   *(package manifest, theme files, `components/`)*
 - Where data comes from: an existing API, a mock to be replaced, static content.
+  For an existing API: who owns it, whether it can change, and a non-production
+  environment the UI may call — `binding-ui-to-api` proves it against that.
 
 ## App (mobile / desktop)
 

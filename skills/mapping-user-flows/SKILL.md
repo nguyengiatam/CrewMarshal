@@ -28,7 +28,7 @@ it rather than restate it.
 | T2/T3 and adds or changes a business flow a user goes through — on any surface, frontend in this repo or not | **yes** — before the design step |
 | T0/T1, cosmetic UI change, copy change | no |
 | No user journey changes: internal refactor, infrastructure, a job no user triggers or sees | no |
-| A finished design exists (Figma or similar, per the profile's *design source*) | read it and write only what it leaves out — states, failures, data per screen — never redraw it |
+| A finished design exists — from any tool, per the profile's *design source* | read it and write only what it leaves out — states, failures, data per screen — never redraw it |
 
 The profile's core — who uses it, in what situation — must be confirmed
 (`concept-briefing`); it decides the actors. When the user meets a UI, its lens
@@ -145,7 +145,7 @@ diverges from the flow is how BE and FE stop fitting.
 | "I'll add the endpoints right here while I'm at it" | That's the spec's altitude. Name what the surface reads; the BE design picks the endpoint. |
 | "Happy path is enough for now" | Empty, error and no-permission states are exactly what each side invents differently. |
 | "The user didn't object to the rules" | Business rules are confirmed or `CHƯA CHỐT`. Silence is not consent. |
-| "There's a Figma, I'll redraw it as a flow" | Point at the design; write only what it leaves out. |
+| "There's a finished design, I'll redraw it as a flow" | Point at the design; write only what it leaves out. |
 | "Executor found the surface needs more data — I'll patch the spec" | Update the flow first, then the spec and the tasks citing it. |
 | "I'll add a separate backend-flow doc too" | It's the spec's system-flow section. A third document is a second copy that drifts. |
 | "The spec needs a cancel rule — I'll decide it there" | A rule the user feels goes into the flow and gets confirmed; the spec points at it. |

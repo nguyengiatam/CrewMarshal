@@ -83,10 +83,10 @@ Concrete, no hedging — the shape to aim for (a small backend service):
 > | Số bản chạy service | <n replica> |
 > | Ca dùng nặng nhất | <mô tả — thứ phải thiết kế để chịu được> |
 
-And for a UI: *"Làm theo Figma <link>, đã duyệt; chỉ desktop Chrome/Edge; người
+And for a UI: *"Làm theo thiết kế <link>, đã duyệt; chỉ desktop Chrome/Edge; người
 duyệt giao diện là PO qua screenshot; dùng component library sẵn có, không tự
 thêm style."* — four facts that settle most UI arguments before they start.
 
 **Specifics beat adjectives.** "Nhỏ" or "đẹp, hiện đại" is arguable and gets
-re-litigated every phase; "1 replica, 200 internal users" or "theo Figma đã duyệt"
+re-litigated every phase; "1 replica, 200 internal users" or "theo thiết kế đã duyệt"
 is not.
