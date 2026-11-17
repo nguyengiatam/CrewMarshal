@@ -133,6 +133,9 @@ line stays `CHƯA CHỐT`, and a task whose rows depend on it does not dispatch.
 
 - **Plan:** each FE task names the binding rows it builds (`B3–B7`); every row is
   covered by a task (`planning-for-delegation`).
+- **Handoff:** the rules every FE task shares go once into the context file's UI
+  section (`executor-context`); each prompt names only its surfaces, design
+  frames and rows (`writing-handoffs`).
 - **Fake:** reproduces every error row, not only the success — a fake that cannot
   fail leaves every error display untested.
 - **Executor finds a behaviour with no row:** stops and reports; it does not

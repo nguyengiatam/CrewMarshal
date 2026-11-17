@@ -29,7 +29,7 @@ loaded far more often than it is written.
 ## What Belongs In It
 
 Anything true for **every** task in the project. Eight sections, in this order —
-each one earned by a real failure mode:
+each one earned by a real failure mode — and a ninth when there is a UI:
 
 1. **What the project is.** Two or three sentences, plus the stack. Then **the
    handful of facts that govern every decision**, pulled from
@@ -63,6 +63,28 @@ each one earned by a real failure mode:
    results before and after with counts, scoped lint result); long output stays
    in a log the report points at; and — most important — what is unfinished or
    unverified, and everything that looked suspicious or couldn't be decided alone.
+
+A project with a frontend adds a ninth:
+
+9. **UI work.** The rules every FE task shares, so a handoff names only *which*
+   screens and rows:
+   - **Two sources, each for one thing.** The design decides how it looks — where
+     it lives, the design system, tokens and components to reuse, no new styles
+     or one-off components when one exists. The binding table
+     (`binding-ui-to-api`) decides how it behaves — the task builds the rows it
+     names, every error row included.
+   - **No invented behaviour.** A state the design doesn't draw follows its
+     binding row and the design system. A behaviour with no row — what happens
+     after save, an error with no display, data the screen shows that no field
+     supplies — means stop and report, not decide.
+   - **The contract is read-only.** Types, API client and fake are built against,
+     never edited; a contract that looks wrong is reported.
+   - **How to run it:** the command for the app on the fake and on the real API,
+     how to make the fake return a given error, the browsers or devices the
+     profile requires.
+   - **The report adds:** each named row walked on the running screen with a
+     screenshot per state, rows not done, and every mismatch found between
+     design, binding and contract.
 
 Section 6's "stop and report" and section 8's last item are the load-bearing
 ones. An executor that quietly fixes what it shouldn't, or files a clean report to

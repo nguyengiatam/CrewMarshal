@@ -64,6 +64,36 @@ of change as a plain request, read the files whole, edited, tested and committed
   output to a file and read its tail", never "read files in pieces". Before a
   limit goes into the context file or a prompt, name the one action it governs.
 
+## A Frontend Task
+
+The FE rules sit in the context file's UI section (`executor-context`); the prompt
+stays short because it only has to say **which** — and every "which" must be exact,
+since a UI executor fills a vague one with something that looks plausible.
+
+The prompt names:
+
+- **The surfaces and the design for them** — flow ids (`S3`) plus the exact frame,
+  page or file in the design, and which breakpoints or variants count.
+- **The binding rows** it builds (`B3–B7`) and the path to the table.
+- **What it builds versus reuses** — shared components that exist, ones another
+  task is building (held, wait or use the stub), ones this task creates.
+- **The contract files** it builds against, read-only, and whether it runs on the
+  fake or the real API.
+- **Done when:** the named rows walked on the running screen, errors included, on
+  the required devices.
+
+**Before sending, check the prompt has no hole a FE executor would fill by eye:**
+every named row has a design frame or a stated fallback; no row it names is
+`CHƯA CHỐT`; every error its operations return is in some row; a component two
+tasks need has exactly one owner.
+
+> *"Đọc `docs/executor-context.md`. Làm S3 Chi tiết đơn theo thiết kế
+> `<link frame Order/Detail, desktop + mobile>`, các dòng B3–B7 trong
+> `docs/specs/…-fe-design.md#ghép-ui–api`. Dùng `StatusBadge`, `ConfirmDialog` có
+> sẵn; `OrderTimeline` do task 6 làm — dùng stub. Chạy trên fake
+> (`src/api/fake/orders.ts`, chỉ đọc). Xong khi B3–B7 chạy được trên màn hình kể
+> cả nhánh lỗi, có ảnh từng trạng thái. Không commit."*
+
 ## Continuation task
 
 When a task stopped partway, or a task too long for its agent was split into a
@@ -86,4 +116,5 @@ alongside it.
 |---------|---------|
 | "The prompt is clear enough, I know what I mean" | You do; the executor has only the prompt. Every "as before" or "that one" is a hole. |
 | "I'll tell it exactly how to read, to save rounds" | A method rule gets followed to the letter. State the result and the limits; leave the reading to the executor. |
+| "Build the order detail screen per the design" | Which frame, which rows, which components exist, fake or real. A UI executor fills each gap with something plausible. |
 | "I'll restate the conventions in this prompt" | Point at the context file and fix the file. Retyped conventions drift and get omitted under pressure. |
