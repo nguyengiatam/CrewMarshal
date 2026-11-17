@@ -252,6 +252,11 @@ is no BE to stub: the contract task *captures* it — types and a fake recorded 
 real responses, errors included — and the binding's proof of each operation is
 what that task works from.
 
+Each FE task names here, once, what its handoff will only point at: its surfaces,
+the design frames for them, its binding rows (none `CHƯA CHỐT`), and in *Giữ* any
+shared component it creates — one owner per component. Settled at the plan, the
+handoff needs no codebase survey (`writing-handoffs`).
+
 Don't split when the shape itself is still unknown (spike first, then write the
 contract), when the edge carries behaviour rather than shape (a migration whose
 data the next task reads), or when the gain is smaller than the contract task plus

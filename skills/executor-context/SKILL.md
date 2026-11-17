@@ -69,8 +69,8 @@ A project with a frontend adds a ninth:
 9. **UI work.** The rules every FE task shares, so a handoff names only *which*
    screens and rows:
    - **Two sources, each for one thing.** The design decides how it looks — where
-     it lives, the design system, tokens and components to reuse, no new styles
-     or one-off components when one exists. The binding table
+     it lives, the design system and tokens; look for an existing component
+     before making one, and no new styles. The binding table
      (`binding-ui-to-api`) decides how it behaves — the task builds the rows it
      names, every error row included.
    - **No invented behaviour.** A state the design doesn't draw follows its
@@ -83,7 +83,7 @@ A project with a frontend adds a ninth:
      how to make the fake return a given error, the browsers or devices the
      profile requires.
    - **The report adds:** each named row walked on the running screen with a
-     screenshot per state, rows not done, and every mismatch found between
+     screenshot per state, rows not done, components created, and every mismatch found between
      design, binding and contract.
 
 Section 6's "stop and report" and section 8's last item are the load-bearing
