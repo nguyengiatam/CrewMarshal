@@ -37,6 +37,22 @@ for delegated work: the call-site and the real operational path.
       THEN start service), follow it exactly — init state runs at startup.
 - [ ] Only then accept the checkpoint.
 
+## For a UI, the Real Path Is the Running Screen
+
+Component tests prove the pieces render; they don't prove the screen behaves as
+bound. When the task builds UI:
+
+- Run the app and drive it in a real browser (or the device or emulator for an
+  app) — not a test renderer.
+- Walk every binding row the task names (`binding-ui-to-api`): trigger, pending,
+  success, **and each error row**, with the fake made to return that error.
+  Capture a screenshot or recording per state as the evidence.
+- Check every state the UX flow lists for the surface — empty, no permission,
+  partial data — and the devices the profile requires.
+- At integration, walk the same rows again against the real API. A row that
+  passed on the fake and fails on the real API means the fake and the API
+  disagree: fix the capture or the contract, not just the screen.
+
 ## After Acceptance: Clean Up the Task's Disk
 
 A delegated task leaves copies behind: the worktree it ran in (often with its own

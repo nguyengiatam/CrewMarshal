@@ -245,6 +245,13 @@ When a confirmed UX flow exists (`mapping-user-flows`), the contract is read off
 its surfaces: everything each surface reads and sends is something the contract
 provides. A surface with nothing in the contract behind it is a missing task.
 
+A frontend against an API adds the FE spec's binding table (`binding-ui-to-api`):
+each FE task names the rows it builds, every row is covered, and the fake returns
+every error a row maps, not only success. **When the API already exists** there
+is no BE to stub: the contract task *captures* it — types and a fake recorded from
+real responses, errors included — and the binding's proof of each operation is
+what that task works from.
+
 Don't split when the shape itself is still unknown (spike first, then write the
 contract), when the edge carries behaviour rather than shape (a migration whose
 data the next task reads), or when the gain is smaller than the contract task plus

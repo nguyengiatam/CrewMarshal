@@ -117,6 +117,9 @@ UX flow exists to close.
 - **The BE contract** is derived from the *reads/sends* of every surface — each one
   maps to something the contract provides, or the spec says why not. This is the
   shape the contract task in `planning-for-delegation` lays down before fan-out.
+- **A frontend against an API** gets a binding table in its FE spec
+  (`binding-ui-to-api`); behaviour the user would feel that neither design nor
+  flow states comes back here as `CHƯA CHỐT`.
 - **The plan** traces both ways: every BE/FE task names the surfaces or journeys it
   serves, and every surface is covered by some task.
 - **Multi-lane:** the flow belongs to the Chief, confirmed before contracts are

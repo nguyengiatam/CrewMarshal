@@ -143,6 +143,7 @@ Listed in the order the arc uses them.
 | **Design** | |
 | `concept-briefing` | Locks a user-confirmed project profile, tiers each request and routes it to just enough process — including a phased roadmap for layered work. |
 | `mapping-user-flows` | A user-confirmed UX flow (journeys, surfaces with their states, what each reads and sends) before BE or FE is designed — frontend in the repo or not — so the BE contract comes from the journey. |
+| `binding-ui-to-api` | A binding table in the FE spec: every UI element tied to an API operation with its trigger, pending, success and each error; checked both ways; an existing API proved by real calls or its source, gaps decided by the user. |
 | `planning-for-delegation` | The gate a plan passes before the first dispatch: spec/plan altitude, the plan-detail convention, nine structural checks, and an assignment table in waves picked from the team file. |
 | **Delegation** | |
 | `managing-workforce` | The team file: who does what, proven capability, task size vs agent ceiling, paused agents, quota; a new source of labor is confirmed with the user. |
@@ -151,7 +152,7 @@ Listed in the order the arc uses them.
 | `orchestrating-executors` | Roles, one-task checkpoints, background dispatch with a monitor (no polling), a freed agent gets the next ready task in the same turn, parallel isolation. |
 | `keeping-cache-warm` | While runs are out: one warm-up timer per session, re-armed by moving a deadline file (`scripts/keep_warm.py`) rather than relaunched. |
 | **Verification** | |
-| `checkpoint-verification` | Refuses green tests as proof; inspects the call-site and drives the real runtime path. |
+| `checkpoint-verification` | Refuses green tests as proof; inspects the call-site and drives the real runtime path — for a UI, the running screen through every binding row, errors included. |
 | `convention-commit-gate` | Centralized enums, no magic literals, the project's commit style. |
 | `adversarial-review-to-go` | External reviewer locked to the altitude of a spec, plan or diff; a diff converges to GO, a spec or plan until a round leaves fewer than 5 mostly-low findings; every finding re-verified. |
 | **Scale** | |
@@ -166,7 +167,7 @@ which steps run. Below is the full T2/T3 path:
 pointer-handoff (resume) → lessons-ledger (what applies here?)
   → concept-briefing → project-working-agreement (cadence + execution mode + role rules)
   → mapping-user-flows (user business flows)
-  → brainstorming (SP) → writing-plans (SP)
+  → brainstorming (SP) → binding-ui-to-api (FE against an API) → writing-plans (SP)
   → planning-for-delegation (gate the plan before anyone is dispatched)
   → per task, in a loop:
       managing-workforce (who) → writing-handoffs (prompt, pointing at executor-context)

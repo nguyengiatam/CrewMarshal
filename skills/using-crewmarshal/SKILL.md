@@ -25,6 +25,8 @@ concept-briefing                 → confirm system profile, tier the request, r
 project-working-agreement        → load cadence + execution mode + role rules (set up once if missing)
 mapping-user-flows               → (user business flow, frontend or not) confirm the UX flow the BE derives from
 [superpowers:brainstorming]      → design the change (steered by the profile)
+binding-ui-to-api                → (FE against an API, new or existing) bind every UI element to an
+                                   operation and each outcome; an existing API is proved, not read by name
 [superpowers:writing-plans]      → draft the task-by-task plan
 planning-for-delegation          → gate it: altitude, plan-detail convention,
                                    nine structural checks, assignment in waves, phase gates
@@ -105,6 +107,7 @@ hooks look in both.
 | Planning large work as phases from foundation upward | `concept-briefing` (roadmap) |
 | Mapping what users see and do before designing BE and FE | `mapping-user-flows` |
 | Deciding what to build | `superpowers:brainstorming` |
+| Tying the design's screens to the API's behaviour — or to an API that already exists | `binding-ui-to-api` |
 | Turning a spec into tasks | `superpowers:writing-plans` |
 | Checking a plan before anyone is dispatched | `planning-for-delegation` |
 | Several services, several coordinators, one Chief | `multi-lane-coordination` |
